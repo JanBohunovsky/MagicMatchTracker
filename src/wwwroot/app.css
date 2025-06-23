@@ -1,0 +1,12 @@
+:root {
+	--bs-font-sans-serif: "Noto Sans", system-ui, sans-serif;
+	--bs-font-monospace: "Noto Sans Mono", ui-monospace, monospace;
+}
+
+h1:focus {
+    outline: none;
+}
+
+.content {
+	padding-top: 1.1rem;
+}

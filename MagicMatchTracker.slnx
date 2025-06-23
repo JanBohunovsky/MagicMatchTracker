@@ -1,0 +1,11 @@
+﻿<Solution>
+	<Folder Name="/.root/">
+		<File Path=".dockerignore" />
+		<File Path=".editorconfig" />
+		<File Path=".gitignore" />
+		<File Path="Dockerfile" />
+		<File Path="LICENSE" />
+		<File Path="README.md" />
+	</Folder>
+	<Project Path="src/MagicMatchTracker.csproj" />
+</Solution>
