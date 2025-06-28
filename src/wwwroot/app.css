@@ -1,3 +1,6 @@
+@import "icons.css";
+@import "buttons.css";
+
 :root {
 	--bs-font-sans-serif: "Noto Sans", system-ui, sans-serif;
 	--bs-font-monospace: "Noto Sans Mono", ui-monospace, monospace;
