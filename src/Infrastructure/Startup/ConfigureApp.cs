@@ -1,4 +1,5 @@
-using MagicMatchTracker.Features.Shared.Layout;
+using MagicMatchTracker.Infrastructure.Layout;
+using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Infrastructure.Startup;
 
@@ -18,6 +19,8 @@ public static class ConfigureApp
 		{
 			app.UseExceptionHandler("/error", createScopeForErrors: true);
 		}
+
+		app.UseStatusCodePagesWithReExecute("/error/{0}");
 	}
 
 	private static void ConfigureMiddlewares(this WebApplication app)
@@ -34,11 +37,9 @@ public static class ConfigureApp
 
 	private static async Task InitializeDatabaseAsync(this WebApplication app)
 	{
-		// TODO: Uncomment after setting up EF Core.
-
-		// using var scope = app.Services.CreateScope();
-		// var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-		// await context.Database.MigrateAsync();
+		using var scope = app.Services.CreateScope();
+		var context = scope.ServiceProvider.GetRequiredService<Database>();
+		await context.Database.MigrateAsync();
 	}
 
 }

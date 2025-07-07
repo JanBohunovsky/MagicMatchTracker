@@ -1,0 +1,58 @@
+@using MagicMatchTracker.Infrastructure.Validation
+@typeparam TModel
+
+@if (Model is not null)
+{
+	<div class="modal show" tabindex="-1" @onclick="OnCancel">
+		<div class="modal-dialog" @onclick:stopPropagation="true">
+			<EditForm EditContext="_editContext" OnValidSubmit="OnSubmit" class="modal-content">
+				<FluentValidator/>
+				@Content(Model)
+			</EditForm>
+		</div>
+	</div>
+	<div class="modal-backdrop show"></div>
+}
+
+@code {
+
+	private TModel? _model;
+	private EditContext? _editContext;
+
+	/// <summary>
+	/// Model to be used for the form dialog. Also controls the visibility of the dialog.
+	/// </summary>
+	[Parameter, EditorRequired]
+	public required TModel? Model
+	{
+		get => _model;
+		set
+		{
+			if (ReferenceEquals(_model, value))
+				return;
+
+			_model = value;
+			_editContext = _model is not null ? new EditContext(_model) : null;
+			_editContext?.SetFieldCssClassProvider(BootstrapFieldClassProvider.Instance);
+		}
+	}
+
+	/// <summary>
+	/// Content to be rendered inside <c>EditForm.modal-content</c>.
+	/// </summary>
+	[Parameter, EditorRequired]
+	public required RenderFragment<TModel> Content { get; set; }
+
+	/// <summary>
+	/// Invoked when the user clicks outside the dialog.
+	/// </summary>
+	[Parameter]
+	public EventCallback OnCancel { get; set; }
+
+	/// <summary>
+	/// Invoked when the form is submitted and the model is valid.
+	/// </summary>
+	[Parameter]
+	public EventCallback OnSubmit { get; set; }
+
+}

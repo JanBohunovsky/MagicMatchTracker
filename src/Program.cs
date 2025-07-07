@@ -13,4 +13,5 @@ try
 catch (Exception e) when (e is not HostAbortedException)
 {
 	// TODO: Log exception
+	throw;
 }

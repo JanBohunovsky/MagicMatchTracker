@@ -1,0 +1,18 @@
+@using MagicMatchTracker.Data.Models
+
+<div class="avatar-container">
+	<img class="avatar @DefaultClass" src="@AvatarUri" width="@Size" height="@Size" aria-hidden="true"/>
+</div>
+
+@code {
+
+	[Parameter, EditorRequired]
+    public required Player Player { get; set; }
+
+	[Parameter, EditorRequired]
+    public required int Size { get; set; }
+
+	private string DefaultClass => Player.AvatarUri is null ? "default" : "";
+	private string AvatarUri => Player.AvatarUri ?? "/img/avatar.png";
+
+}

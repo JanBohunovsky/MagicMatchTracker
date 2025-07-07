@@ -1,0 +1,21 @@
+.avatar {
+	border-radius: 50%;
+}
+
+.avatar-container {
+	position: relative;
+}
+
+/* Inset border to prevent background bleed */
+.avatar-container:not(:has(.default))::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	pointer-events: none;
+
+	border-radius: 50%;
+	box-shadow: inset 0 0 0 1px hsla(0, 0%, 0%, 0.15);
+}
