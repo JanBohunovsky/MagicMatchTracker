@@ -7,12 +7,27 @@
 	margin-bottom: 6rem;
 }
 
-.player-entry:has(.player-link:hover),
-.player-entry:has(.player-link:focus) {
+.player-entry {
+	display: flex;
+	align-items: stretch;
+	gap: 0.5rem;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+}
+
+.player-link {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.player-entry:has(a.player-link:hover),
+.player-entry:has(a.player-link:focus) {
 	background-color: var(--bs-list-group-action-hover-bg);
 }
 
-.player-entry:has(.player-link:active) {
+.player-entry:has(a.player-link:active) {
 	background-color: var(--bs-list-group-action-active-bg);
 }
 

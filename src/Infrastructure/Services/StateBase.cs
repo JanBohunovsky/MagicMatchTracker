@@ -1,4 +1,4 @@
-namespace MagicMatchTracker.Infrastructure.Components;
+namespace MagicMatchTracker.Infrastructure.Services;
 
 public abstract class StateBase
 {

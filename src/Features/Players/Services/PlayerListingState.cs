@@ -1,4 +1,4 @@
-using MagicMatchTracker.Infrastructure.Components;
+using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Features.Players.Services;

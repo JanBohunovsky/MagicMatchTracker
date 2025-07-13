@@ -1,3 +1,4 @@
+using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace MagicMatchTracker.Infrastructure.Components;

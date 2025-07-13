@@ -1,5 +1,5 @@
 using MagicMatchTracker.Features.Players.Models;
-using MagicMatchTracker.Infrastructure.Components;
+using MagicMatchTracker.Infrastructure.Services;
 
 namespace MagicMatchTracker.Features.Players.Services;
 

@@ -1,8 +1,6 @@
 @page "/players"
-@using MagicMatchTracker.Features.Players.Services
 @using MagicMatchTracker.Features.Players.Components
-@attribute [StreamRendering]
-@inherits StatefulComponentBase<PlayerListingState>
+@inherits StatefulComponentBase<MagicMatchTracker.Features.Players.Services.PlayerListingState>
 @rendermode InteractiveServer
 
 <PageTitle>Players - Match Tracker</PageTitle>
@@ -21,11 +19,11 @@
 	<ul class="list-group list-group-flush">
 		@for (int i = 0; i < 8; i++)
 		{
-			var width = Random.Shared.Next(70, 170);
-			<li class="list-group-item d-flex justify-content-between align-items-stretch placeholder-glow">
-				<span class="d-flex align-items-center gap-2">
+			var width = i % 2 == 0 ? 8 : 6;
+			<li class="player-entry list-group-item placeholder-glow">
+				<span class="player-link">
 					<span class="placeholder placeholder-avatar"></span>
-					<span class="placeholder" style="width: @(width)px;"></span>
+					<span class="placeholder" style="width: @(width)rem;"></span>
 				</span>
 				<a class="btn btn-ghost-secondary btn-square disabled placeholder"></a>
 			</li>
@@ -46,7 +44,7 @@
 	@foreach (var player in State.Players)
 	{
 		<li class="player-entry list-group-item d-flex align-items-stretch gap-2 px-4">
-			<a href="/players/@player.Id" class="player-link text-body text-decoration-none flex-fill d-flex align-items-center gap-2">
+			<a href="/players/@player.Id" class="player-link text-body text-decoration-none">
 				<Avatar Player="player" Size="28"/>
 				<span>@player.Name</span>
 			</a>
