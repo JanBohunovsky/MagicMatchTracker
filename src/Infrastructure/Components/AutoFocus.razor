@@ -1,0 +1,27 @@
+@using MagicMatchTracker.Infrastructure.Services
+@inject FocusService FocusService
+
+<div @ref="_container" @attributes="Attributes">
+	@ChildContent
+</div>
+
+@code {
+
+	private ElementReference _container;
+
+	[Parameter, EditorRequired]
+    public required RenderFragment ChildContent { get; set; }
+
+	[Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? Attributes { get; set; }
+
+	/// <inheritdoc />
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender)
+			return;
+
+		await FocusService.AutoFocusAsync(_container);
+	}
+
+}

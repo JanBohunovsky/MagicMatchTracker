@@ -6,6 +6,8 @@ public sealed class BootstrapFieldClassProvider : FieldCssClassProvider
 {
 	public static BootstrapFieldClassProvider Instance { get; } = new();
 
+	private BootstrapFieldClassProvider() { }
+
 	/// <inheritdoc />
 	public override string GetFieldCssClass(EditContext editContext, in FieldIdentifier fieldIdentifier)
 	{

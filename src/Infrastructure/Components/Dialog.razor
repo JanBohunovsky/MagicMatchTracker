@@ -2,11 +2,11 @@
 @if (IsOpen)
 {
 	<div class="modal show" tabindex="-1" @onclick="OnCancel">
-		<div class="modal-dialog" @onclick:stopPropagation="true">
+		<AutoFocus class="modal-dialog" @onclick:stopPropagation="true">
 			<div class="modal-content">
-				@Content
+				@ChildContent
 			</div>
-		</div>
+		</AutoFocus>
 	</div>
 	<div class="modal-backdrop show"></div>
 }
@@ -20,11 +20,12 @@
 	/// Content to be rendered inside <c>div.modal-content</c>.
 	/// </summary>
 	[Parameter, EditorRequired]
-    public required RenderFragment Content { get; set; }
+    public required RenderFragment ChildContent { get; set; }
 
 	/// <summary>
 	/// Invoked when the user clicks outside the dialog.
 	/// </summary>
 	[Parameter]
     public EventCallback OnCancel { get; set; }
+
 }

@@ -1,5 +1,6 @@
 using FluentValidation;
 using MagicMatchTracker.Features.Players;
+using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Infrastructure.Startup;
@@ -10,9 +11,8 @@ public static class ConfigureServices
 	{
 		builder.AddBlazor();
 		builder.AddDatabase();
+		builder.AddInfrastructure();
 		builder.AddFeatures();
-
-		builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 	}
 
 	private static void AddBlazor(this WebApplicationBuilder builder)
@@ -32,6 +32,12 @@ public static class ConfigureServices
 			{
 				dbContextOptions.UseSnakeCaseNamingConvention();
 			});
+	}
+
+	private static void AddInfrastructure(this WebApplicationBuilder builder)
+	{
+		builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+		builder.Services.AddScoped<FocusService>();
 	}
 
 	private static void AddFeatures(this WebApplicationBuilder builder)
