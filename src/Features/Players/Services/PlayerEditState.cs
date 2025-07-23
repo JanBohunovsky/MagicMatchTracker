@@ -33,7 +33,7 @@ public sealed class PlayerEditState(Database database) : StateBase
 		HideDialog(cancelled: true);
 	}
 
-	public async Task SaveAsync()
+	public async Task SaveAsync(CancellationToken cancellationToken = default)
 	{
 		if (Model is null)
 			return;
@@ -49,7 +49,7 @@ public sealed class PlayerEditState(Database database) : StateBase
 			if (IsNew)
 				database.Players.Add(player);
 
-			await database.SaveChangesAsync();
+			await database.SaveChangesAsync(cancellationToken);
 		}
 	}
 

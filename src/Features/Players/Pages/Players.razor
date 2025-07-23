@@ -1,7 +1,6 @@
 @page "/players"
 @using MagicMatchTracker.Features.Players.Components
 @inherits StatefulComponentBase<MagicMatchTracker.Features.Players.Services.PlayerListingState>
-@rendermode InteractiveServer
 
 <PageTitle>Players - Match Tracker</PageTitle>
 
@@ -25,7 +24,7 @@
 					<span class="placeholder placeholder-avatar"></span>
 					<span class="placeholder" style="width: @(width)rem;"></span>
 				</span>
-				<a class="btn btn-ghost-secondary btn-square disabled placeholder"></a>
+				<a class="btn btn-ghost-secondary btn-square my-2 disabled placeholder"></a>
 			</li>
 		}
 	</ul>
@@ -43,12 +42,12 @@
 <ul class="list-group list-group-flush player-list">
 	@foreach (var player in State.Players)
 	{
-		<li class="player-entry list-group-item d-flex align-items-stretch gap-2 px-4">
+		<li class="player-entry list-group-item">
 			<a href="/players/@player.Id" class="player-link text-body text-decoration-none">
 				<Avatar Player="player" Size="28"/>
 				<span>@player.Name</span>
 			</a>
-			<button class="btn btn-ghost-secondary btn-square hover-icon-filled"
+			<button class="btn btn-ghost-secondary btn-square hover-icon-filled my-2"
 			        title="Edit player"
 			        @onclick="() => State.ShowEditPlayerDialogAsync(player)">
 				<span class="icon" aria-hidden="true">edit</span>
@@ -59,14 +58,9 @@
 
 @code {
 
-	/// <inheritdoc />
-	protected override async Task OnAfterRenderAsync(bool firstRender)
+	protected override async Task OnInitializedAsync()
 	{
-		if (!firstRender)
-			return;
-
-		await State.LoadPlayersAsync();
-		StateHasChanged();
+		await State.LoadPlayersAsync(CancellationToken);
 	}
 
 }

@@ -1,7 +1,9 @@
-@using MagicMatchTracker.Data.Models
-
 <div class="avatar-container">
-	<img class="avatar @DefaultClass" src="@AvatarUri" width="@Size" height="@Size" aria-hidden="true"/>
+	<img class="avatar @DefaultClass"
+	     src="@AvatarUri"
+	     alt="@(Player.Name)'s avatar"
+	     width="@Size" height="@Size"
+	     aria-hidden="true"/>
 </div>
 
 @code {
