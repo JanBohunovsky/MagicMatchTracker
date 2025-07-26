@@ -1,0 +1,61 @@
+@using MagicMatchTracker.Features.Players.Models
+@inherits StatefulComponentBase<MagicMatchTracker.Features.Players.Services.DeckEditState>
+
+<FormDialog TModel="DeckEditModel" Model="State.Model" OnSubmit="@(() => State.SaveAsync(CancellationToken))">
+	<div class="modal-header">
+		<h5 class="modal-title">@Title</h5>
+		<button type="button" class="btn-close" aria-label="Close" @onclick="State.Cancel" disabled="@State.IsBusy"></button>
+	</div>
+	<div class="modal-body d-flex flex-column gap-3">
+		<div>
+			<label for="deckName" class="form-label">Name <span class="text-secondary small">(optional)</span></label>
+			<InputText @bind-Value="context.Name" class="form-control" id="deckName" disabled="@State.IsBusy" autofocus/>
+		</div>
+
+		<div>
+			<label for="commander" class="form-label">Commander</label>
+			<InputText @bind-Value="context.Commander" class="form-control" id="commander" disabled="@State.IsBusy"/>
+			<ValidationMessage For="() => context.Commander" class="invalid-feedback"/>
+		</div>
+
+		<div>
+			<label for="partner" class="form-label">Partner <span class="text-secondary small">(optional)</span></label>
+			<InputText @bind-Value="context.Partner" class="form-control" id="partner" disabled="@State.IsBusy"/>
+		</div>
+
+		<div>
+			<label for="colourIdentity" class="form-label">Colour Identity</label>
+			<InputColours @bind-Value="context.ColourIdentity" id="colourIdentity" class="mb-1" disabled="@State.IsBusy"/>
+			<span class="text-secondary small fst-italic">@context.ColourIdentity.ToColourIdentityName()</span>
+		</div>
+
+		<div>
+			<label for="imageUrl" class="form-label">Image URL <span class="text-secondary small">(optional)</span></label>
+			<InputText @bind-Value="context.ImageUri" class="form-control" id="imageUrl" disabled="@State.IsBusy"/>
+			<ValidationMessage For="() => context.ImageUri" class="invalid-feedback"/>
+		</div>
+
+		<div>
+			<label for="deckUrl" class="form-label">Deck URL <span class="text-secondary small">(optional)</span></label>
+			<InputText @bind-Value="context.DeckUri" class="form-control" id="deckUrl" disabled="@State.IsBusy"/>
+			<ValidationMessage For="() => context.DeckUri" class="invalid-feedback"/>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-secondary" @onclick="State.Cancel" disabled="@State.IsBusy">Cancel</button>
+		<button type="submit" class="btn btn-primary" disabled="@State.IsBusy">
+			@if (State.IsBusy)
+			{
+				<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+			}
+			<span>@ConfirmCaption</span>
+		</button>
+	</div>
+</FormDialog>
+
+@code {
+
+	private string Title => State.IsNew ? "Add new deck" : "Edit deck";
+	private string ConfirmCaption => State.IsNew ? "Add" : "Save";
+
+}

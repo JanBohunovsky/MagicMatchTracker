@@ -3,61 +3,19 @@ using MagicMatchTracker.Infrastructure.Services;
 
 namespace MagicMatchTracker.Features.Players.Services;
 
-public sealed class PlayerEditState(Database database) : StateBase
+public sealed class PlayerEditState(Database database) : EditDialogStateBase<PlayerEditModel, Player>
 {
-	private TaskCompletionSource<bool>? _dialogTaskSource = new();
-
-	public PlayerEditModel? Model { get; private set; }
-	public bool IsNew { get; private set; }
-
-	public void ShowDialog(Player player)
+	protected override PlayerEditModel CreateEditModel(Player entity)
 	{
-		IsNew = player.Id == Guid.Empty;
-		Model = new PlayerEditModel(player);
-		NotifyStateChanged();
+		return new PlayerEditModel(entity);
 	}
 
-	public async Task<bool> ShowDialogAsync(Player player)
+	protected override async Task SaveCoreAsync(PlayerEditModel model, CancellationToken cancellationToken)
 	{
-		_dialogTaskSource = new TaskCompletionSource<bool>();
+		var player = model.ApplyChanges();
+		if (IsNew)
+			database.Players.Add(player);
 
-		ShowDialog(player);
-		var result = await _dialogTaskSource.Task;
-
-		_dialogTaskSource = null;
-		return result;
-	}
-
-	public void Cancel()
-	{
-		HideDialog(cancelled: true);
-	}
-
-	public async Task SaveAsync(CancellationToken cancellationToken = default)
-	{
-		if (Model is null)
-			return;
-
-		await WithBusyAsync(SaveAsyncImpl);
-
-		HideDialog(cancelled: false);
-		return;
-
-		async Task SaveAsyncImpl()
-		{
-			var player = Model.ApplyChanges();
-			if (IsNew)
-				database.Players.Add(player);
-
-			await database.SaveChangesAsync(cancellationToken);
-		}
-	}
-
-	private void HideDialog(bool cancelled)
-	{
-		Model = null;
-		NotifyStateChanged();
-
-		_dialogTaskSource?.SetResult(!cancelled);
+		await database.SaveChangesAsync(cancellationToken);
 	}
 }

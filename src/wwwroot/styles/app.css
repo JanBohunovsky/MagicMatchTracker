@@ -1,5 +1,6 @@
 @import "animations.css";
 @import "icons.css";
+@import "colours.css";
 @import "buttons.css";
 
 :root {
@@ -38,4 +39,12 @@ h1:focus {
 
 .modal-backdrop {
 	animation: backdrop-entry 0.15s linear;
+}
+
+.modal-content {
+	max-height: calc(100svh - var(--bs-modal-margin) * 2);
+}
+
+.modal-body {
+	overflow-y: auto;
 }

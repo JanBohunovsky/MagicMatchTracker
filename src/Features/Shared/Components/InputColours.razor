@@ -1,0 +1,78 @@
+@using System.Diagnostics.CodeAnalysis
+@using System.Globalization
+@inherits InputBase<Colours>
+
+<div @attributes="AdditionalAttributes" class="@_cssClass">
+	@foreach (var colour in EnumerateValues())
+	{
+		var colourName = colour.ToString().ToLower();
+		var id = CombineId(colourName);
+		<div class="colour-input mana-@colourName">
+			<input type="checkbox" class="btn-check" id="@id" @bind="@this[colour]" disabled="@_isDisabled"/>
+			<label class="btn btn-circle" for="@id">
+				<img src="/img/mana_symbols/@(colourName.ToLower()).svg" alt="@colourName" />
+			</label>
+		</div>
+	}
+</div>
+
+@code {
+
+	private string? _cssClass;
+	private string? _id;
+	private bool _isDisabled;
+
+	private bool this[Colours colour]
+	{
+		get
+		{
+			if (colour is Colours.Colourless)
+				return CurrentValue is Colours.Colourless;
+
+			return CurrentValue.HasFlag(colour);
+		}
+		set
+		{
+			if (colour is Colours.Colourless)
+			{
+				// Colourless cannot be combined with other colours, so we explicitly set it to Colourless.
+				// When the user unchecks the colourless checkbox, we set all colours, as that's the inverse of colourless.
+				CurrentValue = value ? Colours.Colourless : Colours.White | Colours.Blue | Colours.Black | Colours.Red | Colours.Green;
+				return;
+			}
+
+			CurrentValue = value ? CurrentValue | colour : CurrentValue & ~colour;
+		}
+	}
+
+	private string CombineId(string inputId)
+	{
+		if (string.IsNullOrWhiteSpace(_id))
+			return inputId;
+
+		return $"{_id}-{inputId}";
+	}
+
+	protected override void OnParametersSet()
+	{
+		_cssClass = AttributeUtilities.CombineClassNames(AdditionalAttributes, "colour-picker");
+		_id = AdditionalAttributes?.TryGetValue("id", out var id) is true ? Convert.ToString(id, CultureInfo.InvariantCulture) : null;
+		_isDisabled = AdditionalAttributes?.TryGetValue("disabled", out var disabled) is true && Convert.ToBoolean(disabled);
+	}
+
+	protected override bool TryParseValueFromString(string? value, out Colours result, [NotNullWhen(false)] out string? validationErrorMessage)
+	{
+		throw new NotSupportedException($"This component does not parse string inputs. Bind to the '{nameof(CurrentValue)}' property, not '{nameof(CurrentValueAsString)}'.");
+	}
+
+	private static IEnumerable<Colours> EnumerateValues()
+	{
+		yield return Colours.White;
+		yield return Colours.Blue;
+		yield return Colours.Black;
+		yield return Colours.Red;
+		yield return Colours.Green;
+		yield return Colours.Colourless;
+	}
+
+}

@@ -19,7 +19,7 @@ public sealed class PlayerListingState(Database database, PlayerEditState editSt
 			.ToListAsync(cancellationToken);
 	}
 
-	public async Task ShowNewPlayerDialogAsync()
+	public async Task AddNewPlayerAsync(CancellationToken cancellationToken = default)
 	{
 		if (_players is null)
 			return;
@@ -28,7 +28,7 @@ public sealed class PlayerListingState(Database database, PlayerEditState editSt
 		{
 			Name = "",
 		};
-		var success = await editState.ShowDialogAsync(player);
+		var success = await editState.ShowDialogAsync(player, cancellationToken);
 		if (!success)
 			return;
 
@@ -36,9 +36,9 @@ public sealed class PlayerListingState(Database database, PlayerEditState editSt
 		NotifyStateChanged();
 	}
 
-	public async Task ShowEditPlayerDialogAsync(Player player)
+	public async Task EditPlayerAsync(Player player, CancellationToken cancellationToken = default)
 	{
-		var success = await editState.ShowDialogAsync(player);
+		var success = await editState.ShowDialogAsync(player, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}

@@ -1,0 +1,74 @@
+@page "/players/{id:guid}"
+@using MagicMatchTracker.Features.Players.Components
+@using MagicMatchTracker.Infrastructure.Pages
+@inherits StatefulComponentBase<MagicMatchTracker.Features.Players.Services.PlayerDetailState>
+
+<PageTitle>@PageTitle - Match Tracker</PageTitle>
+
+@if (State.IsBusy)
+{
+	<div class="heading placeholder-glow">
+		<span class="player-name">
+			<span class="placeholder placeholder-avatar"></span>
+			<h1><span class="placeholder" style="width: 6rem;"></span></h1>
+		</span>
+		<a class="btn btn-ghost-secondary btn-square disabled placeholder"></a>
+	</div>
+	return;
+}
+
+@if (State.Player is null)
+{
+	<NotFound/>
+	return;
+}
+
+<PlayerEditDialog/>
+<DeckEditDialog/>
+
+<button class="btn btn-primary btn-fab"
+        @onclick="() => State.AddNewDeckAsync(CancellationToken)">
+	<span class="icon filled" aria-hidden="true">box_add</span>
+	<span>New deck</span>
+</button>
+
+<div class="heading">
+	<span class="player-name">
+		<Avatar Player="State.Player" Size="32"/>
+		<h1>@State.Player.Name</h1>
+	</span>
+
+	<button class="btn btn-ghost-secondary btn-square hover-icon-filled"
+	        title="Edit player"
+	        @onclick="() => State.EditPlayerAsync(CancellationToken)">
+		<span class="icon" aria-hidden="true">edit</span>
+	</button>
+</div>
+
+@if (State.Player.Decks.Count == 0)
+{
+	<p>Player has no decks.</p>
+	return;
+}
+
+@* Placeholder for now *@
+<ul>
+	@foreach (var deck in State.Player.Decks)
+	{
+		<li>@deck.Commander</li>
+	}
+</ul>
+
+@code {
+
+	private string PageTitle => State.Player?.Name ?? "Player Detail";
+
+	[Parameter, EditorRequired]
+    public Guid Id { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await State.LoadPlayerAsync(Id, CancellationToken);
+	}
+
+}

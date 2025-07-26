@@ -1,0 +1,26 @@
+.heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+}
+
+.heading .player-name {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.placeholder-avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+}
+
+@media screen and (min-width: 768px) {
+
+	.heading {
+		justify-content: start;
+	}
+
+}

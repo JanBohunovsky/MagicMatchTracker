@@ -7,16 +7,19 @@ public sealed class Database(DbContextOptions<Database> options) : DbContext(opt
 {
 	public DbSet<Player> Players => Set<Player>();
 
-	/// <inheritdoc />
+	public DbSet<Deck> Decks => Set<Deck>();
+
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.ApplyConfigurationsFromAssembly(typeof(Database).Assembly);
 	}
 
-	/// <inheritdoc />
 	protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
 	{
 		configurationBuilder.Properties<DateTimeOffset>()
 			.HaveConversion<DateTimeOffsetTimezoneConverter>();
+
+		configurationBuilder.Properties<Colours>()
+			.HaveConversion<ColoursConverter>();
 	}
 }

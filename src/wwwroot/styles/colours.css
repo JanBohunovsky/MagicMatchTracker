@@ -1,0 +1,21 @@
+:root {
+	--mana-text: #0D0F0F;
+
+	--mana-white: #F8F6D8;
+	--mana-white-rgb: 248, 246, 216;
+
+	--mana-blue: #C1D7E9;
+	--mana-blue-rgb: 193, 215, 233;
+
+	--mana-black: #CAC5C0;
+	--mana-black-rgb: 202, 197, 192;
+
+	--mana-red: #E49977;
+	--mana-red-rgb: 228, 153, 119;
+
+	--mana-green: #A3C095;
+	--mana-green-rgb: 163, 192, 149;
+
+	--mana-colourless: #CAC5C0;
+	--mana-colourless-rgb: 202, 197, 192;
+}

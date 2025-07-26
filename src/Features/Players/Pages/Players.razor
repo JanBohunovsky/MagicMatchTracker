@@ -8,7 +8,7 @@
 
 <button class="btn btn-primary btn-fab"
         disabled="@(State.Players is null)"
-        @onclick="() => State.ShowNewPlayerDialogAsync()">
+        @onclick="() => State.AddNewPlayerAsync(CancellationToken)">
 	<span class="icon filled" aria-hidden="true">person_add</span>
 	<span>New player</span>
 </button>
@@ -49,7 +49,7 @@
 			</a>
 			<button class="btn btn-ghost-secondary btn-square hover-icon-filled my-2"
 			        title="Edit player"
-			        @onclick="() => State.ShowEditPlayerDialogAsync(player)">
+			        @onclick="() => State.EditPlayerAsync(player, CancellationToken)">
 				<span class="icon" aria-hidden="true">edit</span>
 			</button>
 		</li>

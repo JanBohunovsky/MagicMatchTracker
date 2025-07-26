@@ -5,9 +5,11 @@ namespace MagicMatchTracker.Data.Configuration;
 
 public sealed class PlayerConfiguration : IEntityTypeConfiguration<Player>
 {
-	/// <inheritdoc />
 	public void Configure(EntityTypeBuilder<Player> builder)
 	{
 		builder.HasKey(p => p.Id);
+
+		builder.HasMany(p => p.Decks)
+			.WithOne(d => d.Owner);
 	}
 }

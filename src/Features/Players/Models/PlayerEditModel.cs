@@ -31,11 +31,8 @@ public sealed class PlayerEditModelValidator : AbstractValidator<PlayerEditModel
 	public PlayerEditModelValidator()
 	{
 		RuleFor(m => m.Name)
-			.Cascade(CascadeMode.Stop)
 			.NotEmpty()
-			.WithMessage("Enter the name")
-			.MinimumLength(2)
-			.WithMessage("Enter at least 2 characters");
+			.WithMessage("Enter the name");
 
 		RuleFor(m => m.AvatarUri)
 			.Must(u => u.StartsWith("https://") || u.StartsWith("http://"))

@@ -8,5 +8,7 @@ public sealed class Player : IEntity
 
 	public string? AvatarUri { get; set; }
 
+	public List<Deck> Decks { get; set; } = [];
+
 	public DateTimeOffset CreatedAt { get; private init; } = DateTimeOffset.Now;
 }
