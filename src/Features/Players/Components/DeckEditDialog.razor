@@ -8,13 +8,8 @@
 	</div>
 	<div class="modal-body d-flex flex-column gap-3">
 		<div>
-			<label for="deckName" class="form-label">Name <span class="text-secondary small">(optional)</span></label>
-			<InputText @bind-Value="context.Name" class="form-control" id="deckName" disabled="@State.IsBusy" autofocus/>
-		</div>
-
-		<div>
 			<label for="commander" class="form-label">Commander</label>
-			<InputText @bind-Value="context.Commander" class="form-control" id="commander" disabled="@State.IsBusy"/>
+			<InputText @bind-Value="context.Commander" class="form-control" id="commander" disabled="@State.IsBusy" autofocus/>
 			<ValidationMessage For="() => context.Commander" class="invalid-feedback"/>
 		</div>
 
@@ -27,6 +22,11 @@
 			<label for="colourIdentity" class="form-label">Colour Identity</label>
 			<InputColours @bind-Value="context.ColourIdentity" id="colourIdentity" class="mb-1" disabled="@State.IsBusy"/>
 			<span class="text-secondary small fst-italic">@context.ColourIdentity.ToColourIdentityName()</span>
+		</div>
+
+		<div>
+			<label for="deckName" class="form-label">Name <span class="text-secondary small">(optional)</span></label>
+			<InputText @bind-Value="context.Name" class="form-control" id="deckName" disabled="@State.IsBusy"/>
 		</div>
 
 		<div>

@@ -1,0 +1,27 @@
+.colours {
+	--mana-size: 1.125rem;
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.mana-symbol {
+	display: inline-block;
+	width: var(--mana-size);
+	height: var(--mana-size);
+
+	border-radius: 50%;
+	background-color: var(--mana-colour);
+	border: 1px solid var(--mana-colour-dark);
+}
+
+.mana-symbol::after {
+	content: "";
+	display: block;
+	width: 100%;
+	height: 100%;
+	background-color: var(--mana-text);
+	mask-image: var(--mana-symbol-url);
+	mask-size: contain;
+	mask-repeat: no-repeat;
+}

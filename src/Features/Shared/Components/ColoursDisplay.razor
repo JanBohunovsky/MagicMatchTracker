@@ -1,0 +1,43 @@
+<div @attributes="AdditionalAttributes" class="@_cssClass" title="@Value.ToColourIdentityName()">
+	@if (Value is Colours.Colourless)
+	{
+		<span class="mana-symbol mana-colourless"></span>
+	}
+	@if (Value.HasFlag(Colours.White))
+	{
+		<span class="mana-symbol mana-white"></span>
+	}
+	@if (Value.HasFlag(Colours.Blue))
+	{
+		<span class="mana-symbol mana-blue"></span>
+	}
+	@if (Value.HasFlag(Colours.Black))
+	{
+		<span class="mana-symbol mana-black"></span>
+	}
+	@if (Value.HasFlag(Colours.Red))
+	{
+		<span class="mana-symbol mana-red"></span>
+	}
+	@if (Value.HasFlag(Colours.Green))
+	{
+		<span class="mana-symbol mana-green"></span>
+	}
+</div>
+
+@code {
+
+	private string? _cssClass;
+
+	[Parameter, EditorRequired]
+    public required Colours Value { get; set; }
+
+	[Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		_cssClass = AttributeUtilities.CombineClassNames(AdditionalAttributes, "colours");
+	}
+
+}

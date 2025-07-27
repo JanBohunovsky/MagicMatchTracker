@@ -10,7 +10,7 @@
 		<div class="colour-input mana-@colourName">
 			<input type="checkbox" class="btn-check" id="@id" @bind="@this[colour]" disabled="@_isDisabled"/>
 			<label class="btn btn-circle" for="@id">
-				<img src="/img/mana_symbols/@(colourName.ToLower()).svg" alt="@colourName" />
+				<span class="mana-symbol"></span>
 			</label>
 		</div>
 	}

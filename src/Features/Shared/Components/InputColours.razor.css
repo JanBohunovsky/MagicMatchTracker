@@ -4,7 +4,7 @@
 }
 
 .colour-input .btn {
-	--bs-btn-focus-shadow-rgb: var(--btn-mana-rgb);
+	--bs-btn-focus-shadow-rgb: var(--mana-colour-rgb);
 	--bs-btn-border-width: 2px;
 
 	--bs-btn-color: var(--mana-text);
@@ -13,56 +13,33 @@
 
 	--bs-btn-hover-color: var(--mana-text);
 	--bs-btn-hover-bg: transparent;
-	--bs-btn-hover-border-color: color-mix(in hsl shorter hue, var(--btn-mana) 70%, black);
+	--bs-btn-hover-border-color: var(--mana-colour-dark);
 
 	--bs-btn-active-color: var(--mana-text);
-	--bs-btn-active-bg: var(--btn-mana);
-	--bs-btn-active-border-color: color-mix(in hsl shorter hue, var(--btn-mana) 70%, black);
+	--bs-btn-active-bg: var(--mana-colour);
+	--bs-btn-active-border-color: var(--mana-colour-dark);
 
 	--bs-btn-disabled-color: var(--mana-text);
-	--bs-btn-disabled-bg: var(--mana-colourless);
+	--bs-btn-disabled-bg: var(--bs-secondary-bg-subtle);
 	--bs-btn-disabled-border-color: transparent;
-
-	& img {
-		scale: 0.6;
-		opacity: 0.8;
-		transition:
-			scale 0.15s ease-in-out,
-			opacity 0.15s ease-in-out;
-	}
-
-	.btn-check:checked + & img {
-		scale: 0.95;
-		opacity: 1;
-	}
 }
 
-.mana-white {
-	--btn-mana: var(--mana-white);
-	--btn-mana-rgb: var(--mana-white-rgb)
+.colour-input .mana-symbol {
+	display: inline-block;
+	width: 1.25rem;
+	aspect-ratio: 1;
+	background-color: var(--mana-colour-dark);
+	mask-image: var(--mana-symbol-url);
+	mask-size: contain;
+	mask-repeat: no-repeat;
+
+	transition:
+		background-color 0.15s ease-in-out,
+		width 0.15s ease-in-out;
 }
 
-.mana-blue {
-	--btn-mana: var(--mana-blue);
-	--btn-mana-rgb: var(--mana-blue-rgb)
-}
-
-.mana-black {
-	--btn-mana: var(--mana-black);
-	--btn-mana-rgb: var(--mana-black-rgb)
-}
-
-.mana-red {
-	--btn-mana: var(--mana-red);
-	--btn-mana-rgb: var(--mana-red-rgb)
-}
-
-.mana-green {
-	--btn-mana: var(--mana-green);
-	--btn-mana-rgb: var(--mana-green-rgb)
-}
-
-.mana-colourless {
-	--btn-mana: var(--mana-colourless);
-	--btn-mana-rgb: var(--mana-colourless-rgb)
+.btn-check:checked + .btn .mana-symbol {
+	width: 2rem;
+	background-color: var(--mana-text);
+	filter: none;
 }
