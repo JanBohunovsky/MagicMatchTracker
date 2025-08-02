@@ -27,6 +27,10 @@ h1:focus {
 
 .content {
 	padding-top: 1.1rem;
+
+	&:has(.btn-fab) {
+		padding-bottom: 6rem;
+	}
 }
 
 .modal.show {

@@ -21,89 +21,15 @@
 .deck-list {
 	list-style-type: none;
 	padding: 0;
-	margin-bottom: 6rem;
 
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
 	gap: 1rem;
 }
 
-.deck-card {
-	min-height: 139px;
-	text-decoration: none;
-	height: 100%;
-
-	transition:
-		scale 0.15s ease-in-out,
-		box-shadow 0.15s ease-in-out,
-		border-color 0.15s ease-in-out;
-}
-
-.deck-card:hover {
-	box-shadow: var(--bs-box-shadow);
-	scale: 1.025;
-}
-
-.deck-card:active {
-	box-shadow: var(--bs-box-shadow-sm);
-	scale: 1;
-}
-
-.deck-card:focus-visible {
-	border-color: var(--bs-secondary);
-	outline: 0;
-	box-shadow: 0 0 0 0.25rem rgba(var(--bs-secondary-rgb), .5);
-}
-
-.deck-image {
-	object-fit: cover;
-	object-position: 0 10%;
-	height: 139px;
-	background-color: var(--bs-secondary-bg-subtle);
-	font-size: 0;
-}
-
-/* Kind of a hacky way to display placeholder deck image while it's loading or when the deck doesn't have one. */
-/* Note: The box icon won't be visible while the deck is loading, only when the image doesn't exist. */
-.deck-image::after {
-	display: grid;
-	place-items: center;
-	height: 100%;
-	color: var(--bs-secondary-border-subtle);
-
-	content: "box";
-	font-family: "Material Symbols Rounded";
-	font-variation-settings: 'FILL' 1;
-	font-size: 6rem;
-	line-height: 1;
-	-moz-font-feature-settings: 'liga';
-	-moz-osx-font-smoothing: grayscale;
-}
-
-.deck-stats {
-	display: flex;
-	align-items: center;
-	gap: 0.75rem;
-}
-
-.deck-stat {
-	display: flex;
-	align-items: center;
-	gap: 0.125rem;
-
-	& .icon {
-		font-size: 19px;
-	}
-}
-
-.placeholder-icon {
-	width: 1.125rem;
-	height: 1.125rem;
-	border-radius: 50%;
-}
-
-.placeholder-stat {
-	width: 1.5rem;
+.heading-archive {
+	display: inline-block;
+	margin: 1rem 0;
 }
 
 @media screen and (min-width: 768px) {

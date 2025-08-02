@@ -1,0 +1,85 @@
+@if (Deck is null)
+{
+	<div class="card h-100 placeholder-glow">
+		<div class="card-img-top bg-secondary-subtle" style="height: 139px"></div>
+		<div class="card-body">
+			<span class="card-title">
+				<span class="placeholder col-8"></span>
+			</span>
+			<span class="card-subtitle">
+				<span class="placeholder col-5 small text-secondary"></span>
+			</span>
+		</div>
+		<div class="card-footer d-flex justify-content-between small">
+			<div class="d-flex align-items-center gap-1">
+				<span class="placeholder placeholder-icon"></span>
+				<span class="placeholder placeholder-icon"></span>
+				<span class="placeholder placeholder-icon"></span>
+			</div>
+			<div class="deck-stats">
+				<div class="deck-stat gap-1">
+					<span class="placeholder placeholder-icon"></span>
+					<span class="placeholder placeholder-stat"></span>
+				</div>
+				<div class="deck-stat gap-1">
+					<span class="placeholder placeholder-icon"></span>
+					<span class="placeholder placeholder-stat"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+	return;
+}
+
+<button class="card deck-card" @onclick="OnClick">
+	<img src="@Deck.ImageUri" class="card-img-top deck-image" alt="Deck image" height="139"/>
+
+	<div class="card-body">
+		<div>
+			<span class="card-title fw-medium">@(Deck.Name ?? Deck.Commander)</span>
+			<span class="card-subtitle fw-normal">
+				<div class="d-flex flex-column text-secondary small">
+					@if (Deck.Name is not null)
+					{
+						<span>@Deck.Commander</span>
+					}
+					<span>@Deck.Partner</span>
+				</div>
+			</span>
+		</div>
+
+		@if (Deck.DeckUri is not null)
+		{
+			<a class="btn btn-square btn-ghost-secondary btn-sm hover-icon-filled"
+			   @onclick:stopPropagation="true"
+			   href="@Deck.DeckUri"
+			   target="_blank"
+			   rel="noreferrer"
+			   title="View decklist">
+				<span class="icon">open_in_new</span>
+			</a>
+		}
+	</div>
+
+	<div class="card-footer d-flex justify-content-between small">
+		<ColoursDisplay Value="Deck.ColourIdentity"/>
+		<div class="deck-stats">
+			<div class="deck-stat" title="Win ratio">
+				<span class="icon">trophy</span> 25%
+			</div>
+			<div class="deck-stat" title="Games played">
+				<span class="icon">swords</span> 100
+			</div>
+		</div>
+	</div>
+</button>
+
+@code {
+
+	[Parameter]
+    public Deck? Deck { get; set; }
+
+	[Parameter]
+    public EventCallback OnClick { get; set; }
+
+}

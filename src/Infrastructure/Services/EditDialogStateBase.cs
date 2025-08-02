@@ -2,7 +2,7 @@ namespace MagicMatchTracker.Infrastructure.Services;
 
 public abstract class EditDialogStateBase<TEditModel, TEntity> : StateBase where TEditModel : class where TEntity : IEntity
 {
-	private TaskCompletionSource<bool>? _dialogTaskSource = new();
+	private TaskCompletionSource<bool>? _dialogClosedCompletionSource = new();
 
 	public TEditModel? Model { get; private set; }
 	public bool IsNew { get; private set; }
@@ -20,19 +20,19 @@ public abstract class EditDialogStateBase<TEditModel, TEntity> : StateBase where
 
 	public async Task<bool> ShowDialogAsync(TEntity entity, CancellationToken cancellationToken = default)
 	{
-		_dialogTaskSource = new TaskCompletionSource<bool>();
+		_dialogClosedCompletionSource = new TaskCompletionSource<bool>();
 		await using var cancellationRegistration = cancellationToken.Register(Cancel);
 
 		ShowDialog(entity);
-		var result = await _dialogTaskSource.Task;
+		var result = await _dialogClosedCompletionSource.Task;
 
-		_dialogTaskSource = null;
+		_dialogClosedCompletionSource = null;
 		return result;
 	}
 
 	public void Cancel()
 	{
-		HideDialog(cancelled: true);
+		HideDialog(success: false);
 	}
 
 	public async Task SaveAsync(CancellationToken cancellationToken = default)
@@ -42,14 +42,14 @@ public abstract class EditDialogStateBase<TEditModel, TEntity> : StateBase where
 
 		await WithBusyAsync(() => SaveCoreAsync(Model, cancellationToken));
 
-		HideDialog(cancelled: false);
+		HideDialog(success: true);
 	}
 
-	private void HideDialog(bool cancelled)
+	protected void HideDialog(bool success)
 	{
 		Model = null;
 		NotifyStateChanged();
 
-		_dialogTaskSource?.SetResult(!cancelled);
+		_dialogClosedCompletionSource?.SetResult(success);
 	}
 }

@@ -18,34 +18,7 @@
 	<div class="deck-list">
 		@for (int i = 0; i < 6; i++)
 		{
-			<div class="card h-100 placeholder-glow">
-				<div class="card-img-top bg-secondary-subtle" style="height: 139px"></div>
-				<div class="card-body">
-					<span class="card-title">
-						<span class="placeholder col-8"></span>
-					</span>
-					<span class="card-subtitle">
-						<span class="placeholder col-5 small text-secondary"></span>
-					</span>
-				</div>
-				<div class="card-footer d-flex justify-content-between small">
-					<div class="d-flex align-items-center gap-1">
-						<span class="placeholder placeholder-icon"></span>
-						<span class="placeholder placeholder-icon"></span>
-						<span class="placeholder placeholder-icon"></span>
-					</div>
-					<div class="deck-stats">
-						<div class="deck-stat gap-1">
-							<span class="placeholder placeholder-icon"></span>
-							<span class="placeholder placeholder-stat"></span>
-						</div>
-						<div class="deck-stat gap-1">
-							<span class="placeholder placeholder-icon"></span>
-							<span class="placeholder placeholder-stat"></span>
-						</div>
-					</div>
-				</div>
-			</div>
+			<DeckCard/>
 		}
 	</div>
 	return;
@@ -86,40 +59,33 @@
 }
 
 <ul class="deck-list">
-	@foreach (var deck in State.Player.Decks)
+	@foreach (var deck in State.ActiveDecks)
 	{
 		<li>
-			<a class="card deck-card" href="/players/@State.Player.Id/decks/@deck.Id">
-				<img src="@deck.ImageUri" class="card-img-top deck-image" alt="Deck image" height="139"/>
-
-				<div class="card-body">
-					<span class="card-title fw-medium">@(deck.Name ?? deck.Commander)</span>
-					<span class="card-subtitle fw-normal">
-						<div class="d-flex flex-column text-secondary small">
-							@if (deck.Name is not null)
-							{
-								<span>@deck.Commander</span>
-							}
-							<span>@deck.Partner</span>
-						</div>
-					</span>
-				</div>
-
-				<div class="card-footer d-flex justify-content-between small">
-					<ColoursDisplay Value="deck.ColourIdentity"/>
-					<div class="deck-stats">
-						<div class="deck-stat" title="Win ratio">
-							<span class="icon">trophy</span> 25%
-						</div>
-						<div class="deck-stat" title="Games played">
-							<span class="icon">swords</span> 100
-						</div>
-					</div>
-				</div>
-			</a>
+			<DeckCard Deck="deck" OnClick="@(() => State.EditDeckAsync(deck, CancellationToken))"/>
 		</li>
 	}
 </ul>
+
+@if (!State.ArchivedDecks.Any())
+{
+	return;
+}
+
+<details>
+	<summary class="fs-4">
+		<h4 class="heading-archive">Archived decks</h4>
+	</summary>
+
+	<ul class="deck-list">
+		@foreach (var deck in State.ArchivedDecks)
+		{
+			<li>
+				<DeckCard Deck="deck" OnClick="@(() => State.EditDeckAsync(deck, CancellationToken))"/>
+			</li>
+		}
+	</ul>
+</details>
 
 @code {
 

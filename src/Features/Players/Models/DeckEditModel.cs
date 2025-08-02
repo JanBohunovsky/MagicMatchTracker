@@ -13,6 +13,8 @@ public sealed class DeckEditModel
 	public string ImageUri { get; set; }
 	public string DeckUri { get; set; }
 
+	public bool IsArchived => _model.IsArchived;
+
 	public DeckEditModel(Deck deck)
 	{
 		_model = deck;
@@ -22,6 +24,12 @@ public sealed class DeckEditModel
 		ColourIdentity = deck.ColourIdentity;
 		ImageUri = deck.ImageUri ?? string.Empty;
 		DeckUri = deck.DeckUri ?? string.Empty;
+	}
+
+	public Deck ToggleArchiveState()
+	{
+		_model.IsArchived = !_model.IsArchived;
+		return _model;
 	}
 
 	public Deck ApplyChanges()

@@ -7,6 +7,18 @@ public sealed class PlayerDetailState(Database database, PlayerEditState playerE
 {
 	public Player? Player { get; private set; }
 
+	public IEnumerable<Deck> ActiveDecks => Player is not null
+		? Player.Decks
+			.Where(d => !d.IsArchived)
+			.OrderBy(d => d.Name ?? d.Commander)
+		: [];
+
+	public IEnumerable<Deck> ArchivedDecks => Player is not null
+		? Player.Decks
+			.Where(d => d.IsArchived)
+			.OrderBy(d => d.Name ?? d.Commander)
+		: [];
+
 	public async Task LoadPlayerAsync(Guid id, CancellationToken cancellationToken = default)
 	{
 		if (Player?.Id == id)
@@ -40,6 +52,16 @@ public sealed class PlayerDetailState(Database database, PlayerEditState playerE
 			Owner = Player,
 			Commander = "",
 		};
+		var success = await deckEditState.ShowDialogAsync(deck, cancellationToken);
+		if (success)
+			NotifyStateChanged();
+	}
+
+	public async Task EditDeckAsync(Deck deck, CancellationToken cancellationToken = default)
+	{
+		if (Player is null)
+			return;
+
 		var success = await deckEditState.ShowDialogAsync(deck, cancellationToken);
 		if (success)
 			NotifyStateChanged();

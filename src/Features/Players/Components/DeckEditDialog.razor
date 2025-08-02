@@ -42,6 +42,14 @@
 		</div>
 	</div>
 	<div class="modal-footer">
+		@if (!State.IsNew)
+		{
+			<div class="flex-grow-1">
+				<button type="button" class="btn btn-ghost-primary hover-icon-filled" @onclick="() => State.ToggleArchiveAsync(CancellationToken)">
+					<span>@ToggleArchiveCaption</span>
+				</button>
+			</div>
+		}
 		<button type="button" class="btn btn-outline-secondary" @onclick="State.Cancel" disabled="@State.IsBusy">Cancel</button>
 		<button type="submit" class="btn btn-primary" disabled="@State.IsBusy">
 			@if (State.IsBusy)
@@ -57,5 +65,6 @@
 
 	private string Title => State.IsNew ? "Add new deck" : "Edit deck";
 	private string ConfirmCaption => State.IsNew ? "Add" : "Save";
+	private string ToggleArchiveCaption => State.Model?.IsArchived is true ? "Unarchive" : "Archive";
 
 }
