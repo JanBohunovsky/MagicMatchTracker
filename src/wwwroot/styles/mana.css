@@ -6,6 +6,7 @@
 .mana-colourless {
 	--mana-text: #0D0F0F;
 	--mana-colour-dark: color-mix(in hsl shorter hue, var(--mana-colour) 70%, black);
+	--mana-colour-light: color-mix(in hsl shorter hue, var(--mana-colour) 50%, white);
 }
 
 .mana-white {

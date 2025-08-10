@@ -7,12 +7,12 @@
 	--bs-btn-focus-shadow-rgb: var(--mana-colour-rgb);
 	--bs-btn-border-width: 2px;
 
-	--bs-btn-color: var(--mana-text);
+	--bs-btn-color: var(--mana-colour-dark);
 	--bs-btn-bg: transparent;
 	--bs-btn-border-color: var(--bs-secondary-border-subtle);
 
 	--bs-btn-hover-color: var(--mana-text);
-	--bs-btn-hover-bg: transparent;
+	--bs-btn-hover-bg: var(--mana-colour-light);
 	--bs-btn-hover-border-color: var(--mana-colour-dark);
 
 	--bs-btn-active-color: var(--mana-text);
@@ -24,11 +24,17 @@
 	--bs-btn-disabled-border-color: transparent;
 }
 
+.colour-input .btn-check:not(:checked) ~ .btn:hover {
+	color: var(--bs-btn-hover-color);
+	background-color: var(--bs-btn-hover-bg);
+	border-color: var(--bs-btn-hover-border-color);
+}
+
 .colour-input .mana-symbol {
 	display: inline-block;
 	width: 1.25rem;
 	aspect-ratio: 1;
-	background-color: var(--mana-colour-dark);
+	background-color: currentColor;
 	mask-image: var(--mana-symbol-url);
 	mask-size: contain;
 	mask-repeat: no-repeat;
@@ -40,6 +46,6 @@
 
 .btn-check:checked + .btn .mana-symbol {
 	width: 2rem;
-	background-color: var(--mana-text);
+	/*background-color: var(--mana-text);*/
 	filter: none;
 }
