@@ -1,0 +1,72 @@
+@using MagicMatchTracker.Features.Matches.Models
+<div class="d-flex gap-2">
+	<span class="icon pt-2">@Icon</span>
+	<div class="d-flex flex-column gap-2 flex-grow-1">
+		@* TODO: Replicate the form control with floating label style *@
+		<Dropdown>
+			<Button>
+				<button class="btn btn-outline-secondary w-100" @onclick="context.ShowMenu">
+					@if (Participation.Player is not null)
+					{
+						<Avatar Player="Participation.Player" Size="20" class="m-0.5"/>
+						<span>@Participation.Player.Name</span>
+					}
+					else
+					{
+						<span>Select a player</span>
+					}
+				</button>
+			</Button>
+			<Menu>
+				<MatchPlayerAutocompleteMenu
+					Dropdown="context"
+					Match="@Participation.Match"
+					Player="@Participation.Player"
+					OnPlayerSelected="@(player => Participation.Player = player)"/>
+			</Menu>
+		</Dropdown>
+
+		<Dropdown>
+			<Button>
+				<button class="btn btn-outline-secondary w-100 align-items-start" @onclick="context.ShowMenu">
+					@if (Participation.Deck is not null)
+					{
+						<span class="icon">box</span>
+						<div class="d-flex flex-column align-items-start">
+							<span>@(Participation.Deck.Name ?? Participation.Deck.Commander)</span>
+							@if (Participation.Deck.Name is not null)
+							{
+								<span class="small">@Participation.Deck.Commander</span>
+							}
+							@if (Participation.Deck.Partner is not null)
+							{
+								<span class="small">@Participation.Deck.Partner</span>
+							}
+						</div>
+					}
+					else
+					{
+						<span>Select a deck</span>
+					}
+				</button>
+			</Button>
+			<Menu>
+				<span class="dropdown-menu px-3">TODO</span>
+			</Menu>
+		</Dropdown>
+	</div>
+</div>
+
+@code {
+
+	[Parameter, EditorRequired]
+    public required int Number { get; set; }
+
+	[Parameter, EditorRequired]
+	public required MatchParticipationEditModel Participation { get; set; }
+
+	private string Icon => Participation.Player is null || Participation.Deck is null
+		? "add_circle"
+		: $"counter_{Number}";
+
+}

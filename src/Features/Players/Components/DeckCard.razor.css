@@ -1,29 +1,7 @@
 .deck-card {
 	min-height: 139px;
-	text-decoration: none;
 	height: 100%;
 	width: 100%;
-	padding: 0;
-	text-align: start;
-
-	transition:
-		box-shadow 0.15s ease-in-out,
-		border-color 0.15s ease-in-out;
-}
-
-.deck-card:hover {
-	box-shadow: var(--bs-box-shadow);
-	border-color: var(--bs-secondary);
-}
-
-.deck-card:active {
-	box-shadow: var(--bs-box-shadow-sm);
-}
-
-.deck-card:focus-visible {
-	border-color: var(--bs-secondary);
-	outline: 0;
-	box-shadow: 0 0 0 0.25rem rgba(var(--bs-secondary-rgb), .5);
 }
 
 .deck-image {

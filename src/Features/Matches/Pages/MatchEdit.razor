@@ -1,0 +1,92 @@
+@page "/matches/{id:guid}/edit"
+@using MagicMatchTracker.Features.Matches.Components
+@using MagicMatchTracker.Infrastructure.Pages
+@inherits StatefulComponentBase<MagicMatchTracker.Features.Matches.Services.MatchEditState>
+
+<PageTitle>Edit @PageTitle - Match Tracker</PageTitle>
+
+@if (State.IsBusy)
+{
+	<p><em>Loading...</em></p>
+	return;
+}
+
+@if (State.Match is null)
+{
+	<NotFound/>
+	return;
+}
+
+<div class="heading sticky-top bg-white">
+	<h1>@State.Match.Title</h1>
+
+	<a class="btn btn-success hover-icon-filled" href="/matches/@Id">
+		<span class="icon" aria-hidden="true">save</span>
+		<span>Save</span>
+	</a>
+</div>
+
+<div class="d-flex flex-column gap-2 mb-3">
+	<div class="d-flex gap-2">
+		<span class="icon pt-3">calendar_today</span>
+		<div class="d-flex flex-column gap-2 flex-grow-1">
+			<div class="form-floating">
+				<input type="datetime-local" step="1" class="form-control" id="timeStarted" placeholder="Time Started"/>
+				<label for="timeStarted">Time Started</label>
+			</div>
+			<div class="form-floating">
+				<input type="datetime-local" step="1" class="form-control" id="timeEnded"/>
+				<label for="timeEnded">Time Ended</label>
+			</div>
+		</div>
+	</div>
+	<div class="d-flex gap-2">
+		<span class="icon pt-3">sticky_note_2</span>
+		<div class="form-floating flex-grow-1">
+			<textarea class="form-control" id="note" placeholder="Note" style="height: 6rem;"></textarea>
+			<label for="note">Note</label>
+		</div>
+	</div>
+</div>
+
+<hr class="border-secondary"/>
+
+<div class="d-flex flex-column gap-4 mb-4">
+	@foreach (var (index, participation) in State.Match.Participations.Index())
+	{
+		<MatchParticipationEditCard Number="index + 1" Participation="participation"/>
+	}
+</div>
+
+@* TODO: Make a service out of this, ideally it should be automatic (detect page change maybe?) *@
+<script>
+	if (typeof stickyHeading === 'undefined') {
+
+		const stickyHeading = document.querySelector('.heading.sticky-top');
+		if (!stickyHeading) {
+			alert('No sticky heading found');
+		} else {
+			const observer = new IntersectionObserver(([e]) => e.target.classList.toggle('is-stuck', e.intersectionRatio < 1), { threshold: [1] });
+			observer.observe(stickyHeading);
+			console.log('Observing ', stickyHeading)
+		}
+
+	}
+</script>
+
+@code {
+
+	// TODO: Make sure, that upon making a change, to prevent accidental navigation:
+	// https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/routing?view=aspnetcore-9.0&preserve-view=true#handleprevent-location-changes
+
+	private string PageTitle => State.Match?.Title ?? "Match";
+
+	[Parameter, EditorRequired]
+	public Guid Id { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await State.LoadMatchAsync(Id, CancellationToken);
+	}
+
+}

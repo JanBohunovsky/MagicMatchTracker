@@ -4,11 +4,13 @@ namespace MagicMatchTracker.Features.Players;
 
 public static class ConfigurePlayersFeature
 {
-	public static void AddPlayersFeature(this IServiceCollection services)
+	public static IServiceCollection AddPlayersFeature(this IServiceCollection services)
 	{
 		services.AddScoped<PlayerListingState>();
 		services.AddScoped<PlayerDetailState>();
 		services.AddScoped<PlayerEditState>();
 		services.AddScoped<DeckEditState>();
+
+		return services;
 	}
 }

@@ -17,6 +17,10 @@ h1:focus {
 }
 
 .heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
 	margin-bottom: 0.5rem;
 
 	.h1, .h2, .h3, .h4, .h5, .h6,
@@ -27,10 +31,31 @@ h1:focus {
 
 .content {
 	padding-top: 1.1rem;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
 
 	&:has(.btn-fab) {
 		padding-bottom: 6rem;
 	}
+
+	& > .list-group-flush {
+		margin-left: -1.5rem;
+		margin-right: -1.5rem;
+
+		& > .list-group-item {
+			padding-left: 1.5rem;
+			padding-right: 1.5rem;
+		}
+	}
+}
+
+.center {
+	display: grid;
+	place-items: center;
+}
+
+.m-0\.5 {
+	margin: 0.125rem !important;
 }
 
 .modal.show {
@@ -45,10 +70,10 @@ h1:focus {
 	animation: backdrop-entry 0.15s linear;
 }
 
-.modal-content {
-	max-height: calc(100svh - var(--bs-modal-margin) * 2);
-}
+@media screen and (min-width: 768px) {
 
-.modal-body {
-	overflow-y: auto;
+	.heading {
+		justify-content: start;
+	}
+
 }

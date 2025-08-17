@@ -1,5 +1,49 @@
 @page "/matches"
+@inherits StatefulComponentBase<MagicMatchTracker.Features.Matches.Services.MatchListingState>
 
 <PageTitle>Matches - Match Tracker</PageTitle>
 
 <h1>Matches</h1>
+
+<button class="btn btn-primary btn-fab"
+        disabled="@(State.Matches is null)"
+        @onclick="() => State.AddNewMatchAsync(CancellationToken)">
+	<span class="icon filled" aria-hidden="true">add</span>
+	<span>New match</span>
+</button>
+
+@if (State.Matches is null)
+{
+	<p><em>Loading...</em></p>
+	return;
+}
+
+@if (State.Matches.Count == 0)
+{
+	<p>No matches available.</p>
+	return;
+}
+
+<div class="list-group list-group-flush">
+	@foreach (var match in State.Matches)
+	{
+		<a class="list-group-item list-group-item-action" href="@GetMatchUrl(match)">
+			@match.GetTitle()
+		</a>
+	}
+</div>
+
+@code {
+
+	protected override async Task OnInitializedAsync()
+	{
+		await State.LoadMatchesAsync(CancellationToken);
+	}
+
+	private static string GetMatchUrl(Match match)
+	{
+		var editSuffix = match.TimeStarted is null ? "/edit" : string.Empty;
+		return $"/matches/{match.Id}{editSuffix}";
+	}
+
+}

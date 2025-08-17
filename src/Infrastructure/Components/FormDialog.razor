@@ -4,7 +4,7 @@
 @if (Model is not null)
 {
 	<div class="modal show" tabindex="-1" @onclick="OnCancel">
-		<AutoFocus class="modal-dialog" @onclick:stopPropagation="true">
+		<AutoFocus class="@($"modal-dialog modal-dialog-scrollable {FullscreenMode.GetCssClass()}")" @onclick:stopPropagation="true">
 			<EditForm EditContext="_editContext" OnValidSubmit="OnSubmit" class="modal-content">
 				<FluentValidator/>
 				@ChildContent(Model)
@@ -29,6 +29,13 @@
 	/// </summary>
 	[Parameter, EditorRequired]
 	public required RenderFragment<TModel> ChildContent { get; set; }
+
+	/// <summary>
+	/// Controls when the dialog is displayed as a fullscreen dialog.
+	/// </summary>
+	/// <remarks>Defaults to <see cref="DialogFullscreenMode.Never"/>.</remarks>
+	[Parameter]
+	public DialogFullscreenMode FullscreenMode { get; set; }
 
 	/// <summary>
 	/// Invoked when the user clicks outside the dialog.

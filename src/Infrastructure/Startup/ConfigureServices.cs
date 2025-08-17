@@ -1,4 +1,5 @@
 using FluentValidation;
+using MagicMatchTracker.Features.Matches;
 using MagicMatchTracker.Features.Players;
 using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -37,11 +38,15 @@ public static class ConfigureServices
 	private static void AddInfrastructure(this WebApplicationBuilder builder)
 	{
 		builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-		builder.Services.AddScoped<FocusService>();
+		builder.Services
+			.AddScoped<FocusService>()
+			.AddScoped<AutoCloseService>();
 	}
 
 	private static void AddFeatures(this WebApplicationBuilder builder)
 	{
-		builder.Services.AddPlayersFeature();
+		builder.Services
+			.AddPlayersFeature()
+			.AddMatchesFeature();
 	}
 }

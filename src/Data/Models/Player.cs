@@ -10,5 +10,7 @@ public sealed class Player : IEntity
 
 	public List<Deck> Decks { get; set; } = [];
 
+	public List<MatchParticipation> Matches { get; set; } = [];
+
 	public DateTimeOffset CreatedAt { get; private init; } = DateTimeOffset.Now;
 }

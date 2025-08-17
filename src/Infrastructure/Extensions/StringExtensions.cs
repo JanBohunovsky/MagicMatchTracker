@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace MagicMatchTracker.Infrastructure.Extensions;
 
 public static class StringExtensions
@@ -10,6 +12,12 @@ public static class StringExtensions
 	public static string? TrimToNull(this string? value)
 	{
 		value = value?.Trim();
-		return string.IsNullOrEmpty(value) ? null : value;
+		return value.IsNotEmpty() ? value : null;
 	}
+
+	public static bool IsEmpty([NotNullWhen(false)] this string? value)
+		=> string.IsNullOrEmpty(value);
+
+	public static bool IsNotEmpty([NotNullWhen(true)] this string? value)
+		=> !string.IsNullOrEmpty(value);
 }

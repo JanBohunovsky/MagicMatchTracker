@@ -2,6 +2,7 @@
   <configuration default="false" name="MagicMatchTracker: docker" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
     <deployment type="dockerfile">
       <settings>
+        <option name="imageTag" value="magicmatchtracker:dev" />
         <option name="containerName" value="magic-match-tracker" />
         <option name="portBindings">
           <list>

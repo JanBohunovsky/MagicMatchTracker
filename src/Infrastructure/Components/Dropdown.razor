@@ -1,0 +1,41 @@
+<div class="dropdown">
+	@Button(this)
+
+	@if (IsMenuVisible)
+	{
+		<AutoClose OnClose="@HideMenu">
+			@Menu(this)
+		</AutoClose>
+	}
+
+</div>
+
+@code {
+
+	[Parameter, EditorRequired]
+	public required RenderFragment<Dropdown> Button { get; set; }
+
+	[Parameter, EditorRequired]
+    public required RenderFragment<Dropdown> Menu { get; set; }
+
+	public bool IsMenuVisible { get; private set; }
+
+	public void ShowMenu()
+	{
+		if (IsMenuVisible)
+			return;
+
+		IsMenuVisible = true;
+		StateHasChanged();
+	}
+
+	public void HideMenu()
+	{
+		if (!IsMenuVisible)
+			return;
+
+		IsMenuVisible = false;
+		StateHasChanged();
+	}
+
+}

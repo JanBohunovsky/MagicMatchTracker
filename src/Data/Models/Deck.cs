@@ -20,5 +20,7 @@ public sealed class Deck : IEntity
 
 	public bool IsArchived { get; set; }
 
+	public List<MatchParticipation> Matches { get; set; } = [];
+
 	public DateTimeOffset CreatedAt { get; private init; } = DateTimeOffset.Now;
 }

@@ -6,8 +6,10 @@ namespace MagicMatchTracker.Data;
 public sealed class Database(DbContextOptions<Database> options) : DbContext(options)
 {
 	public DbSet<Player> Players => Set<Player>();
-
 	public DbSet<Deck> Decks => Set<Deck>();
+	public DbSet<Match> Matches => Set<Match>();
+	public DbSet<MatchParticipation> MatchParticipations => Set<MatchParticipation>();
+	public DbSet<MatchEvent> MatchEvents => Set<MatchEvent>();
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{

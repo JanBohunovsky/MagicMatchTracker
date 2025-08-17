@@ -1,8 +1,4 @@
 .heading {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 0.5rem;
 	margin-bottom: 1rem;
 }
 
@@ -30,12 +26,4 @@
 .heading-archive {
 	display: inline-block;
 	margin: 1rem 0;
-}
-
-@media screen and (min-width: 768px) {
-
-	.heading {
-		justify-content: start;
-	}
-
 }

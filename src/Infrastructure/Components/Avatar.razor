@@ -1,4 +1,4 @@
-<div class="avatar-container">
+<div @attributes="AdditionalAttributes" class="@_containerClass">
 	<img class="avatar @DefaultClass"
 	     src="@AvatarUri"
 	     alt="@(Player.Name)'s avatar"
@@ -8,13 +8,22 @@
 
 @code {
 
+	private string? _containerClass;
+
 	[Parameter, EditorRequired]
     public required Player Player { get; set; }
 
 	[Parameter, EditorRequired]
     public required int Size { get; set; }
 
+	[Parameter(CaptureUnmatchedValues = true)]
+	public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
 	private string DefaultClass => Player.AvatarUri is null ? "default" : "";
 	private string AvatarUri => Player.AvatarUri ?? "/img/avatar.png";
 
+	protected override void OnParametersSet()
+	{
+		_containerClass = AttributeUtilities.CombineClassNames(AdditionalAttributes, "avatar-container");
+	}
 }

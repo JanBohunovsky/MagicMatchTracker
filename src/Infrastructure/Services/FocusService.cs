@@ -3,16 +3,8 @@ using Microsoft.JSInterop;
 
 namespace MagicMatchTracker.Infrastructure.Services;
 
-public sealed class FocusService : IAsyncDisposable
+public sealed class FocusService(IJSRuntime jsRuntime) : JavaScriptServiceBase(jsRuntime, "focus.js")
 {
-	private readonly Lazy<ValueTask<IJSObjectReference>> _module;
-
-	public FocusService(IJSRuntime jsRuntime)
-	{
-		_module = new Lazy<ValueTask<IJSObjectReference>>(() =>
-			jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/focus.js"));
-	}
-
 	/// <summary>
 	/// Focuses the first descendant of the <paramref name="parent"/> with <c>autofocus</c> attribute.
 	/// </summary>
@@ -30,17 +22,7 @@ public sealed class FocusService : IAsyncDisposable
 	/// <param name="parent">The parent elements. Defaults to <c>window.document</c> if <see langword="null"/>.</param>
 	public async Task FocusFirstAsync(string selector, ElementReference? parent = null)
 	{
-		var module = await _module.Value;
+		var module = await GetModuleAsync();
 		await module.InvokeVoidAsync("focusFirst", parent, selector);
-	}
-
-	/// <inheritdoc />
-	public async ValueTask DisposeAsync()
-	{
-		if (!_module.IsValueCreated)
-			return;
-
-		var module = await _module.Value;
-		await module.DisposeAsync();
 	}
 }

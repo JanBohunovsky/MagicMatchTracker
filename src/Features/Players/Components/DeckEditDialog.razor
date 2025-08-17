@@ -1,7 +1,10 @@
 @using MagicMatchTracker.Features.Players.Models
 @inherits StatefulComponentBase<MagicMatchTracker.Features.Players.Services.DeckEditState>
 
-<FormDialog TModel="DeckEditModel" Model="State.Model" OnSubmit="@(() => State.SaveAsync(CancellationToken))">
+<FormDialog TModel="DeckEditModel"
+            Model="State.Model"
+            FullscreenMode="DialogFullscreenMode.Mobile"
+            OnSubmit="@(() => State.SaveAsync(CancellationToken))">
 	<div class="modal-header">
 		<h5 class="modal-title">@Title</h5>
 		<button type="button" class="btn-close" aria-label="Close" @onclick="State.Cancel" disabled="@State.IsBusy"></button>

@@ -1,0 +1,64 @@
+@page "/matches/{id:guid}"
+@using MagicMatchTracker.Features.Matches.Components
+@using MagicMatchTracker.Infrastructure.Pages
+@inherits StatefulComponentBase<MagicMatchTracker.Features.Matches.Services.MatchDetailState>
+
+<PageTitle>@PageTitle - Match Tracker</PageTitle>
+
+@if (State.IsBusy)
+{
+	<p><em>Loading...</em></p>
+	return;
+}
+
+@if (State.Match is null)
+{
+	<NotFound/>
+	return;
+}
+
+<div class="heading">
+	<h1>@State.Match.GetTitle(includeDate: false)</h1>
+
+	<a class="btn btn-ghost-secondary btn-square hover-icon-filled"
+	   title="Edit match"
+	   href="/matches/@Id/edit">
+		<span class="icon" aria-hidden="true">edit</span>
+	</a>
+</div>
+
+<div class="d-flex flex-column gap-2 mb-3">
+	<div class="d-flex align-items-center gap-2">
+		<span class="icon">calendar_today</span>
+		<span>@State.Match.GetEffectiveDate().ToString("dddd, dd MMMM yyyy")</span>
+	</div>
+	<div class="d-flex align-items-center gap-2">
+		<span class="icon">timer</span>
+		<span>1h 45m &bull; 7 turns</span>
+	</div>
+	<div class="d-flex gap-2">
+		<span class="icon">sticky_note_2</span>
+		<span>A player did a thing that nobody liked, so everyone scooped.</span>
+	</div>
+</div>
+
+<div class="d-flex flex-column gap-3">
+	@foreach (var participation in State.Match.Participations)
+	{
+		<MatchParticipationCard Participation="participation"/>
+	}
+</div>
+
+@code {
+
+	private string PageTitle => State.Match?.GetTitle() ?? "Match Detail";
+
+	[Parameter, EditorRequired]
+	public Guid Id { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await State.LoadMatchAsync(Id, CancellationToken);
+	}
+
+}

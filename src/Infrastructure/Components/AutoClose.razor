@@ -1,0 +1,40 @@
+@inject AutoCloseService Service
+@using MagicMatchTracker.Infrastructure.Services
+@implements IAsyncDisposable
+
+<div @ref="_container" @attributes="Attributes">
+	@ChildContent
+</div>
+
+@code {
+
+	private ElementReference _container;
+	private IAsyncDisposable? _subscription;
+
+	[Parameter, EditorRequired]
+	public required RenderFragment ChildContent { get; set; }
+
+	[Parameter, EditorRequired]
+    public required EventCallback OnClose { get; set; }
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public Dictionary<string, object>? Attributes { get; set; }
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender)
+			return;
+
+		_subscription = await Service.SubscribeAsync(_container, async () =>
+		{
+			if (OnClose.HasDelegate)
+				await OnClose.InvokeAsync();
+		});
+	}
+
+	public async ValueTask DisposeAsync()
+	{
+		if (_subscription is not null)
+			await _subscription.DisposeAsync();
+	}
+}
