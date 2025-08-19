@@ -7,6 +7,10 @@
 	top: 0;
 	width: 100%;
 	max-height: 50svh;
+
+	&:has(.filters) .search-results {
+		padding-top: 0;
+	}
 }
 
 ::deep .search-term-container {

@@ -9,6 +9,8 @@ public static class ConfigureMatchesFeature
 		services.AddScoped<MatchListingState>();
 		services.AddScoped<MatchDetailState>();
 		services.AddScoped<MatchEditState>();
+		services.AddTransient<MatchPlayerSearchProvider>();
+		services.AddTransient<MatchDeckSearchProvider>();
 
 		return services;
 	}

@@ -2,26 +2,14 @@ namespace MagicMatchTracker.Features.Matches.Models;
 
 public sealed class MatchParticipationEditModel
 {
-	private readonly MatchParticipation? _model;
-	private Player? _changedPlayer;
-	private Deck? _changedDeck;
+	public MatchEditModel Match { get; }
+	public Player? Player { get; set; }
+	public Deck? Deck { get; set; }
 
-	public Match? Match => _model?.Match;
-
-	public Player? Player
+	public MatchParticipationEditModel(MatchEditModel match, Player? player, Deck? deck)
 	{
-		get => _changedPlayer ?? _model?.Player;
-		set => _changedPlayer = value;
-	}
-
-	public Deck? Deck
-	{
-		get => _changedDeck ?? _model?.Deck;
-		set => _changedDeck = value;
-	}
-
-	public MatchParticipationEditModel(MatchParticipation? participation)
-	{
-		_model = participation;
+		Match = match;
+		Player = player;
+		Deck = deck;
 	}
 }

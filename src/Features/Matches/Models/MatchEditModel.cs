@@ -14,8 +14,8 @@ public sealed class MatchEditModel
 	{
 		_model = match;
 		_participations = match.Participations
-			.Select(p => new MatchParticipationEditModel(p))
-			.Append(new MatchParticipationEditModel(null))
+			.Select(p => new MatchParticipationEditModel(this, p.Player, p.Deck))
+			.Append(new MatchParticipationEditModel(this, null, null))
 			.ToList();
 	}
 }

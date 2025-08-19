@@ -18,11 +18,10 @@
 				</button>
 			</Button>
 			<Menu>
-				<MatchPlayerAutocompleteMenu
-					Dropdown="context"
-					Match="@Participation.Match"
-					Player="@Participation.Player"
-					OnPlayerSelected="@(player => Participation.Player = player)"/>
+				<MatchPlayerSearchMenu
+					Participation="@Participation"
+					OnClose="@context.HideMenu"
+					OnPlayerSelect="@(player => Participation.Player = player)"/>
 			</Menu>
 		</Dropdown>
 
@@ -51,7 +50,10 @@
 				</button>
 			</Button>
 			<Menu>
-				<span class="dropdown-menu px-3">TODO</span>
+				<MatchDeckSearchMenu
+					Participation="@Participation"
+					OnClose="@context.HideMenu"
+					OnDeckSelect="@(deck => Participation.Deck = deck)"/>
 			</Menu>
 		</Dropdown>
 	</div>

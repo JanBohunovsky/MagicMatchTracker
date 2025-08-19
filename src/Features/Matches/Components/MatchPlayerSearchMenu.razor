@@ -1,0 +1,36 @@
+@using MagicMatchTracker.Features.Matches.Models
+@using MagicMatchTracker.Features.Matches.Services
+@inject MatchPlayerSearchProvider Provider
+
+<SearchMenu
+	TItem="Player"
+	Provider="Provider"
+	Placeholder="@(Participation.Player?.Name ?? "Select a player")"
+	NotFoundMessage="No players found"
+	OnClose="@OnClose"
+	OnSelect="@OnPlayerSelect">
+	<ResultItemTemplate>
+		<div class="d-flex gap-1">
+			<Avatar Player="@context" Size="20" class="m-0.5"/>
+			<span>@context.Name</span>
+		</div>
+	</ResultItemTemplate>
+</SearchMenu>
+
+@code {
+
+	[Parameter, EditorRequired]
+	public required MatchParticipationEditModel Participation { get; set; }
+
+	[Parameter]
+    public EventCallback OnClose { get; set; }
+
+	[Parameter]
+	public EventCallback<Player> OnPlayerSelect { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		Provider.MatchParticipation = Participation;
+	}
+
+}
