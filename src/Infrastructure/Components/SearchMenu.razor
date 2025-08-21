@@ -11,7 +11,7 @@
 		       @bind="_searchTerm" @bind:after="SearchAsync" @bind:event="oninput"
 		       @onkeydown="OnSearchKeyPress"
 		       class="form-control search-term" placeholder="@Placeholder"
-		       autocomplete="off" autocorrect="off" spellcheck="false" autofocus/>
+		       spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" autofocus/>
 	</AutoFocus>
 	<hr class="dropdown-divider"/>
 	@if (_result is null)
