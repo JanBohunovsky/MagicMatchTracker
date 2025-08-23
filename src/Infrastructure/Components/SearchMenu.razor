@@ -7,11 +7,15 @@
 		<button class="btn btn-ghost-secondary btn-square" @onclick="@(() => CloseAsync(null))">
 			<span class="icon">arrow_back</span>
 		</button>
-		<input type="text" onfocus="this.select();"
+		<input type="text" onfocus="this.select();" id="search-term"
 		       @bind="_searchTerm" @bind:after="SearchAsync" @bind:event="oninput"
 		       @onkeydown="OnSearchKeyPress"
 		       class="form-control search-term" placeholder="@Placeholder"
 		       spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" autofocus/>
+		@if (Label is not null)
+		{
+			<label class="floating-label" for="search-term">@Label</label>
+		}
 	</AutoFocus>
 	<hr class="dropdown-divider"/>
 	@if (_result is null)
@@ -81,6 +85,9 @@
 
 	[Parameter]
 	public string Placeholder { get; set; } = "Search";
+
+	[Parameter]
+    public string? Label { get; set; }
 
 	[Parameter]
 	public string NotFoundMessage { get; set; } = "No results found";

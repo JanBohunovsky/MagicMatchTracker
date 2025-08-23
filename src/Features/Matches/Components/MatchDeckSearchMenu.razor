@@ -5,7 +5,8 @@
 <SearchMenu
 	TItem="Deck"
 	Provider="Provider"
-	Placeholder="@(Participation.Deck?.Name ?? "Select a deck")"
+	Placeholder="@(Participation.Deck?.Name ?? Participation.Deck?.Commander ?? "Select a deck")"
+	Label="@Label"
 	NotFoundMessage="No decks found"
 	OnClose="@OnClose"
 	OnSelect="@OnDeckSelect">
@@ -14,11 +15,11 @@
 			<span>@(context.Name ?? context.Commander)</span>
 			@if (context.Name is not null)
 			{
-				<span class="small">@context.Commander</span>
+				<span class="small opacity-75">@context.Commander</span>
 			}
 			@if (context.Partner is not null)
 			{
-				<span class="small">@context.Partner</span>
+				<span class="small opacity-75">@context.Partner</span>
 			}
 			@if (context.Owner != Participation.Player)
 			{
@@ -34,6 +35,9 @@
 
 	[Parameter, EditorRequired]
 	public required MatchParticipationEditModel Participation { get; set; }
+
+	[Parameter]
+    public string? Label { get; set; }
 
 	[Parameter]
 	public EventCallback OnClose { get; set; }

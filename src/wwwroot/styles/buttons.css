@@ -53,6 +53,61 @@
 	}
 }
 
+.btn-form-select {
+	padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+	width: 100%;
+	position: relative;
+
+	--bs-btn-focus-box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), .25);
+	--bs-btn-border-radius: var(--bs-border-radius);
+
+	--bs-btn-color: var(--bs-body-color);
+	--bs-btn-bg: var(--bs-body-bg);
+	--bs-btn-border-color: var(--bs-border-color);
+
+	--bs-btn-hover-color: var(--bs-body-color);
+	--bs-btn-hover-bg: var(--bs-body-bg);
+	--bs-btn-hover-border-color: var(--bs-border-color);
+
+	--bs-btn-active-color: var(--bs-body-color);
+	--bs-btn-active-bg: var(--bs-body-bg);
+	--bs-btn-active-border-color: var(--bs-border-color);
+
+	--bs-btn-disabled-color: var(--bs-body-color);
+	--bs-btn-disabled-bg: var(--bs-secondary-bg);
+	--bs-btn-disabled-border-color: var(--bs-border-color);
+
+	&:disabled {
+		opacity: 1;
+	}
+
+	&:focus-visible {
+		border-color: #86b7fe
+	}
+
+	&:has(.floating-label) {
+		padding-top: 1.625rem;
+		padding-bottom: 0.625rem;
+	}
+
+	&::after {
+		content: "keyboard_arrow_down";
+		font-family: 'Material Symbols Rounded';
+		font-size: 24px;
+		line-height: 1;
+		font-weight: normal;
+		font-style: normal;
+		-moz-font-feature-settings: 'liga';
+		-moz-osx-font-smoothing: grayscale;
+
+		position: absolute;
+		right: 0.5rem;
+		top: calc(50% + 1px);
+		transform: translateY(-50%);
+		pointer-events: none;
+	}
+}
+
 /* region Ghost buttons */
 
 .btn-ghost-primary {

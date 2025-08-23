@@ -1,11 +1,11 @@
 @using MagicMatchTracker.Features.Matches.Models
 <div class="d-flex gap-2">
-	<span class="icon pt-2">@Icon</span>
+	<span class="icon pt-3">@Icon</span>
 	<div class="d-flex flex-column gap-2 flex-grow-1">
-		@* TODO: Replicate the form control with floating label style *@
 		<Dropdown>
 			<Button>
-				<button class="btn btn-outline-secondary w-100" @onclick="context.ShowMenu">
+				<button class="btn btn-form-select" @onclick="context.ShowMenu">
+					<div class="floating-label">Player</div>
 					@if (Participation.Player is not null)
 					{
 						<Avatar Player="Participation.Player" Size="20" class="m-0.5"/>
@@ -20,6 +20,7 @@
 			<Menu>
 				<MatchPlayerSearchMenu
 					Participation="@Participation"
+					Label="Player"
 					OnClose="@context.HideMenu"
 					OnPlayerSelect="@(player => Participation.Player = player)"/>
 			</Menu>
@@ -27,19 +28,27 @@
 
 		<Dropdown>
 			<Button>
-				<button class="btn btn-outline-secondary w-100 align-items-start" @onclick="context.ShowMenu">
+				<button class="btn btn-form-select align-items-start" @onclick="context.ShowMenu"
+				        disabled="@(Participation.Player is null)">
+					<div class="floating-label">Deck</div>
 					@if (Participation.Deck is not null)
 					{
-						<span class="icon">box</span>
+						@* <span class="icon">box</span> *@
 						<div class="d-flex flex-column align-items-start">
 							<span>@(Participation.Deck.Name ?? Participation.Deck.Commander)</span>
 							@if (Participation.Deck.Name is not null)
 							{
-								<span class="small">@Participation.Deck.Commander</span>
+								<span class="small text-muted">@Participation.Deck.Commander</span>
 							}
 							@if (Participation.Deck.Partner is not null)
 							{
-								<span class="small">@Participation.Deck.Partner</span>
+								<span class="small text-muted">@Participation.Deck.Partner</span>
+							}
+							@if (Participation.Deck.Owner != Participation.Player)
+							{
+								<span class="small d-flex align-items-center gap-1">
+									Borrowed from <Avatar Player="Participation.Deck.Owner" Size="16"/> @Participation.Deck.Owner.Name
+								</span>
 							}
 						</div>
 					}
@@ -52,6 +61,7 @@
 			<Menu>
 				<MatchDeckSearchMenu
 					Participation="@Participation"
+					Label="Deck"
 					OnClose="@context.HideMenu"
 					OnDeckSelect="@(deck => Participation.Deck = deck)"/>
 			</Menu>

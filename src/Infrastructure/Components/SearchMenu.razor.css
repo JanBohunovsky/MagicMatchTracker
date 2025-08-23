@@ -21,6 +21,15 @@
 	position: absolute;
 	top: 1px;
 	left: 1px;
+	bottom: 1px;
+	height: calc(100% - 2px);
+}
+::deep .search-term-container .floating-label {
+	padding-left: 2.5rem;
+}
+::deep .search-term-container:has(.floating-label) .search-term {
+	padding-top: 1.625rem;
+	padding-bottom: 0.625rem;
 }
 
 .dropdown-divider {
@@ -29,7 +38,7 @@
 
 .search-term {
 	border: 0;
-	padding: 0.5rem 1rem 0.5rem 2.5rem;
+	padding-left: 2.5rem;
 }
 
 .search-results {
