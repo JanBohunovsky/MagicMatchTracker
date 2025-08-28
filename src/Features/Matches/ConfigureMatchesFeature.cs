@@ -6,11 +6,11 @@ public static class ConfigureMatchesFeature
 {
 	public static IServiceCollection AddMatchesFeature(this IServiceCollection services)
 	{
-		services.AddScoped<MatchListingState>();
-		services.AddScoped<MatchDetailState>();
-		services.AddScoped<MatchEditState>();
-		services.AddTransient<MatchPlayerSearchProvider>();
-		services.AddTransient<MatchDeckSearchProvider>();
+		services
+			.AddScoped<MatchListingState>()
+			.AddScoped<MatchDetailState>()
+			.AddScoped<MatchEditState>()
+			.AddScoped<MatchPlayerSelectionState>();
 
 		return services;
 	}

@@ -10,7 +10,7 @@
 		<input type="text" onfocus="this.select();" id="search-term"
 		       @bind="_searchTerm" @bind:after="SearchAsync" @bind:event="oninput"
 		       @onkeydown="OnSearchKeyPress"
-		       class="form-control search-term" placeholder="@Placeholder"
+		       class="form-control search-term text-truncate" placeholder="@Placeholder"
 		       spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" autofocus/>
 		@if (Label is not null)
 		{

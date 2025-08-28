@@ -2,46 +2,33 @@ using FluentValidation;
 
 namespace MagicMatchTracker.Features.Players.Models;
 
-public sealed class DeckEditModel
+public sealed class DeckEditModel(Deck model)
 {
-	private readonly Deck _model;
+	public string Name { get; set; } = model.Name ?? string.Empty;
+	public string Commander { get; set; } = model.Commander;
+	public string Partner { get; set; } = model.Partner ?? string.Empty;
+	public Colours ColourIdentity { get; set; } = model.ColourIdentity;
+	public string ImageUri { get; set; } = model.ImageUri ?? string.Empty;
+	public string DeckUri { get; set; } = model.DeckUri ?? string.Empty;
 
-	public string Name { get; set; }
-	public string Commander { get; set; }
-	public string Partner { get; set; }
-	public Colours ColourIdentity { get; set; }
-	public string ImageUri { get; set; }
-	public string DeckUri { get; set; }
-
-	public bool IsArchived => _model.IsArchived;
-
-	public DeckEditModel(Deck deck)
-	{
-		_model = deck;
-		Name = deck.Name ?? string.Empty;
-		Commander = deck.Commander;
-		Partner = deck.Partner ?? string.Empty;
-		ColourIdentity = deck.ColourIdentity;
-		ImageUri = deck.ImageUri ?? string.Empty;
-		DeckUri = deck.DeckUri ?? string.Empty;
-	}
+	public bool IsArchived => model.IsArchived;
 
 	public Deck ToggleArchiveState()
 	{
-		_model.IsArchived = !_model.IsArchived;
-		return _model;
+		model.IsArchived = !model.IsArchived;
+		return model;
 	}
 
 	public Deck ApplyChanges()
 	{
-		_model.Name = Name.TrimToNull();
-		_model.Commander = Commander.Trim();
-		_model.Partner = Partner.TrimToNull();
-		_model.ColourIdentity = ColourIdentity;
-		_model.ImageUri = ImageUri.TrimToNull();
-		_model.DeckUri = DeckUri.TrimToNull();
+		model.Name = Name.TrimToNull();
+		model.Commander = Commander.Trim();
+		model.Partner = Partner.TrimToNull();
+		model.ColourIdentity = ColourIdentity;
+		model.ImageUri = ImageUri.TrimToNull();
+		model.DeckUri = DeckUri.TrimToNull();
 
-		return _model;
+		return model;
 	}
 }
 

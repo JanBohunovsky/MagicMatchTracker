@@ -1,21 +1,49 @@
+using FluentValidation;
+
 namespace MagicMatchTracker.Features.Matches.Models;
 
-public sealed class MatchEditModel
+public sealed class MatchEditModel(Match model)
 {
-	private readonly Match _model;
-	private readonly List<MatchParticipationEditModel> _participations;
+	public DateTimeOffset? TimeStarted { get; set; } = model.TimeStarted;
+	public DateTimeOffset? TimeEnded { get; set; } = model.TimeEnded;
+	public int MatchNumber { get; set; } = model.MatchNumber;
+	public string Notes { get; set; } = model.Notes ?? string.Empty;
 
-	public Guid Id => _model.Id;
-	public string Title => _model.GetTitle(includeDate: false);
+	public bool HasStarted { get; } = model.TimeStarted is not null;
 
-	public IReadOnlyList<MatchParticipationEditModel> Participations => _participations;
-
-	public MatchEditModel(Match match)
+	public Match ApplyChanges()
 	{
-		_model = match;
-		_participations = match.Participations
-			.Select(p => new MatchParticipationEditModel(this, p.Player, p.Deck))
-			.Append(new MatchParticipationEditModel(this, null, null))
-			.ToList();
+		model.TimeStarted = TimeStarted;
+		model.TimeEnded = TimeEnded;
+		model.MatchNumber = MatchNumber;
+		model.Notes = Notes.TrimToNull();
+
+		return model;
+	}
+}
+
+[UsedImplicitly]
+public class MatchEditModelValidator : AbstractValidator<MatchEditModel>
+{
+	public MatchEditModelValidator()
+	{
+		RuleFor(m => m.TimeStarted)
+			.NotEmpty()
+			.When(m => m.HasStarted)
+			.WithMessage("Start time is required after the match has started");
+
+		RuleFor(m => m.TimeStarted)
+			.NotEmpty()
+			.When(m => m.TimeEnded.HasValue && !m.HasStarted)
+			.WithMessage("End time requires start time");
+
+		RuleFor(m => m.TimeEnded)
+			.GreaterThanOrEqualTo(m => m.TimeStarted)
+			.When(m => m.TimeEnded.HasValue && m.TimeStarted.HasValue)
+			.WithMessage("End time must be after start time");
+
+		RuleFor(m => m.MatchNumber)
+			.GreaterThanOrEqualTo(1)
+			.WithMessage("Match number must be a positive number");
 	}
 }

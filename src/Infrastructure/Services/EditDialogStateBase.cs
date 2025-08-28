@@ -11,19 +11,26 @@ public abstract class EditDialogStateBase<TEditModel, TEntity> : StateBase where
 
 	protected abstract Task SaveCoreAsync(TEditModel model, CancellationToken cancellationToken);
 
-	public void ShowDialog(TEntity entity)
+	protected virtual Task InitialiseAsync(TEntity entity, CancellationToken cancellationToken)
+		=> Task.CompletedTask;
+
+	public async Task ShowDialogAsync(TEntity entity, CancellationToken cancellationToken = default)
 	{
 		IsNew = entity.Id == Guid.Empty;
 		Model = CreateEditModel(entity);
 		NotifyStateChanged();
+
+		await InitialiseAsync(entity, cancellationToken);
+		NotifyStateChanged();
 	}
 
-	public async Task<bool> ShowDialogAsync(TEntity entity, CancellationToken cancellationToken = default)
+	public async Task<bool> ShowDialogAndWaitAsync(TEntity entity, CancellationToken cancellationToken = default)
 	{
 		_dialogClosedCompletionSource = new TaskCompletionSource<bool>();
 		await using var cancellationRegistration = cancellationToken.Register(Cancel);
 
-		ShowDialog(entity);
+		// TODO: Cancellation token does not include dialog closing
+		await ShowDialogAsync(entity, cancellationToken);
 		var result = await _dialogClosedCompletionSource.Task;
 
 		_dialogClosedCompletionSource = null;

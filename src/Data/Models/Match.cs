@@ -45,4 +45,32 @@ public sealed class Match : IEntity
 
 		return sb.ToString();
 	}
+
+	public string? GetFormattedDuration()
+	{
+		if (TimeStarted is null)
+			return null;
+
+		var endTime = TimeEnded ?? DateTimeOffset.Now;
+		var duration = endTime - TimeStarted.Value;
+
+		if (duration.TotalMinutes < 1)
+			return "Less than a minute";
+		if (duration.TotalDays >= 1)
+			return "Over a day";
+
+		var sb = new StringBuilder();
+
+		if (duration.Hours > 0)
+			sb.Append($"{duration.Hours}h ");
+
+		if (duration.Minutes > 0)
+			sb.Append($"{duration.Minutes}m ");
+
+		// Trim last space
+		if (sb.Length > 0)
+			sb.Length--;
+
+		return sb.ToString();
+	}
 }

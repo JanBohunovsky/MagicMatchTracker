@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Features.Matches.Services;
 
-public sealed class MatchListingState(Database database, NavigationManager navigationManager) : StateBase
+public sealed class MatchListingState(Database database, MatchPlayerSelectionState playerSelectionState, NavigationManager navigationManager) : StateBase
 {
 	private List<Match>? _matches;
 
@@ -36,11 +36,12 @@ public sealed class MatchListingState(Database database, NavigationManager navig
 			MatchNumber = lastMatchNumberOfToday + 1,
 		};
 
-		database.Matches.Add(match);
-		await database.SaveChangesAsync(cancellationToken);
+		var success = await playerSelectionState.ShowDialogAndWaitAsync(match, cancellationToken);
+		if (!success)
+			return;
 
 		_matches.Insert(0, match);
-		navigationManager.NavigateTo($"/matches/{match.Id}/edit");
+		navigationManager.NavigateTo($"/matches/{match.Id}");
 	}
 
 }

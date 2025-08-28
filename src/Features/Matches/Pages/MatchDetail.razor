@@ -20,11 +20,11 @@
 <div class="heading">
 	<h1>@State.Match.GetTitle(includeDate: false)</h1>
 
-	<a class="btn btn-ghost-secondary btn-square hover-icon-filled"
-	   title="Edit match"
-	   href="/matches/@Id/edit">
+	<button class="btn btn-ghost-secondary btn-square hover-icon-filled"
+	        title="Edit match"
+	        @onclick="@(() => State.EditMatchAsync(CancellationToken))">
 		<span class="icon" aria-hidden="true">edit</span>
-	</a>
+	</button>
 </div>
 
 <div class="d-flex flex-column gap-2 mb-3">
@@ -32,22 +32,51 @@
 		<span class="icon">calendar_today</span>
 		<span>@State.Match.GetEffectiveDate().ToString("dddd, dd MMMM yyyy")</span>
 	</div>
-	<div class="d-flex align-items-center gap-2">
-		<span class="icon">timer</span>
-		<span>1h 45m &bull; 7 turns</span>
-	</div>
-	<div class="d-flex gap-2">
-		<span class="icon">sticky_note_2</span>
-		<span>A player did a thing that nobody liked, so everyone scooped.</span>
-	</div>
+	@if (State.Match.TimeStarted is not null)
+	{
+		<div class="d-flex align-items-center gap-2">
+			<span class="icon">timer</span>
+			@if (State.Match.TimeEnded is null)
+			{
+				<span>In Progress &bull; @State.Match.GetFormattedDuration()</span>
+			}
+			else
+			{
+				@* TODO: Show turn counter if available *@
+				<span>@State.Match.GetFormattedDuration()</span>
+			}
+		</div>
+	}
+	@if (State.Match.Notes is not null)
+	{
+		<div class="d-flex gap-2">
+			<span class="icon">sticky_note_2</span>
+			<span>@State.Match.Notes</span>
+		</div>
+	}
 </div>
 
-<div class="d-flex flex-column gap-3">
-	@foreach (var participation in State.Match.Participations)
+<div class="d-flex flex-column gap-3 mb-3">
+	@if (State.Match.TimeStarted is null)
+	{
+		var hasPlayers = State.Match.Participations.Count > 0;
+		var buttonStyle = hasPlayers ? "btn-outline-secondary" : "btn-primary";
+		var buttonCaption = hasPlayers ? "Change players" : "Add players";
+		var iconFilledStyle = hasPlayers ? string.Empty : "filled";
+		<button class="btn @buttonStyle hover-icon-filled w-100 justify-content-center" @onclick="@(() => State.SelectPlayersAsync(CancellationToken))">
+			<span class="icon @iconFilledStyle">patient_list</span>
+			<span>@buttonCaption</span>
+		</button>
+	}
+
+	@foreach (var participation in State.Match.Participations.OrderBy(mp => mp.Player.Name))
 	{
 		<MatchParticipationCard Participation="participation"/>
 	}
 </div>
+
+<MatchEditDialog/>
+<MatchPlayerSelectDialog/>
 
 @code {
 

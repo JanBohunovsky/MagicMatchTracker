@@ -2,26 +2,17 @@ using FluentValidation;
 
 namespace MagicMatchTracker.Features.Players.Models;
 
-public sealed class PlayerEditModel
+public sealed class PlayerEditModel(Player model)
 {
-	private readonly Player _model;
-
-	public string Name { get; set; }
-	public string AvatarUri { get; set; }
-
-	public PlayerEditModel(Player player)
-	{
-		_model = player;
-		Name = player.Name;
-		AvatarUri = player.AvatarUri ?? string.Empty;
-	}
+	public string Name { get; set; } = model.Name;
+	public string AvatarUri { get; set; } = model.AvatarUri ?? string.Empty;
 
 	public Player ApplyChanges()
 	{
-		_model.Name = Name.Trim();
-		_model.AvatarUri = AvatarUri.TrimToNull();
+		model.Name = Name.Trim();
+		model.AvatarUri = AvatarUri.TrimToNull();
 
-		return _model;
+		return model;
 	}
 }
 

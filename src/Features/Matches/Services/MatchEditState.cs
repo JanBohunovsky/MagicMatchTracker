@@ -1,29 +1,21 @@
 using MagicMatchTracker.Features.Matches.Models;
 using MagicMatchTracker.Infrastructure.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Features.Matches.Services;
 
-public sealed class MatchEditState(Database database) : StateBase
+public sealed class MatchEditState(Database database) : EditDialogStateBase<MatchEditModel, Match>
 {
-	public MatchEditModel? Match { get; private set; }
-
-	public async Task LoadMatchAsync(Guid id, CancellationToken cancellationToken = default)
+	protected override MatchEditModel CreateEditModel(Match entity)
 	{
-		if (Match?.Id == id)
-			return;
+		if (IsNew)
+			throw new InvalidOperationException($"{nameof(MatchEditState)} cannot be used for new entities.");
 
-		await WithBusyAsync(async () =>
-		{
-			var match = await database.Matches
-				.Include(m => m.Participations)
-				.ThenInclude(mp => mp.Events)
-				.FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
+		return new MatchEditModel(entity);
+	}
 
-			if (match is null)
-				return;
-
-			Match = new MatchEditModel(match);
-		});
+	protected override async Task SaveCoreAsync(MatchEditModel model, CancellationToken cancellationToken)
+	{
+		model.ApplyChanges();
+		await database.SaveChangesAsync(cancellationToken);
 	}
 }
