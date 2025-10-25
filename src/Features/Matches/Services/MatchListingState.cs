@@ -36,7 +36,7 @@ public sealed class MatchListingState(Database database, MatchPlayerSelectionSta
 			MatchNumber = lastMatchNumberOfToday + 1,
 		};
 
-		var success = await playerSelectionState.ShowDialogAndWaitAsync(match, cancellationToken);
+		var success = await playerSelectionState.ShowDialogAsync(match, cancellationToken);
 		if (!success)
 			return;
 

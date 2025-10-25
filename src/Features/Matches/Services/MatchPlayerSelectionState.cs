@@ -1,25 +1,16 @@
 using MagicMatchTracker.Features.Matches.Models;
 using MagicMatchTracker.Infrastructure.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Features.Matches.Services;
 
 public sealed class MatchPlayerSelectionState(Database database) : EditDialogStateBase<MatchPlayerSelectModel, Match>
 {
+	public bool IsNew { get; private set; }
+
 	protected override MatchPlayerSelectModel CreateEditModel(Match entity)
 	{
+		IsNew = entity.Id == Guid.Empty;
 		return new MatchPlayerSelectModel(entity);
-	}
-
-	protected override async Task InitialiseAsync(Match entity, CancellationToken cancellationToken)
-	{
-		var players = await database.Players
-			.Include(p => p.Decks)
-			.Where(p => p.Decks.Count > 0)
-			.OrderBy(p => p.Name)
-			.ToListAsync(cancellationToken);
-
-		Model?.SetAvailablePlayers(players);
 	}
 
 	protected override async Task SaveCoreAsync(MatchPlayerSelectModel model, CancellationToken cancellationToken)

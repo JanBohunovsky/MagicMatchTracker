@@ -21,6 +21,12 @@
 
 			<div class="d-flex flex-column gap-3 mt-2">
 				<div>
+					<label for="matchNumber" class="form-label">Match Number</label>
+					<InputNumber min="1" step="1" @bind-Value="context.MatchNumber" class="form-control"
+					             id="matchNumber" disabled="@State.IsBusy"/>
+				</div>
+
+				<div>
 					<label for="timeStarted" class="form-label">Start time</label>
 					<InputDate Type="InputDateType.DateTimeLocal" step="1" @bind-Value="context.TimeStarted" class="form-control"
 					           id="timeStarted" disabled="@State.IsBusy"/>
@@ -32,12 +38,6 @@
 					<InputDate Type="InputDateType.DateTimeLocal" step="1" @bind-Value="context.TimeEnded" class="form-control"
 					           id="timeEnded" disabled="@State.IsBusy"/>
 					<ValidationMessage For="() => context.TimeEnded" class="invalid-feedback"/>
-				</div>
-
-				<div>
-					<label for="matchNumber" class="form-label">Match Number</label>
-					<InputNumber min="1" step="1" @bind-Value="context.MatchNumber" class="form-control"
-					             id="matchNumber" disabled="@State.IsBusy"/>
 				</div>
 			</div>
 		</details>

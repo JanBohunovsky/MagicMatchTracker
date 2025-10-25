@@ -3,7 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Features.Matches.Services;
 
-public sealed class MatchDetailState(Database database, MatchPlayerSelectionState playerSelectionState, MatchEditState editState) : StateBase
+public sealed class MatchDetailState(
+	Database database,
+	MatchPlayerSelectionState playerSelectionState,
+	MatchEditState editState,
+	MatchDeckSelectionState deckSelectionState) : StateBase
 {
 	public Match? Match { get; private set; }
 
@@ -26,7 +30,7 @@ public sealed class MatchDetailState(Database database, MatchPlayerSelectionStat
 		if (Match is null)
 			return;
 
-		var success = await playerSelectionState.ShowDialogAndWaitAsync(Match, cancellationToken);
+		var success = await playerSelectionState.ShowDialogAsync(Match, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}
@@ -36,7 +40,17 @@ public sealed class MatchDetailState(Database database, MatchPlayerSelectionStat
 		if (Match is null)
 			return;
 
-		var success = await editState.ShowDialogAndWaitAsync(Match, cancellationToken);
+		var success = await editState.ShowDialogAsync(Match, cancellationToken);
+		if (success)
+			NotifyStateChanged();
+	}
+
+	public async Task SelectDeckAsync(MatchParticipation participation, CancellationToken cancellationToken = default)
+	{
+		if (Match is null)
+			return;
+
+		var success = await deckSelectionState.ShowDialogAsync(participation, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}

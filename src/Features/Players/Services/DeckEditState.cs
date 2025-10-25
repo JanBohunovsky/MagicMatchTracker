@@ -5,8 +5,11 @@ namespace MagicMatchTracker.Features.Players.Services;
 
 public sealed class DeckEditState(Database database) : EditDialogStateBase<DeckEditModel, Deck>
 {
+	public bool IsNew { get; private set; }
+
 	protected override DeckEditModel CreateEditModel(Deck entity)
 	{
+		IsNew = entity.Id == Guid.Empty;
 		return new DeckEditModel(entity);
 	}
 

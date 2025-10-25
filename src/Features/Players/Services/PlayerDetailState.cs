@@ -37,7 +37,7 @@ public sealed class PlayerDetailState(Database database, PlayerEditState playerE
 		if (Player is null)
 			return;
 
-		var success = await playerEditState.ShowDialogAndWaitAsync(Player, cancellationToken);
+		var success = await playerEditState.ShowDialogAsync(Player, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}
@@ -52,7 +52,7 @@ public sealed class PlayerDetailState(Database database, PlayerEditState playerE
 			Owner = Player,
 			Commander = "",
 		};
-		var success = await deckEditState.ShowDialogAndWaitAsync(deck, cancellationToken);
+		var success = await deckEditState.ShowDialogAsync(deck, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}
@@ -62,7 +62,7 @@ public sealed class PlayerDetailState(Database database, PlayerEditState playerE
 		if (Player is null)
 			return;
 
-		var success = await deckEditState.ShowDialogAndWaitAsync(deck, cancellationToken);
+		var success = await deckEditState.ShowDialogAsync(deck, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}

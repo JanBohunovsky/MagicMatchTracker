@@ -7,7 +7,7 @@ public sealed class MatchEditState(Database database) : EditDialogStateBase<Matc
 {
 	protected override MatchEditModel CreateEditModel(Match entity)
 	{
-		if (IsNew)
+		if (entity.Id == Guid.Empty)
 			throw new InvalidOperationException($"{nameof(MatchEditState)} cannot be used for new entities.");
 
 		return new MatchEditModel(entity);

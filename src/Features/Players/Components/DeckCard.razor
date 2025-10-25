@@ -32,7 +32,14 @@
 }
 
 <button class="card deck-card" @onclick="OnClick">
-	<img src="@Deck.ImageUri" class="card-img-top deck-image" alt="Deck image" height="139"/>
+	@if (Deck.ImageUri is null)
+	{
+		<div class="card-img-top deck-cover deck-cover-placeholder icon filled">box</div>
+	}
+	else
+	{
+		<img src="@Deck.ImageUri" class="card-img-top deck-cover" alt="Deck image" height="139"/>
+	}
 
 	<div class="card-body">
 		<div>

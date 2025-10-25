@@ -20,4 +20,7 @@ public static class StringExtensions
 
 	public static bool IsNotEmpty([NotNullWhen(true)] this string? value)
 		=> !string.IsNullOrEmpty(value);
+
+	public static string ToPossessive(this string value)
+		=> value.EndsWith("s", StringComparison.InvariantCultureIgnoreCase) ? $"{value}'" : $"{value}'s";
 }

@@ -1,0 +1,27 @@
+.deck-list-item {
+	--image-cover-colour: var(--bs-list-group-bg);
+
+	background-image:
+		linear-gradient(
+			to left,
+			transparent 0%,
+			transparent 33%,
+			var(--image-cover-colour) 100%),
+		var(--deck-image-url);
+	background-repeat: no-repeat;
+	background-position: 120% 15%;
+	background-size: 50%;
+}
+
+.deck-list-item:hover {
+	--image-cover-colour: var(--bs-list-group-action-hover-bg);
+}
+
+.deck-list-item:active {
+	--image-cover-colour: var(--bs-list-group-action-active-bg);
+}
+
+.deck-name:only-child {
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+}

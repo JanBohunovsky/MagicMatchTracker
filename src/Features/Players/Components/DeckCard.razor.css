@@ -4,31 +4,6 @@
 	width: 100%;
 }
 
-.deck-image {
-	object-fit: cover;
-	object-position: 0 10%;
-	height: 139px;
-	background-color: var(--bs-secondary-bg-subtle);
-	font-size: 0;
-}
-
-/* Kind of a hacky way to display placeholder deck image while it's loading or when the deck doesn't have one. */
-/* Note: The box icon won't be visible while the deck is loading, only when the image doesn't exist. */
-.deck-image::after {
-	display: grid;
-	place-items: center;
-	height: 100%;
-	color: var(--bs-secondary-border-subtle);
-
-	content: "box";
-	font-family: "Material Symbols Rounded";
-	font-variation-settings: 'FILL' 1;
-	font-size: 6rem;
-	line-height: 1;
-	-moz-font-feature-settings: 'liga';
-	-moz-osx-font-smoothing: grayscale;
-}
-
 .card-body {
 	display: flex;
 	justify-content: space-between;

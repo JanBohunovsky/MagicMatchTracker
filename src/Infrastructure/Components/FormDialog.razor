@@ -49,20 +49,29 @@
 	[Parameter]
 	public EventCallback OnSubmit { get; set; }
 
-	/// <inheritdoc />
-	protected override void OnParametersSet()
+	[Parameter]
+    public EventCallback<TModel> OnDialogShown { get; set; }
+
+	[Parameter]
+    public EventCallback OnDialogHidden { get; set; }
+
+	protected override async Task OnParametersSetAsync()
 	{
+		if (ReferenceEquals(Model, _editContext?.Model))
+			return;
+
 		if (Model is null)
 		{
 			_editContext = null;
+			if (OnDialogHidden.HasDelegate)
+				await OnDialogHidden.InvokeAsync();
 			return;
 		}
 
-		if (Model.Equals(_editContext?.Model))
-			return;
-
 		_editContext = new EditContext(Model);
 		_editContext.SetFieldCssClassProvider(BootstrapFieldClassProvider.Instance);
-	}
 
+		if (OnDialogShown.HasDelegate)
+			await OnDialogShown.InvokeAsync(Model);
+	}
 }

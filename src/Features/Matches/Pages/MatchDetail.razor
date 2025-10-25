@@ -71,12 +71,15 @@
 
 	@foreach (var participation in State.Match.Participations.OrderBy(mp => mp.Player.Name))
 	{
-		<MatchParticipationCard Participation="participation"/>
+		<MatchParticipationCard
+			Participation="participation"
+			OnDeckClicked="@(() => State.SelectDeckAsync(participation, CancellationToken))"/>
 	}
 </div>
 
 <MatchEditDialog/>
 <MatchPlayerSelectDialog/>
+<MatchDeckSelectDialog/>
 
 @code {
 

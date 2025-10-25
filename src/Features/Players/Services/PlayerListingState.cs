@@ -28,7 +28,7 @@ public sealed class PlayerListingState(Database database, PlayerEditState editSt
 		{
 			Name = "",
 		};
-		var success = await editState.ShowDialogAndWaitAsync(player, cancellationToken);
+		var success = await editState.ShowDialogAsync(player, cancellationToken);
 		if (!success)
 			return;
 
@@ -38,7 +38,7 @@ public sealed class PlayerListingState(Database database, PlayerEditState editSt
 
 	public async Task EditPlayerAsync(Player player, CancellationToken cancellationToken = default)
 	{
-		var success = await editState.ShowDialogAndWaitAsync(player, cancellationToken);
+		var success = await editState.ShowDialogAsync(player, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}

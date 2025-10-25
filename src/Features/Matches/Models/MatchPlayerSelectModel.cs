@@ -1,40 +1,43 @@
-using MagicMatchTracker.Infrastructure.Components;
+using MagicMatchTracker.Features.Shared;
 
 namespace MagicMatchTracker.Features.Matches.Models;
 
 public sealed class MatchPlayerSelectModel(Match model)
 {
-	private List<CheckableItem<Player>>? _players;
+	private readonly HashSet<Player> _selectedPlayers = model.Participations
+		.Select(mp => mp.Player)
+		.ToHashSet(EntityEqualityComparer<Player>.Default);
 
-	public IReadOnlyList<CheckableItem<Player>>? Players => _players;
+	public bool IsPlayerSelected(Player player) => _selectedPlayers.Contains(player);
 
-	public void SetAvailablePlayers(IEnumerable<Player> players)
+	public void TogglePlayerSelection(Player player, bool isSelected)
 	{
-		_players = players.Select(p => new CheckableItem<Player>(p, model.Participations.Any(mp => mp.Player.Id == p.Id)))
-			.ToList();
+		if (isSelected)
+			_selectedPlayers.Add(player);
+		else
+			_selectedPlayers.Remove(player);
 	}
 
 	public Match ApplyChanges()
 	{
-		if (_players is null)
-			return model;
+		var addedPlayers = _selectedPlayers.Except(model.Participations.Select(mp => mp.Player)).ToList();
+		var removedParticipations = model.Participations.ExceptBy(_selectedPlayers, mp => mp.Player).ToList();
 
-		foreach (var player in _players.Where(i => i.IsChanged))
+		foreach (var participation in removedParticipations)
 		{
-			if (player.IsChecked)
-			{
-				model.Participations.Add(new MatchParticipation
-				{
-					Match = model,
-					Player = player.Value,
-					Deck = player.Value.Decks.First(), // TODO: Allow null
-				});
-			}
-			else
-			{
-				model.Participations.RemoveAll(mp => mp.Player.Id == player.Value.Id);
-			}
+			model.Participations.Remove(participation);
 		}
+
+		foreach (var player in addedPlayers)
+		{
+			model.Participations.Add(new MatchParticipation
+			{
+				Match = model,
+				Player = player,
+				Deck = player.Decks.First(), // TODO: Allow null
+			});
+		}
+
 		return model;
 	}
 }
