@@ -11,14 +11,17 @@
 	background-repeat: no-repeat;
 	background-position: 120% 15%;
 	background-size: 50%;
-}
 
-.deck-list-item:hover {
-	--image-cover-colour: var(--bs-list-group-action-hover-bg);
-}
-
-.deck-list-item:active {
-	--image-cover-colour: var(--bs-list-group-action-active-bg);
+	&:hover {
+		--image-cover-colour: var(--bs-list-group-action-hover-bg);
+	}
+	&:active {
+		--image-cover-colour: var(--bs-list-group-action-active-bg);
+	}
+	&.disabled {
+		opacity: 0.75;
+		filter: grayscale(1);
+	}
 }
 
 .deck-name:only-child {

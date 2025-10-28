@@ -13,6 +13,10 @@ public sealed class MatchDeckSelectModel(MatchParticipation model)
 
 	public Deck? Deck { get; set; } = model.Deck;
 
+	public bool IsDeckTakenByAnotherPlayer(Deck deck) => model.Match
+		.Participations
+		.Any(mp => mp.Player != model.Player && mp.Deck == deck);
+
 	public MatchParticipation ApplyChanges()
 	{
 		model.Deck = Deck ?? throw new InvalidOperationException("Deck nullability is not allowed yet");
