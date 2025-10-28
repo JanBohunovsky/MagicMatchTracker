@@ -73,6 +73,13 @@ h1:focus {
 	animation: backdrop-entry 0.15s linear;
 }
 
+.nested-modal-layer .modal {
+	--bs-modal-zindex: 1155 !important;
+}
+.nested-modal-layer .modal-backdrop {
+	--bs-backdrop-zindex: 1150 !important;
+}
+
 .floating-label {
 	font-size: 0.85rem;
 	opacity: 0.65;
@@ -106,6 +113,10 @@ h1:focus {
 
 	.heading {
 		justify-content: start;
+	}
+
+	.nested-modal-layer .modal {
+		--bs-modal-margin: 3.5rem;
 	}
 
 }

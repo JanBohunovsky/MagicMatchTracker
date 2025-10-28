@@ -1,7 +1,7 @@
 using MagicMatchTracker.Features.Players.Models;
 using MagicMatchTracker.Infrastructure.Services;
 
-namespace MagicMatchTracker.Features.Players.Services;
+namespace MagicMatchTracker.Features.Shared.Services;
 
 public sealed class DeckEditState(Database database) : EditDialogStateBase<DeckEditModel, Deck>
 {

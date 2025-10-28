@@ -71,7 +71,7 @@
 					{
 						<span>No decks found</span>
 					}
-					<button type="button" class="btn btn-primary">
+					<button type="button" class="btn btn-primary" @onclick="AddNewDeckAsync">
 						<span class="icon">add</span>
 						<span>New deck</span>
 					</button>
@@ -111,8 +111,8 @@
 					}
 					@if (_selectedPlayerId != Guid.Empty)
 					{
-						@* TODO: Implement new deck creation *@
-						<button type="button" class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-3" disabled>
+						<button type="button" class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-3"
+						        @onclick="AddNewDeckAsync">
 							<span class="icon text-muted">add</span>
 							<span>New deck</span>
 						</button>
@@ -124,8 +124,9 @@
 
 	<div class="modal-footer">
 		<div class="flex-grow-1">
-			@* TODO: Implement deck editing *@
-			<button type="button" class="btn btn-ghost-primary hover-icon-filled" disabled="@(_selectedDeckId is null || true)">
+			<button type="button" class="btn btn-ghost-primary hover-icon-filled"
+			        @onclick="EditSelectedDeckAsync"
+			        disabled="@(State.IsBusy || !IsSelectedDeckVisible)">
 				<span>Edit deck</span>
 			</button>
 		</div>
@@ -139,6 +140,10 @@
 		</button>
 	</div>
 </FormDialog>
+
+<div class="nested-modal-layer">
+	<DeckEditDialog IsFullscreen="false"/>
+</div>
 
 @code {
 
@@ -192,6 +197,31 @@
 
 		if (_searchCancellationSource is not null)
 			await _searchCancellationSource.CancelAsync();
+	}
+
+	private async Task AddNewDeckAsync()
+	{
+		var player = SelectedPlayer;
+		if (player is null)
+			return;
+
+		var success = await State.AddNewDeckAsync(player, CancellationToken);
+		if (success)
+			await SearchAsync();
+	}
+
+	private async Task EditSelectedDeckAsync()
+	{
+		if (_selectedDeckId is null || _decks is null)
+			return;
+
+		var deck = _decks.FirstOrDefault(d => d.Id == _selectedDeckId);
+		if (deck is null)
+			return;
+
+		var success = await State.EditDeckAsync(deck, CancellationToken);
+		if (success)
+			await SearchAsync();
 	}
 
 }

@@ -9,7 +9,6 @@ public static class ConfigurePlayersFeature
 		services.AddScoped<PlayerListingState>();
 		services.AddScoped<PlayerDetailState>();
 		services.AddScoped<PlayerEditState>();
-		services.AddScoped<DeckEditState>();
 
 		return services;
 	}

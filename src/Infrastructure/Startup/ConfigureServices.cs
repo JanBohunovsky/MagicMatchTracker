@@ -1,6 +1,7 @@
 using FluentValidation;
 using MagicMatchTracker.Features.Matches;
 using MagicMatchTracker.Features.Players;
+using MagicMatchTracker.Features.Shared;
 using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,6 +47,7 @@ public static class ConfigureServices
 	private static void AddFeatures(this WebApplicationBuilder builder)
 	{
 		builder.Services
+			.AddSharedFeature()
 			.AddPlayersFeature()
 			.AddMatchesFeature();
 	}

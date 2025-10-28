@@ -1,3 +1,4 @@
+using MagicMatchTracker.Features.Shared.Services;
 using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 

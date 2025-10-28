@@ -1,9 +1,9 @@
 @using MagicMatchTracker.Features.Players.Models
-@inherits StatefulComponentBase<MagicMatchTracker.Features.Players.Services.DeckEditState>
+@inherits StatefulComponentBase<MagicMatchTracker.Features.Shared.Services.DeckEditState>
 
 <FormDialog TModel="DeckEditModel"
             Model="State.Model"
-            FullscreenMode="DialogFullscreenMode.Mobile"
+            FullscreenMode="@FullscreenMode"
             OnSubmit="@(() => State.SaveAsync(CancellationToken))">
 	<div class="modal-header">
 		<h5 class="modal-title">@Title</h5>
@@ -69,5 +69,9 @@
 	private string Title => State.IsNew ? "Add new deck" : "Edit deck";
 	private string ConfirmCaption => State.IsNew ? "Add" : "Save";
 	private string ToggleArchiveCaption => State.Model?.IsArchived is true ? "Unarchive" : "Archive";
+	private DialogFullscreenMode FullscreenMode => IsFullscreen ? DialogFullscreenMode.Mobile : DialogFullscreenMode.Never;
+
+	[Parameter]
+	public bool IsFullscreen { get; set; } = true;
 
 }
