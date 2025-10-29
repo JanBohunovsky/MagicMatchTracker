@@ -34,7 +34,6 @@ public sealed class MatchPlayerSelectModel(Match model)
 			{
 				Match = model,
 				Player = player,
-				Deck = player.Decks.First(), // TODO: Allow null
 			});
 		}
 

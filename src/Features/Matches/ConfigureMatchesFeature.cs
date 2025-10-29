@@ -12,7 +12,8 @@ public static class ConfigureMatchesFeature
 			.AddScoped<MatchEditState>()
 			.AddScoped<MatchPlayerSelectionState>()
 			.AddScoped<MatchDeckSelectionState>()
-			.AddScoped<MatchDeckSearchProvider>();
+			.AddScoped<MatchDeckSearchProvider>()
+			.AddScoped<MatchCreationHelper>();
 
 		return services;
 	}

@@ -69,7 +69,6 @@
 
 		var players = await Database.Players
 			.Include(p => p.Decks)
-			.Where(p => p.Decks.Count > 0)
 			.OrderBy(p => p.Name)
 			.ToListAsync(cancellationToken);
 

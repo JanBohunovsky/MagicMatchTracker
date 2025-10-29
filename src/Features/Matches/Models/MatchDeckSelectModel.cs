@@ -19,7 +19,7 @@ public sealed class MatchDeckSelectModel(MatchParticipation model)
 
 	public MatchParticipation ApplyChanges()
 	{
-		model.Deck = Deck ?? throw new InvalidOperationException("Deck nullability is not allowed yet");
+		model.Deck = Deck;
 
 		return model;
 	}

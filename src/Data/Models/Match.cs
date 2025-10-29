@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace MagicMatchTracker.Data.Models;
@@ -18,12 +19,15 @@ public sealed class Match : IEntity
 
 	public DateTimeOffset CreatedAt { get; private init; } = DateTimeOffset.Now;
 
+	[MemberNotNullWhen(false, nameof(TimeStarted))]
+	public bool IsDraft => TimeStarted is null;
+
 	public DateOnly GetEffectiveDate() => TimeStarted?.Date.ToDateOnly() ?? CreatedAt.Date.ToDateOnly();
 
 	public string GetTitle(bool includeDate = true)
 	{
 		var sb = new StringBuilder();
-		if (TimeStarted is null)
+		if (IsDraft)
 			sb.Append("Draft ");
 
 		sb.Append($"Match #{MatchNumber}");

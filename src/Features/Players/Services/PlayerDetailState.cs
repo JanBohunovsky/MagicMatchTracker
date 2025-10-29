@@ -25,12 +25,13 @@ public sealed class PlayerDetailState(Database database, PlayerEditState playerE
 		if (Player?.Id == id)
 			return;
 
-		await WithBusyAsync(async () =>
-		{
-			Player = await database.Players
-				.Include(p => p.Decks)
-				.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
-		});
+		IsBusy = true;
+
+		Player = await database.Players
+			.Include(p => p.Decks)
+			.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+
+		IsBusy = false;
 	}
 
 	public async Task EditPlayerAsync(CancellationToken cancellationToken = default)

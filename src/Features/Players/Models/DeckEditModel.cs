@@ -10,14 +10,7 @@ public sealed class DeckEditModel(Deck model)
 	public Colours ColourIdentity { get; set; } = model.ColourIdentity;
 	public string ImageUri { get; set; } = model.ImageUri ?? string.Empty;
 	public string DeckUri { get; set; } = model.DeckUri ?? string.Empty;
-
-	public bool IsArchived => model.IsArchived;
-
-	public Deck ToggleArchiveState()
-	{
-		model.IsArchived = !model.IsArchived;
-		return model;
-	}
+	public bool IsArchived { get; set; } = model.IsArchived;
 
 	public Deck ApplyChanges()
 	{
@@ -27,6 +20,7 @@ public sealed class DeckEditModel(Deck model)
 		model.ColourIdentity = ColourIdentity;
 		model.ImageUri = ImageUri.TrimToNull();
 		model.DeckUri = DeckUri.TrimToNull();
+		model.IsArchived = IsArchived;
 
 		return model;
 	}

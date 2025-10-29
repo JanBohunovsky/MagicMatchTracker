@@ -29,7 +29,6 @@ public sealed class MatchDeckSearchProvider(Database database)
 			|| EF.Functions.ILike(d.Commander, pattern)
 			|| EF.Functions.ILike(d.Partner!, pattern));
 
-		// TODO: Hide decks which are already selected by other players
 		return await query.ToListAsync(cancellationToken);
 	}
 }

@@ -1,4 +1,5 @@
-<button class="card" @onclick="OnDeckClicked">
+<button class="card @(Deck is null ? "border-danger" : null) @(IsDisabled ? "disabled" : null)"
+        @onclick="OnClicked" disabled="@IsDisabled">
 	@if (Deck is null)
 	{
 		<div class="card-img-top deck-cover deck-cover-placeholder icon filled">box_add</div>
@@ -12,32 +13,38 @@
 		<img class="card-img-top deck-cover" alt="Deck image" height="139" src="@Deck.ImageUri"/>
 	}
 
-	@* TODO: Add layout when no deck is selected *@
-	<div class="card-body">
-		<span class="card-title fw-medium">@(Deck.Name ?? Deck.Commander)</span>
-		<span class="card-subtitle fw-normal">
-			<div class="d-flex flex-column text-muted small">
-				@if (Deck.Name is not null)
-				{
-					<span>@Deck.Commander</span>
-				}
-				<span>@Deck.Partner</span>
-			</div>
-		</span>
-
-		@if (Deck.Owner != Player)
-		{
-			<span class="card-subtitle fw-normal small text-muted d-flex align-items-center gap-1 mt-1">
-				Borrowed from <Avatar Player="Deck.Owner" Size="18"/> @Deck.Owner.Name
+	@if (Deck is not null)
+	{
+		<div class="card-body">
+			<span class="card-title fw-medium">@(Deck.Name ?? Deck.Commander)</span>
+			<span class="card-subtitle fw-normal">
+				<div class="d-flex flex-column text-muted small">
+					@if (Deck.Name is not null)
+					{
+						<span>@Deck.Commander</span>
+					}
+					<span>@Deck.Partner</span>
+				</div>
 			</span>
-		}
-	</div>
 
-	<div class="card-footer d-flex align-items-center justify-content-start gap-1">
+			@if (Deck.Owner != Player)
+			{
+				<span class="card-subtitle fw-normal small text-muted d-flex align-items-center gap-1 mt-1">
+					Borrowed from <Avatar Player="Deck.Owner" Size="18"/> @Deck.Owner.Name
+				</span>
+			}
+		</div>
+	}
+
+	<div class="card-footer d-flex align-items-center justify-content-between gap-1">
 		<span class="d-flex align-items-center gap-1">
 			<Avatar Player="Player" Size="20"/>
 			<span>@Player.Name</span>
 		</span>
+		@if (Deck is null)
+		{
+			<span class="icon text-danger" title="No deck selected">error</span>
+		}
 	</div>
 </button>
 
@@ -47,7 +54,10 @@
     public required MatchParticipation Participation { get; set; }
 
 	[Parameter]
-    public EventCallback OnDeckClicked { get; set; }
+    public EventCallback OnClicked { get; set; }
+
+	[Parameter]
+    public bool IsDisabled { get; set; }
 
 	private Player Player => Participation.Player;
 	private Deck? Deck => Participation.Deck;

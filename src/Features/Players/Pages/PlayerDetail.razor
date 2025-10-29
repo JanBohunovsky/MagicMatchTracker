@@ -33,11 +33,14 @@
 <PlayerEditDialog/>
 <DeckEditDialog/>
 
-<button class="btn btn-primary btn-fab"
-        @onclick="() => State.AddNewDeckAsync(CancellationToken)">
-	<span class="icon filled" aria-hidden="true">box_add</span>
-	<span>New deck</span>
-</button>
+@if (State.Player.Decks.Count > 0)
+{
+	<button class="btn btn-primary btn-fab"
+	        @onclick="() => State.AddNewDeckAsync(CancellationToken)">
+		<span class="icon filled" aria-hidden="true">box_add</span>
+		<span>New deck</span>
+	</button>
+}
 
 <div class="heading">
 	<span class="player-name">
@@ -54,7 +57,14 @@
 
 @if (State.Player.Decks.Count == 0)
 {
-	<p>Player has no decks.</p>
+	<span class="center my-5 d-flex flex-column gap-3 align-items-center justify-content-start">
+		<span class="icon filled cover-icon text-primary">box_add</span>
+		<span>@State.Player.Name has no decks yet</span>
+		<button type="button" class="btn btn-primary" @onclick="() => State.AddNewDeckAsync(CancellationToken)">
+			<span class="icon">add</span>
+			<span>New deck</span>
+		</button>
+	</span>
 	return;
 }
 

@@ -5,7 +5,7 @@
 
 <PageTitle>@PageTitle - Match Tracker</PageTitle>
 
-@if (State.IsBusy)
+@if (State.IsLoading)
 {
 	<p><em>Loading...</em></p>
 	return;
@@ -17,12 +17,30 @@
 	return;
 }
 
+@if (State.Match.IsDraft)
+{
+	<button class="btn btn-primary btn-fab"
+	        @onclick="@(() => State.StartMatchAsync(CancellationToken))"
+	        disabled="@(!State.CanStartMatch || State.IsBusy)">
+		@if (State.IsBusy)
+		{
+			<span class="spinner-border spinner-border-sm m-1" aria-hidden="true"></span>
+		}
+		else
+		{
+			<span class="icon filled" aria-hidden="true">swords</span>
+		}
+		<span>Start match</span>
+	</button>
+}
+
 <div class="heading">
 	<h1>@State.Match.GetTitle(includeDate: false)</h1>
 
 	<button class="btn btn-ghost-secondary btn-square hover-icon-filled"
 	        title="Edit match"
-	        @onclick="@(() => State.EditMatchAsync(CancellationToken))">
+	        @onclick="@(() => State.EditMatchAsync(CancellationToken))"
+	        disabled="@State.IsBusy">
 		<span class="icon" aria-hidden="true">edit</span>
 	</button>
 </div>
@@ -63,7 +81,9 @@
 		var buttonStyle = hasPlayers ? "btn-outline-secondary" : "btn-primary";
 		var buttonCaption = hasPlayers ? "Change players" : "Add players";
 		var iconFilledStyle = hasPlayers ? string.Empty : "filled";
-		<button class="btn @buttonStyle hover-icon-filled w-100 justify-content-center" @onclick="@(() => State.SelectPlayersAsync(CancellationToken))">
+		<button class="btn @buttonStyle hover-icon-filled w-100 justify-content-center"
+		        @onclick="@(() => State.SelectPlayersAsync(CancellationToken))"
+		        disabled="@State.IsBusy">
 			<span class="icon @iconFilledStyle">patient_list</span>
 			<span>@buttonCaption</span>
 		</button>
@@ -73,7 +93,8 @@
 	{
 		<MatchParticipationCard
 			Participation="participation"
-			OnDeckClicked="@(() => State.SelectDeckAsync(participation, CancellationToken))"/>
+			OnClicked="@(() => OnParticipationClickedAsync(participation))"
+			IsDisabled="State.IsBusy"/>
 	}
 </div>
 
@@ -91,6 +112,20 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await State.LoadMatchAsync(Id, CancellationToken);
+	}
+
+	private async Task OnParticipationClickedAsync(MatchParticipation participation)
+	{
+		if (State.Match is null)
+			return;
+
+		if (State.Match.IsDraft)
+		{
+			await State.SelectDeckAsync(participation, CancellationToken);
+			return;
+		}
+
+		// TODO: Show update dialog for an active match
 	}
 
 }

@@ -21,18 +21,4 @@ public sealed class DeckEditState(Database database) : EditDialogStateBase<DeckE
 
 		await database.SaveChangesAsync(cancellationToken);
 	}
-
-	public async Task ToggleArchiveAsync(CancellationToken cancellationToken)
-	{
-		if (Model is null || IsNew)
-			return;
-
-		await WithBusyAsync(async () =>
-		{
-			Model.ToggleArchiveState();
-			await database.SaveChangesAsync(cancellationToken);
-		});
-
-		HideDialog(success: true);
-	}
 }

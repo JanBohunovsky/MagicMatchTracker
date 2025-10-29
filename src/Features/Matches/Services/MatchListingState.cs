@@ -4,7 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Features.Matches.Services;
 
-public sealed class MatchListingState(Database database, MatchPlayerSelectionState playerSelectionState, NavigationManager navigationManager) : StateBase
+public sealed class MatchListingState(
+	Database database,
+	MatchPlayerSelectionState playerSelectionState,
+	MatchCreationHelper matchCreationHelper,
+	NavigationManager navigationManager) : StateBase
 {
 	private List<Match>? _matches;
 
@@ -25,16 +29,17 @@ public sealed class MatchListingState(Database database, MatchPlayerSelectionSta
 		if (_matches is null)
 			return;
 
+		IsBusy = true;
+
 		var today = DateTimeOffset.Now.ToDateOnly();
-		var lastMatchNumberOfToday = _matches.Where(m => m.GetEffectiveDate() == today)
-			.Select(m => m.MatchNumber)
-			.DefaultIfEmpty(0)
-			.Max();
+		var matchNumber = await matchCreationHelper.GetNextMatchNumberAsync(today, cancellationToken);
 
 		var match = new Match
 		{
-			MatchNumber = lastMatchNumberOfToday + 1,
+			MatchNumber = matchNumber,
 		};
+
+		IsBusy = false;
 
 		var success = await playerSelectionState.ShowDialogAsync(match, cancellationToken);
 		if (!success)

@@ -2,38 +2,28 @@ namespace MagicMatchTracker.Infrastructure.Services;
 
 public abstract class StateBase
 {
+	private bool _isBusy;
+
 	public event Action? StateChanged;
 
-	public bool IsBusy { get; protected set; }
+	public bool IsBusy
+	{
+		get => _isBusy;
+		protected set
+		{
+			_isBusy = value;
+			NotifyStateChanged();
+		}
+	}
 
 	protected void NotifyStateChanged()
 	{
 		StateChanged?.Invoke();
 	}
 
-	protected void WithBusy(Action action)
+	protected void ExecuteWithStateChange(Action action)
 	{
-		IsBusy = true;
-		try
-		{
-			action();
-		}
-		finally
-		{
-			IsBusy = false;
-		}
-	}
-
-	protected async Task WithBusyAsync(Func<Task> action)
-	{
-		IsBusy = true;
-		try
-		{
-			await action();
-		}
-		finally
-		{
-			IsBusy = false;
-		}
+		action();
+		NotifyStateChanged();
 	}
 }

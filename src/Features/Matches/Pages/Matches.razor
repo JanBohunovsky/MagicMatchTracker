@@ -7,9 +7,16 @@
 <h1>Matches</h1>
 
 <button class="btn btn-primary btn-fab"
-        disabled="@(State.Matches is null)"
+        disabled="@(State.Matches is null || State.IsBusy)"
         @onclick="() => State.AddNewMatchAsync(CancellationToken)">
-	<span class="icon filled" aria-hidden="true">add</span>
+	@if (State.IsBusy)
+	{
+		<span class="spinner-border spinner-border-sm m-1" aria-hidden="true"></span>
+	}
+	else
+	{
+		<span class="icon filled" aria-hidden="true">add</span>
+	}
 	<span>New match</span>
 </button>
 

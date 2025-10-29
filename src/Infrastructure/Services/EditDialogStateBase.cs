@@ -38,7 +38,9 @@ public abstract class EditDialogStateBase<TEditModel, TEntity> : StateBase where
 		if (Model is null)
 			return;
 
-		await WithBusyAsync(() => SaveCoreAsync(Model, cancellationToken));
+		IsBusy = true;
+		await SaveCoreAsync(Model, cancellationToken);
+		IsBusy = false;
 
 		HideDialog(success: true);
 	}

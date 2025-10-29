@@ -43,16 +43,16 @@
 			<InputText @bind-Value="context.DeckUri" class="form-control" id="deckUrl" disabled="@State.IsBusy"/>
 			<ValidationMessage For="() => context.DeckUri" class="invalid-feedback"/>
 		</div>
-	</div>
-	<div class="modal-footer">
+
 		@if (!State.IsNew)
 		{
-			<div class="flex-grow-1">
-				<button type="button" class="btn btn-ghost-primary hover-icon-filled" @onclick="() => State.ToggleArchiveAsync(CancellationToken)">
-					<span>@ToggleArchiveCaption</span>
-				</button>
+			<div class="form-check">
+				<InputCheckbox @bind-Value="context.IsArchived" class="form-check-input" id="isArchived" disabled="@State.IsBusy"/>
+				<label class="form-check-label" for="isArchived">Archived</label>
 			</div>
 		}
+	</div>
+	<div class="modal-footer">
 		<button type="button" class="btn btn-outline-secondary" @onclick="State.Cancel" disabled="@State.IsBusy">Cancel</button>
 		<button type="submit" class="btn btn-primary" disabled="@State.IsBusy">
 			@if (State.IsBusy)
@@ -68,7 +68,6 @@
 
 	private string Title => State.IsNew ? "Add new deck" : "Edit deck";
 	private string ConfirmCaption => State.IsNew ? "Add" : "Save";
-	private string ToggleArchiveCaption => State.Model?.IsArchived is true ? "Unarchive" : "Archive";
 	private DialogFullscreenMode FullscreenMode => IsFullscreen ? DialogFullscreenMode.Mobile : DialogFullscreenMode.Never;
 
 	[Parameter]
