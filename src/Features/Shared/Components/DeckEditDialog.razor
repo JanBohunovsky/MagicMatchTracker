@@ -1,5 +1,7 @@
 @using MagicMatchTracker.Features.Players.Models
+@using MagicMatchTracker.Features.Shared.Services
 @inherits StatefulComponentBase<MagicMatchTracker.Features.Shared.Services.DeckEditDialogState>
+@inject ScryfallClient ScryfallClient
 
 <FormDialog TModel="DeckEditModel"
             Model="State.Model"
@@ -12,7 +14,7 @@
 	<div class="modal-body d-flex flex-column gap-3">
 		<div>
 			<label for="commander" class="form-label">Commander</label>
-			<InputText @bind-Value="context.Commander" class="form-control" id="commander" disabled="@State.IsBusy" autofocus/>
+			<InputText @bind-Value="context.Commander" @bind-Value:after="SetImageUrlAsync" class="form-control" id="commander" disabled="@State.IsBusy" autofocus/>
 			<ValidationMessage For="() => context.Commander" class="invalid-feedback"/>
 		</div>
 
@@ -34,7 +36,13 @@
 
 		<div>
 			<label for="imageUrl" class="form-label">Image URL <span class="text-secondary small">(optional)</span></label>
-			<InputText @bind-Value="context.ImageUri" class="form-control" id="imageUrl" disabled="@State.IsBusy"/>
+			<div class="position-relative">
+				<InputText @bind-Value="context.ImageUri" class="form-control" id="imageUrl" disabled="@(State.IsBusy || _isSearchingForImage)"/>
+				@if (_isSearchingForImage)
+				{
+					<span class="spinner-border spinner-border-sm text-primary input-text-spinner-sm-end"></span>
+				}
+			</div>
 			<ValidationMessage For="() => context.ImageUri" class="invalid-feedback"/>
 		</div>
 
@@ -66,11 +74,27 @@
 
 @code {
 
+	private bool _isSearchingForImage;
+
 	private string Title => State.IsNew ? "Add new deck" : "Edit deck";
 	private string ConfirmCaption => State.IsNew ? "Add" : "Save";
 	private DialogFullscreenMode FullscreenMode => IsFullscreen ? DialogFullscreenMode.Mobile : DialogFullscreenMode.Never;
 
 	[Parameter]
 	public bool IsFullscreen { get; set; } = true;
+
+	private async Task SetImageUrlAsync()
+	{
+		if (State.Model is null || State.Model.Commander.IsEmpty() || State.Model.ImageUri.IsNotEmpty())
+			return;
+
+		_isSearchingForImage = true;
+
+		var imageUri = await ScryfallClient.GetCardArtUriAsync(State.Model.Commander, CancellationToken);
+		if (imageUri.IsNotEmpty())
+			State.Model.ImageUri = imageUri;
+
+		_isSearchingForImage = false;
+	}
 
 }

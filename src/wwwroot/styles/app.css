@@ -109,6 +109,12 @@ h1:focus {
 	background-color: var(--bs-secondary-bg-subtle);
 }
 
+.input-text-spinner-sm-end {
+	position: absolute;
+	top: calc(0.625rem + 1px);
+	right: 0.75rem;
+}
+
 @media screen and (min-width: 768px) {
 
 	.heading {
