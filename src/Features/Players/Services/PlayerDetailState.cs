@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Features.Players.Services;
 
-public sealed class PlayerDetailState(Database database, PlayerEditState playerEditState, DeckEditState deckEditState) : StateBase
+public sealed class PlayerDetailState(Database database, PlayerEditDialogState playerEditDialogState, DeckEditDialogState deckEditDialogState) : StateBase
 {
 	public Player? Player { get; private set; }
 
@@ -39,7 +39,7 @@ public sealed class PlayerDetailState(Database database, PlayerEditState playerE
 		if (Player is null)
 			return;
 
-		var success = await playerEditState.ShowDialogAsync(Player, cancellationToken);
+		var success = await playerEditDialogState.ShowDialogAsync(Player, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}
@@ -54,7 +54,7 @@ public sealed class PlayerDetailState(Database database, PlayerEditState playerE
 			Owner = Player,
 			Commander = "",
 		};
-		var success = await deckEditState.ShowDialogAsync(deck, cancellationToken);
+		var success = await deckEditDialogState.ShowDialogAsync(deck, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}
@@ -64,7 +64,7 @@ public sealed class PlayerDetailState(Database database, PlayerEditState playerE
 		if (Player is null)
 			return;
 
-		var success = await deckEditState.ShowDialogAsync(deck, cancellationToken);
+		var success = await deckEditDialogState.ShowDialogAsync(deck, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}

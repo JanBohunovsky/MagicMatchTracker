@@ -6,7 +6,7 @@ public static class ConfigureSharedFeature
 {
 	public static IServiceCollection AddSharedFeature(this IServiceCollection services)
 	{
-		services.AddScoped<DeckEditState>();
+		services.AddScoped<DeckEditDialogState>();
 
 		return services;
 	}

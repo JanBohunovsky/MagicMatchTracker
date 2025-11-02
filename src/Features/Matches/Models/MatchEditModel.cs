@@ -9,7 +9,7 @@ public sealed class MatchEditModel(Match model)
 	public int MatchNumber { get; set; } = model.MatchNumber;
 	public string Notes { get; set; } = model.Notes ?? string.Empty;
 
-	public bool HasStarted { get; } = model.TimeStarted is not null;
+	public bool HasStarted { get; } = model.HasStarted;
 
 	public Match ApplyChanges()
 	{

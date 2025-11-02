@@ -17,7 +17,7 @@
 	return;
 }
 
-@if (State.Match.IsDraft)
+@if (!State.Match.HasStarted)
 {
 	<button class="btn btn-primary btn-fab"
 	        @onclick="@(() => State.StartMatchAsync(CancellationToken))"
@@ -50,11 +50,11 @@
 		<span class="icon">calendar_today</span>
 		<span>@State.Match.GetEffectiveDate().ToString("dddd, dd MMMM yyyy")</span>
 	</div>
-	@if (State.Match.TimeStarted is not null)
+	@if (State.Match.HasStarted)
 	{
 		<div class="d-flex align-items-center gap-2">
 			<span class="icon">timer</span>
-			@if (State.Match.TimeEnded is null)
+			@if (!State.Match.HasEnded)
 			{
 				<span>In Progress &bull; @State.Match.GetFormattedDuration()</span>
 			}
@@ -75,8 +75,9 @@
 </div>
 
 <div class="d-flex flex-column gap-3 mb-3">
-	@if (State.Match.TimeStarted is null)
+	@if (!State.Match.HasStarted)
 	{
+		@* Player selection button *@
 		var hasPlayers = State.Match.Participations.Count > 0;
 		var buttonStyle = hasPlayers ? "btn-outline-secondary" : "btn-primary";
 		var buttonCaption = hasPlayers ? "Change players" : "Add players";
@@ -94,7 +95,7 @@
 		<MatchParticipationCard
 			Participation="participation"
 			OnClicked="@(() => OnParticipationClickedAsync(participation))"
-			IsDisabled="State.IsBusy"/>
+			IsDisabled="State.IsBusy || State.Match.HasEnded"/>
 	}
 </div>
 
@@ -119,7 +120,7 @@
 		if (State.Match is null)
 			return;
 
-		if (State.Match.IsDraft)
+		if (!State.Match.HasStarted)
 		{
 			await State.SelectDeckAsync(participation, CancellationToken);
 			return;

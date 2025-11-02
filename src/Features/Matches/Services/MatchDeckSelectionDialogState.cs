@@ -4,7 +4,7 @@ using MagicMatchTracker.Infrastructure.Services;
 
 namespace MagicMatchTracker.Features.Matches.Services;
 
-public sealed class MatchDeckSelectionState(Database database, DeckEditState deckEditState) : EditDialogStateBase<MatchDeckSelectModel, MatchParticipation>
+public sealed class MatchDeckSelectionDialogState(Database database, DeckEditDialogState deckEditDialogState) : EditDialogStateBase<MatchDeckSelectModel, MatchParticipation>
 {
 	protected override MatchDeckSelectModel CreateEditModel(MatchParticipation entity)
 	{
@@ -24,11 +24,11 @@ public sealed class MatchDeckSelectionState(Database database, DeckEditState dec
 			Owner = player,
 			Commander = string.Empty,
 		};
-		return await deckEditState.ShowDialogAsync(deck, cancellationToken);
+		return await deckEditDialogState.ShowDialogAsync(deck, cancellationToken);
 	}
 
 	public async Task<bool> EditDeckAsync(Deck deck, CancellationToken cancellationToken = default)
 	{
-		return await deckEditState.ShowDialogAsync(deck, cancellationToken);
+		return await deckEditDialogState.ShowDialogAsync(deck, cancellationToken);
 	}
 }

@@ -19,15 +19,18 @@ public sealed class Match : IEntity
 
 	public DateTimeOffset CreatedAt { get; private init; } = DateTimeOffset.Now;
 
-	[MemberNotNullWhen(false, nameof(TimeStarted))]
-	public bool IsDraft => TimeStarted is null;
+	[MemberNotNullWhen(true, nameof(TimeStarted))]
+	public bool HasStarted => TimeStarted is not null;
+
+	[MemberNotNullWhen(true, nameof(TimeEnded))]
+	public bool HasEnded => TimeEnded is not null;
 
 	public DateOnly GetEffectiveDate() => TimeStarted?.Date.ToDateOnly() ?? CreatedAt.Date.ToDateOnly();
 
 	public string GetTitle(bool includeDate = true)
 	{
 		var sb = new StringBuilder();
-		if (IsDraft)
+		if (!HasStarted)
 			sb.Append("Draft ");
 
 		sb.Append($"Match #{MatchNumber}");
@@ -52,7 +55,7 @@ public sealed class Match : IEntity
 
 	public string? GetFormattedDuration()
 	{
-		if (TimeStarted is null)
+		if (!HasStarted)
 			return null;
 
 		var endTime = TimeEnded ?? DateTimeOffset.Now;

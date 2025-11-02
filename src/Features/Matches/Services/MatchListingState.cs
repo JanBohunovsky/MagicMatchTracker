@@ -6,7 +6,7 @@ namespace MagicMatchTracker.Features.Matches.Services;
 
 public sealed class MatchListingState(
 	Database database,
-	MatchPlayerSelectionState playerSelectionState,
+	MatchPlayerSelectionDialogState playerSelectionDialogState,
 	MatchCreationHelper matchCreationHelper,
 	NavigationManager navigationManager) : StateBase
 {
@@ -41,7 +41,7 @@ public sealed class MatchListingState(
 
 		IsBusy = false;
 
-		var success = await playerSelectionState.ShowDialogAsync(match, cancellationToken);
+		var success = await playerSelectionDialogState.ShowDialogAsync(match, cancellationToken);
 		if (!success)
 			return;
 

@@ -3,7 +3,7 @@ using MagicMatchTracker.Infrastructure.Services;
 
 namespace MagicMatchTracker.Features.Matches.Services;
 
-public sealed class MatchPlayerSelectionState(Database database) : EditDialogStateBase<MatchPlayerSelectModel, Match>
+public sealed class MatchPlayerSelectionDialogState(Database database) : EditDialogStateBase<MatchPlayerSelectModel, Match>
 {
 	public bool IsNew { get; private set; }
 

@@ -6,9 +6,9 @@ namespace MagicMatchTracker.Features.Matches.Services;
 
 public sealed class MatchDetailState(
 	Database database,
-	MatchPlayerSelectionState playerSelectionState,
-	MatchEditState editState,
-	MatchDeckSelectionState deckSelectionState,
+	MatchPlayerSelectionDialogState playerSelectionDialogState,
+	MatchEditDialogState editDialogState,
+	MatchDeckSelectionDialogState deckSelectionDialogState,
 	MatchCreationHelper matchCreationHelper) : StateBase
 {
 	public bool IsLoading { get; private set; }
@@ -16,7 +16,7 @@ public sealed class MatchDetailState(
 
 	[MemberNotNullWhen(true, nameof(Match))]
 	public bool CanStartMatch => Match is not null
-		&& Match.IsDraft
+		&& !Match.HasStarted
 		&& Match.Participations.Count > 0
 		&& Match.Participations.All(p => p.Deck is not null);
 
@@ -40,7 +40,7 @@ public sealed class MatchDetailState(
 		if (Match is null)
 			return;
 
-		var success = await playerSelectionState.ShowDialogAsync(Match, cancellationToken);
+		var success = await playerSelectionDialogState.ShowDialogAsync(Match, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}
@@ -50,7 +50,7 @@ public sealed class MatchDetailState(
 		if (Match is null)
 			return;
 
-		var success = await editState.ShowDialogAsync(Match, cancellationToken);
+		var success = await editDialogState.ShowDialogAsync(Match, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}
@@ -60,7 +60,7 @@ public sealed class MatchDetailState(
 		if (Match is null)
 			return;
 
-		var success = await deckSelectionState.ShowDialogAsync(participation, cancellationToken);
+		var success = await deckSelectionDialogState.ShowDialogAsync(participation, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}

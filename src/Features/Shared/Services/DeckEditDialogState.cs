@@ -3,7 +3,7 @@ using MagicMatchTracker.Infrastructure.Services;
 
 namespace MagicMatchTracker.Features.Shared.Services;
 
-public sealed class DeckEditState(Database database) : EditDialogStateBase<DeckEditModel, Deck>
+public sealed class DeckEditDialogState(Database database) : EditDialogStateBase<DeckEditModel, Deck>
 {
 	public bool IsNew { get; private set; }
 

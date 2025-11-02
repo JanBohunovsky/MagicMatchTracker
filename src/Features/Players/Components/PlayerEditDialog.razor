@@ -1,5 +1,5 @@
 @using MagicMatchTracker.Features.Players.Models
-@inherits StatefulComponentBase<MagicMatchTracker.Features.Players.Services.PlayerEditState>
+@inherits StatefulComponentBase<MagicMatchTracker.Features.Players.Services.PlayerEditDialogState>
 
 <FormDialog TModel="PlayerEditModel" Model="State.Model" OnSubmit="@(() => State.SaveAsync(CancellationToken))">
 	<div class="modal-header">

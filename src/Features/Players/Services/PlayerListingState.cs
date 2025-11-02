@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Features.Players.Services;
 
-public sealed class PlayerListingState(Database database, PlayerEditState editState) : StateBase
+public sealed class PlayerListingState(Database database, PlayerEditDialogState editDialogState) : StateBase
 {
 	private List<Player>? _players;
 
@@ -15,7 +15,7 @@ public sealed class PlayerListingState(Database database, PlayerEditState editSt
 			return;
 
 		_players = await database.Players
-			.OrderBy(p => p.CreatedAt)
+			.OrderBy(p => p.Name)
 			.ToListAsync(cancellationToken);
 	}
 
@@ -28,17 +28,19 @@ public sealed class PlayerListingState(Database database, PlayerEditState editSt
 		{
 			Name = "",
 		};
-		var success = await editState.ShowDialogAsync(player, cancellationToken);
+		var success = await editDialogState.ShowDialogAsync(player, cancellationToken);
 		if (!success)
 			return;
 
-		_players.Add(player);
+		_players = _players.Append(player)
+			.OrderBy(p => p.Name)
+			.ToList();
 		NotifyStateChanged();
 	}
 
 	public async Task EditPlayerAsync(Player player, CancellationToken cancellationToken = default)
 	{
-		var success = await editState.ShowDialogAsync(player, cancellationToken);
+		var success = await editDialogState.ShowDialogAsync(player, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}
