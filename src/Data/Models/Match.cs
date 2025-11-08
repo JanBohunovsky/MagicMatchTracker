@@ -25,6 +25,8 @@ public sealed class Match : IEntity
 	[MemberNotNullWhen(true, nameof(TimeEnded))]
 	public bool HasEnded => TimeEnded is not null;
 
+	public bool IsInProgress => HasStarted && !HasEnded;
+
 	public DateOnly GetEffectiveDate() => TimeStarted?.Date.ToDateOnly() ?? CreatedAt.Date.ToDateOnly();
 
 	public string GetTitle(bool includeDate = true)
@@ -68,11 +70,15 @@ public sealed class Match : IEntity
 
 		var sb = new StringBuilder();
 
-		if (duration.Hours > 0)
-			sb.Append($"{duration.Hours}h ");
+		if (duration.Hours > 1)
+			sb.Append($"{duration.Hours} hours ");
+		else if (duration.Hours > 0)
+			sb.Append($"{duration.Hours} hour ");
 
-		if (duration.Minutes > 0)
-			sb.Append($"{duration.Minutes}m ");
+		if (duration.Minutes > 1)
+			sb.Append($"{duration.Minutes} minutes ");
+		else if (duration.Minutes > 0)
+			sb.Append($"{duration.Minutes} minute ");
 
 		// Trim last space
 		if (sb.Length > 0)

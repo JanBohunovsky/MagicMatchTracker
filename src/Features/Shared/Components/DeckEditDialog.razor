@@ -91,7 +91,7 @@
 		_isSearchingForImage = true;
 
 		var imageUri = await ScryfallClient.GetCardArtUriAsync(State.Model.Commander, CancellationToken);
-		if (imageUri.IsNotEmpty())
+		if (imageUri is not null)
 			State.Model.ImageUri = imageUri;
 
 		_isSearchingForImage = false;

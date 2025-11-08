@@ -1,5 +1,13 @@
-<button class="card @(Deck is null ? "border-danger" : null) @(IsDisabled ? "disabled" : null)"
-        @onclick="OnClicked" disabled="@IsDisabled">
+@using System.Text
+@inherits StatefulComponentBase<MagicMatchTracker.Features.Matches.Services.MatchDetailState>
+
+@if (State.Match is null)
+	return;
+
+<button class="card @GetAdditionalCssClasses()"
+        @onclick="OnCardClickedAsync"
+        disabled="@(!IsInteractive)"
+        tabindex="@(IsInteractive ? "0" : "-1")">
 	@if (Deck is null)
 	{
 		<div class="card-img-top deck-cover deck-cover-placeholder icon filled">box_add</div>
@@ -33,6 +41,14 @@
 					Borrowed from <Avatar Player="Deck.Owner" Size="18"/> @Deck.Owner.Name
 				</span>
 			}
+
+			@if (Participation.Notes is not null)
+			{
+				<div class="d-flex gap-1 small mt-2">
+					<span class="icon small">sticky_note_2</span>
+					<span>@Participation.Notes</span>
+				</div>
+			}
 		</div>
 	}
 
@@ -41,25 +57,118 @@
 			<Avatar Player="Player" Size="20"/>
 			<span>@Player.Name</span>
 		</span>
-		@if (Deck is null)
-		{
-			<span class="icon text-danger" title="No deck selected">error</span>
-		}
+		<div class="d-flex align-items-center gap-1" @onclick:stopPropagation="true">
+			@if (!State.Match.HasStarted)
+			{
+				<button class="btn btn-ghost-primary btn-sm"
+				        @onclick="() => State.EditParticipationAsync(Participation, CancellationToken)">
+					@if (Participation.Notes is null)
+					{
+						<span class="icon">note_stack_add</span>
+						<span>Add notes</span>
+					}
+					else
+					{
+						<span class="icon">edit_note</span>
+						<span>Edit notes</span>
+					}
+				</button>
+			}
+
+			@if (Deck is null)
+			{
+				<span class="icon text-danger" title="No deck selected">error</span>
+			}
+		</div>
 	</div>
+
+	@if (_isOptionsPopupVisible)
+	{
+		<AutoClose class="position-absolute w-100 h-100 bg-body-secondary bg-opacity-50 center rounded-1"
+		           OnClose="@(() => _isOptionsPopupVisible = false)">
+			<ul class="dropdown-menu participation-options">
+				<li>
+					<button class="dropdown-item">
+						<span class="icon">trophy</span>
+						<span>Update: Winner</span>
+					</button>
+				</li>
+				<li>
+					<button class="dropdown-item">
+						<span class="icon">skull</span>
+						<span>Update: Died</span>
+					</button>
+				</li>
+				<li>
+					<button class="dropdown-item" @onclick="() => State.EditParticipationAsync(Participation, CancellationToken)">
+						@if (Participation.Notes is null)
+						{
+							<span class="icon">note_stack_add</span>
+							<span>Add notes</span>
+						}
+						else
+						{
+							<span class="icon">edit_note</span>
+							<span>Edit notes</span>
+						}
+					</button>
+				</li>
+				<li>
+					<button class="dropdown-item" @onclick="() => State.SelectDeckAsync(Participation, CancellationToken)">
+						<span class="icon">box</span>
+						<span>Change deck</span>
+					</button>
+				</li>
+			</ul>
+		</AutoClose>
+	}
 </button>
 
 @code {
 
+	private bool _isOptionsPopupVisible;
+
 	[Parameter, EditorRequired]
     public required MatchParticipation Participation { get; set; }
 
-	[Parameter]
-    public EventCallback OnClicked { get; set; }
-
-	[Parameter]
-    public bool IsDisabled { get; set; }
-
+	private bool IsInteractive => State is { IsBusy: false, Match.HasEnded: false };
 	private Player Player => Participation.Player;
 	private Deck? Deck => Participation.Deck;
+
+	private async Task OnCardClickedAsync()
+	{
+		if (State.Match is null)
+			return;
+
+		if (!State.Match.HasStarted)
+		{
+			await State.SelectDeckAsync(Participation, CancellationToken);
+			return;
+		}
+
+		if (State.Match.HasEnded)
+			return;
+
+		_isOptionsPopupVisible = !_isOptionsPopupVisible;
+	}
+
+	private string GetAdditionalCssClasses()
+	{
+		var sb = new StringBuilder();
+
+		if (!IsInteractive)
+			sb.Append(" disabled");
+		else if (State.Match is not null && State.Match.IsInProgress)
+			sb.Append(" position-relative");
+
+		if (Deck is null)
+			sb.Append(" border-danger");
+
+		// Remove the leading space
+		if (sb.Length > 0)
+			sb.Remove(0, 1);
+
+		return sb.ToString();
+	}
 
 }

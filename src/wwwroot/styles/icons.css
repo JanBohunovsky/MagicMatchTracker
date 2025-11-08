@@ -30,3 +30,7 @@
 .hover-icon-filled:focus-visible .icon {
 	--icon-fill: 1;
 }
+
+.icon.small {
+	font-size: 21px;
+}

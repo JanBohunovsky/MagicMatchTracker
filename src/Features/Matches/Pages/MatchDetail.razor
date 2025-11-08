@@ -92,16 +92,14 @@
 
 	@foreach (var participation in State.Match.Participations.OrderBy(mp => mp.Player.Name))
 	{
-		<MatchParticipationCard
-			Participation="participation"
-			OnClicked="@(() => OnParticipationClickedAsync(participation))"
-			IsDisabled="State.IsBusy || State.Match.HasEnded"/>
+		<MatchParticipationCard Participation="participation"/>
 	}
 </div>
 
 <MatchEditDialog/>
 <MatchPlayerSelectDialog/>
 <MatchDeckSelectDialog/>
+<MatchParticipationEditDialog/>
 
 @code {
 
@@ -113,20 +111,6 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await State.LoadMatchAsync(Id, CancellationToken);
-	}
-
-	private async Task OnParticipationClickedAsync(MatchParticipation participation)
-	{
-		if (State.Match is null)
-			return;
-
-		if (!State.Match.HasStarted)
-		{
-			await State.SelectDeckAsync(participation, CancellationToken);
-			return;
-		}
-
-		// TODO: Show update dialog for an active match
 	}
 
 }
