@@ -54,6 +54,7 @@
 }
 
 .btn-form-select {
+	text-align: start;
 	padding: 0.375rem 2.25rem 0.375rem 0.75rem;
 	width: 100%;
 	position: relative;
@@ -84,10 +85,28 @@
 	&:focus-visible {
 		border-color: #86b7fe
 	}
+	&:focus-visible.is-invalid {
+		border-color: var(--bs-form-invalid-border-color);
+		box-shadow: 0 0 0 .25rem rgba(var(--bs-danger-rgb),.25);
+	}
 
 	&:has(.floating-label) {
 		padding-top: 1.625rem;
 		padding-bottom: 0.625rem;
+	}
+
+	&.is-invalid {
+		border-color: var(--bs-form-invalid-border-color);
+		background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+		background-repeat: no-repeat;
+		background-position: right calc(.375em + .1875rem) center;
+		background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+	}
+	&.is-invalid:active {
+		border-color: var(--bs-form-invalid-border-color);
+	}
+	&.is-invalid::after {
+		right: calc(1em + 0.5rem);
 	}
 
 	&::after {

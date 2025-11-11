@@ -4,7 +4,7 @@
 @if (State.Match is null)
 	return;
 
-<button class="card @GetAdditionalCssClasses()"
+<button class="@GetCssClasses()"
         @onclick="OnCardClickedAsync"
         disabled="@(!IsInteractive)"
         tabindex="@(IsInteractive ? "0" : "-1")">
@@ -37,14 +37,14 @@
 
 			@if (Deck.Owner != Player)
 			{
-				<span class="card-subtitle fw-normal small text-muted d-flex align-items-center gap-1 mt-1">
+				<span class="card-subtitle fw-normal small text-muted text-content mt-1">
 					Borrowed from <Avatar Player="Deck.Owner" Size="18"/> @Deck.Owner.Name
 				</span>
 			}
 
 			@if (Participation.Notes is not null)
 			{
-				<div class="d-flex gap-1 small mt-2">
+				<div class="text-content small mt-2">
 					<span class="icon small">sticky_note_2</span>
 					<span>@Participation.Notes</span>
 				</div>
@@ -52,12 +52,21 @@
 		</div>
 	}
 
-	<div class="card-footer d-flex align-items-center justify-content-between gap-1">
-		<span class="d-flex align-items-center gap-1">
+	<div class="card-footer text-content justify-content-between">
+		<span class="text-content">
 			<Avatar Player="Player" Size="20"/>
 			<span>@Player.Name</span>
+			@if (Participation.IsWinner)
+			{
+				<span class="icon small filled">trophy</span>
+			}
+			else if (HasTerminalEvent)
+			{
+				// TODO: Show details of death
+				<span class="icon small">skull</span>
+			}
 		</span>
-		<div class="d-flex align-items-center gap-1" @onclick:stopPropagation="true">
+		<div class="text-content" @onclick:stopPropagation="true">
 			@if (!State.Match.HasStarted)
 			{
 				<button class="btn btn-ghost-primary btn-sm"
@@ -88,17 +97,36 @@
 		           OnClose="@(() => _isOptionsPopupVisible = false)">
 			<ul class="dropdown-menu participation-options">
 				<li>
-					<button class="dropdown-item">
-						<span class="icon">trophy</span>
-						<span>Update: Winner</span>
-					</button>
+					<span class="dropdown-header text-content py-1">
+						<Avatar Player="Player" Size="18"/>
+						<span>@Player.Name</span>
+					</span>
 				</li>
-				<li>
-					<button class="dropdown-item">
-						<span class="icon">skull</span>
-						<span>Update: Died</span>
-					</button>
-				</li>
+				@if (HasTerminalEvent)
+				{
+					var terminalEvent = Participation.Events.First(e => e.Type.IsTerminal());
+					<li>
+						<button class="dropdown-item" @onclick="() => State.EditEventAsync(terminalEvent, CancellationToken)">
+							<span class="icon">person_edit</span>
+							<span>Edit game state</span>
+						</button>
+					</li>
+				}
+				else
+				{
+					<li>
+						<button class="dropdown-item" @onclick="() => State.AddEventAsync(Participation, MatchEventType.PlayerWon, CancellationToken)">
+							<span class="icon">trophy</span>
+							<span>Update: Winner</span>
+						</button>
+					</li>
+					<li>
+						<button class="dropdown-item" @onclick="() => State.AddEventAsync(Participation, MatchEventType.PlayerLost, CancellationToken)">
+							<span class="icon">skull</span>
+							<span>Update: Died</span>
+						</button>
+					</li>
+				}
 				<li>
 					<button class="dropdown-item" @onclick="() => State.EditParticipationAsync(Participation, CancellationToken)">
 						@if (Participation.Notes is null)
@@ -131,9 +159,10 @@
 	[Parameter, EditorRequired]
     public required MatchParticipation Participation { get; set; }
 
-	private bool IsInteractive => State is { IsBusy: false, Match.HasEnded: false };
 	private Player Player => Participation.Player;
 	private Deck? Deck => Participation.Deck;
+	private bool IsInteractive => State is { IsBusy: false, Match.HasEnded: false };
+	private bool HasTerminalEvent => Participation.Events.Any(e => e.Type.IsTerminal());
 
 	private async Task OnCardClickedAsync()
 	{
@@ -146,15 +175,17 @@
 			return;
 		}
 
+		// TODO: Make the card interactive for finished matches and show some detailed info when interacted?
 		if (State.Match.HasEnded)
 			return;
 
 		_isOptionsPopupVisible = !_isOptionsPopupVisible;
 	}
 
-	private string GetAdditionalCssClasses()
+	private string GetCssClasses()
 	{
 		var sb = new StringBuilder();
+		sb.Append("card ");
 
 		if (!IsInteractive)
 			sb.Append(" disabled");
@@ -163,10 +194,6 @@
 
 		if (Deck is null)
 			sb.Append(" border-danger");
-
-		// Remove the leading space
-		if (sb.Length > 0)
-			sb.Remove(0, 1);
 
 		return sb.ToString();
 	}

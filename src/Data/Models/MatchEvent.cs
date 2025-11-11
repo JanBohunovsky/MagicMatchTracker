@@ -6,9 +6,9 @@ public sealed class MatchEvent : IEntity
 
 	public required MatchParticipation Participation { get; set; }
 
-	public required int Turn { get; set; }
+	public int? Turn { get; set; }
 
-	public DateTimeOffset Time { get; private init; } = DateTimeOffset.Now;
+	public DateTimeOffset? Time { get; set; }
 
 	public MatchEventType Type { get; set; }
 

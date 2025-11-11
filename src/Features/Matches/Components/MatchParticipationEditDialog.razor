@@ -7,7 +7,7 @@
 	FullscreenMode="DialogFullscreenMode.Never"
 	OnSubmit="@(() => State.SaveAsync(CancellationToken))">
 	<div class="modal-header">
-		<h5 class="modal-title d-flex align-items-center gap-1">
+		<h5 class="modal-title text-content">
 			Edit notes for <Avatar Player="context.Player" Size="24" class="ms-1"/> @context.Player.Name
 		</h5>
 		<button type="button" class="btn-close" aria-label="Close" @onclick="State.Cancel" disabled="@State.IsBusy"></button>

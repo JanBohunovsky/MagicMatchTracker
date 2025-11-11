@@ -17,13 +17,14 @@
 		</div>
 
 		<details>
-			<summary>Advanced</summary>
+			<summary class="user-select-none">Advanced</summary>
 
 			<div class="d-flex flex-column gap-3 mt-2">
 				<div>
 					<label for="matchNumber" class="form-label">Match Number</label>
 					<InputNumber min="1" step="1" @bind-Value="context.MatchNumber" class="form-control"
 					             id="matchNumber" disabled="@State.IsBusy"/>
+					<ValidationMessage For="() => context.MatchNumber" class="invalid-feedback"/>
 				</div>
 
 				<div>

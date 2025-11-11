@@ -49,6 +49,12 @@ h1:focus {
 	}
 }
 
+.text-content {
+	display: flex;
+	align-items: center;
+	column-gap: 0.25rem;
+}
+
 .center {
 	display: grid;
 	place-items: center;
@@ -67,6 +73,18 @@ h1:focus {
 
 .modal-dialog {
 	animation: dialog-entry 0.15s ease-out;
+	overflow: hidden;
+}
+
+/* Workaround for dropdowns in modals - not a perfect solution, but works well enough for now. */
+.modal:has(.dropdown-menu) {
+	.modal-body {
+		overflow: visible;
+	}
+
+	.modal-content {
+		overflow: visible;
+	}
 }
 
 .modal-backdrop {

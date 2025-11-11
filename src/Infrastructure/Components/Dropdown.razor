@@ -1,4 +1,4 @@
-<div class="dropdown">
+<div @attributes="AdditionalAttributes" class="@_containerClass">
 	@Button(this)
 
 	@if (IsMenuVisible)
@@ -12,11 +12,16 @@
 
 @code {
 
+	private string? _containerClass;
+
 	[Parameter, EditorRequired]
 	public required RenderFragment<Dropdown> Button { get; set; }
 
 	[Parameter, EditorRequired]
     public required RenderFragment<Dropdown> Menu { get; set; }
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
 	public bool IsMenuVisible { get; private set; }
 
@@ -36,6 +41,11 @@
 
 		IsMenuVisible = false;
 		StateHasChanged();
+	}
+
+	protected override void OnParametersSet()
+	{
+		_containerClass = AttributeUtilities.CombineClassNames(AdditionalAttributes, "dropdown");
 	}
 
 }

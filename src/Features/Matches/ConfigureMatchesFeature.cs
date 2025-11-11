@@ -13,6 +13,7 @@ public static class ConfigureMatchesFeature
 			.AddScoped<MatchPlayerSelectionDialogState>()
 			.AddScoped<MatchDeckSelectionDialogState>()
 			.AddScoped<MatchParticipationEditDialogState>()
+			.AddScoped<MatchEventEditDialogState>()
 			.AddScoped<MatchDeckSearchProvider>()
 			.AddScoped<MatchCreationHelper>();
 

@@ -62,6 +62,8 @@ public sealed class Match : IEntity
 
 		var endTime = TimeEnded ?? DateTimeOffset.Now;
 		var duration = endTime - TimeStarted.Value;
+		if (duration <= TimeSpan.Zero)
+			return null;
 
 		if (duration.TotalMinutes < 1)
 			return "Less than a minute";

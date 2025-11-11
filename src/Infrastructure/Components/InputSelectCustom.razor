@@ -1,0 +1,93 @@
+@typeparam TValue
+@using System.Diagnostics.CodeAnalysis
+@using System.Globalization
+@inherits InputBase<TValue>
+
+<Dropdown class="@GetFieldCssClass()">
+	<Button>
+		<button type="button" class="btn btn-form-select @GetFieldCssClass()" id="@_id"
+		        @onclick="context.ShowMenu"
+		        disabled="@_isDisabled">
+			@if (CurrentValue is null)
+			{
+				<span class="text-muted">@EmptyValueText</span>
+			}
+			else
+			{
+				@ItemTemplate(CurrentValue)
+			}
+		</button>
+	</Button>
+	<Menu>
+		<div class="dropdown-menu w-100 shadow">
+			@if (AllowEmptyValue)
+			{
+				<button type="button" class="dropdown-item py-2 user-select-none"
+				        @onclick="() => SelectValueAndClose(context, default)"
+				        disabled="@_isDisabled">
+					<span>@EmptyValueText</span>
+				</button>
+			}
+			@foreach (var value in ValuesProvider())
+			{
+				<button type="button" class="dropdown-item py-2 text-content active-icon-filled user-select-none @(EqualityComparer<TValue>.Default.Equals(value, CurrentValue) ? "active" : null)"
+				         @onclick="() => SelectValueAndClose(context, value)"
+				         disabled="@_isDisabled">
+					@ItemTemplate(value)
+				</button>
+			}
+		</div>
+	</Menu>
+</Dropdown>
+
+@code {
+
+	private string? _id;
+	private bool _isDisabled;
+
+	[Parameter, EditorRequired]
+    public required RenderFragment<TValue> ItemTemplate { get; set; }
+
+	[Parameter, EditorRequired]
+    public required Func<IEnumerable<TValue>> ValuesProvider { get; set; }
+
+	[Parameter]
+	public string EmptyValueText { get; set; } = "Select a value ...";
+
+	/// <summary>
+	/// Whether an empty value can be selected.
+	/// </summary>
+	/// <remarks>
+	/// <see cref="EmptyValueText"/> will be displayed if the current value is null regardless of what this property is set to.
+	/// </remarks>
+	[Parameter]
+	public bool AllowEmptyValue { get; set; } = true;
+
+	protected override void OnParametersSet()
+	{
+		_id = Convert.ToString(AdditionalAttributes?.GetValueOrDefault("id"), CultureInfo.InvariantCulture);
+		_isDisabled = Convert.ToBoolean(AdditionalAttributes?.GetValueOrDefault("disabled"), CultureInfo.InvariantCulture);
+	}
+
+	protected override string FormatValueAsString(TValue? value)
+	{
+		throw new NotSupportedException();
+	}
+
+	protected override bool TryParseValueFromString(string? value, [MaybeNullWhen(false)] out TValue result, [NotNullWhen(false)] out string? validationErrorMessage)
+	{
+		throw new NotSupportedException();
+	}
+
+	private void SelectValueAndClose(Dropdown dropdown, TValue? value)
+	{
+		CurrentValue = value;
+		dropdown.HideMenu();
+	}
+
+	private string GetFieldCssClass()
+	{
+		return EditContext.FieldCssClass(ValueExpression!);
+	}
+
+}

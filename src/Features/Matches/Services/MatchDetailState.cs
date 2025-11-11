@@ -10,6 +10,7 @@ public sealed class MatchDetailState(
 	MatchEditDialogState editDialogState,
 	MatchDeckSelectionDialogState deckSelectionDialogState,
 	MatchParticipationEditDialogState participationEditDialogState,
+	MatchEventEditDialogState eventEditDialogState,
 	MatchCreationHelper matchCreationHelper) : StateBase
 {
 	public bool IsLoading { get; private set; }
@@ -72,6 +73,31 @@ public sealed class MatchDetailState(
 			return;
 
 		var success = await participationEditDialogState.ShowDialogAsync(participation, cancellationToken);
+		if (success)
+			NotifyStateChanged();
+	}
+
+	public async Task AddEventAsync(MatchParticipation participation, MatchEventType eventType, CancellationToken cancellationToken = default)
+	{
+		if (Match is null)
+			return;
+
+		var matchEvent = new MatchEvent
+		{
+			Participation = participation,
+			Type = eventType,
+		};
+		var success = await eventEditDialogState.ShowDialogAsync(matchEvent, cancellationToken);
+		if (success)
+			NotifyStateChanged();
+	}
+
+	public async Task EditEventAsync(MatchEvent matchEvent, CancellationToken cancellationToken = default)
+	{
+		if (Match is null)
+			return;
+
+		var success = await eventEditDialogState.ShowDialogAsync(matchEvent, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}

@@ -11,6 +11,10 @@ public class MatchEventData
 
 public sealed class PlayerLostEventData : MatchEventData
 {
-	public required MatchParticipation Source { get; set; }
+	/// <summary>
+	/// The ID of a player from the same match who caused this player to lose.
+	/// </summary>
+	public required Guid KillerId { get; set; }
+
 	public required LoseCondition LoseCondition { get; set; }
 }

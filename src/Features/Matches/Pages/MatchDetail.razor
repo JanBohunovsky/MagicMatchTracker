@@ -46,22 +46,36 @@
 </div>
 
 <div class="d-flex flex-column gap-2 mb-3">
-	<div class="d-flex align-items-center gap-2">
+	<div class="text-content gap-2">
 		<span class="icon">calendar_today</span>
 		<span>@State.Match.GetEffectiveDate().ToString("dddd, dd MMMM yyyy")</span>
 	</div>
 	@if (State.Match.HasStarted)
 	{
-		<div class="d-flex align-items-center gap-2">
+		// TODO: Don't show this when the match has ended and it doesn't have turn count AND duration.
+		<div class="text-content gap-2">
 			<span class="icon">timer</span>
 			@if (!State.Match.HasEnded)
 			{
-				<span>In Progress &bull; @State.Match.GetFormattedDuration()</span>
+				var formattedDuration = State.Match.GetFormattedDuration();
+				<span>
+					<span>In Progress</span>
+					@if (formattedDuration is not null)
+					{
+						<span> &bull; @formattedDuration</span>
+					}
+				</span>
 			}
 			else
 			{
-				@* TODO: Show turn counter if available *@
-				<span>@State.Match.GetFormattedDuration()</span>
+				var totalTurns = GetTotalTurns();
+				<span>
+					@if (totalTurns is not null)
+					{
+						<span>@totalTurns turns &bull; </span>
+					}
+					<span>@State.Match.GetFormattedDuration()</span>
+				</span>
 			}
 		</div>
 	}
@@ -100,6 +114,7 @@
 <MatchPlayerSelectDialog/>
 <MatchDeckSelectDialog/>
 <MatchParticipationEditDialog/>
+<MatchEventEditDialog/>
 
 @code {
 
@@ -111,6 +126,19 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await State.LoadMatchAsync(Id, CancellationToken);
+	}
+
+	private int? GetTotalTurns()
+	{
+		if (State.Match is null || !State.Match.HasEnded)
+			return null;
+
+		return State.Match
+			.Participations
+			.SelectMany(mp => mp.Events)
+			.Select(e => e.Turn)
+			.DefaultIfEmpty(null)
+			.Max();
 	}
 
 }
