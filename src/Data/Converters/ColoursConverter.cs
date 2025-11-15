@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MagicMatchTracker.Data.Converters;
 
 [UsedImplicitly]
-public sealed class ColoursConverter : ValueConverter<Colours, string>
+public sealed class ColoursConverter() : ValueConverter<Colours, string>(
+	colours => Convert(colours),
+	value => ConvertBack(value),
+	new ConverterMappingHints(size: 5, unicode: false))
 {
-	public ColoursConverter() : base(c => Convert(c), s => ConvertBack(s), new ConverterMappingHints(size: 5, unicode: false)) { }
-
 	private static string Convert(Colours colours)
 	{
 		if (colours is Colours.Colourless)

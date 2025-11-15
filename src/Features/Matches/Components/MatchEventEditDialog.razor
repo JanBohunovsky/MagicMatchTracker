@@ -12,6 +12,7 @@
 		<button type="button" class="btn-close" aria-label="Close" @onclick="State.Cancel" disabled="@State.IsBusy"></button>
 	</div>
 	<div class="modal-body d-flex flex-column gap-3">
+		@* Event Type *@
 		<div>
 			<label for="eventType" class="form-label">Event type</label>
 			<InputSelectCustom id="eventType" disabled="@State.IsBusy"
@@ -25,6 +26,7 @@
 			</InputSelectCustom>
 		</div>
 
+		@* Turn *@
 		<div>
 			<label for="turn" class="form-label">Turn</label>
 			<InputNumber @bind-Value="context.Turn" class="form-control" id="turn" autofocus
@@ -33,23 +35,7 @@
 			<ValidationMessage For="() => context.Turn" class="invalid-feedback"/>
 		</div>
 
-		@if (context.Type is MatchEventType.PlayerLost)
-		{
-			<div>
-				<label for="killer" class="form-label">Killer</label>
-				<InputSelectCustom id="killer" disabled="@State.IsBusy"
-				                   @bind-Value="context.Killer"
-				                   EmptyValueText="Select a player..."
-				                   ValuesProvider="() => context.PlayersInMatch.OrderBy(p => p.Name)">
-					<ItemTemplate Context="player">
-						<Avatar Player="player" Size="24"/>
-						<span>@player.Name</span>
-					</ItemTemplate>
-				</InputSelectCustom>
-				<ValidationMessage For="() => context.Killer" class="invalid-feedback"/>
-			</div>
-		}
-
+		@* Kill Remaining Players (Winner only) *@
 		@if (context.Type is MatchEventType.PlayerWon && context.CanKillRemainingPlayers)
 		{
 			<div class="form-check">
@@ -82,6 +68,7 @@
 			</div>
 		}
 
+		@* Lose Condition *@
 		@if (context.Type is MatchEventType.PlayerLost || context.KillRemainingPlayers)
 		{
 			<div>
@@ -106,13 +93,33 @@
 			</div>
 		}
 
+		@* Killer (Lose only) *@
+		@if (context.Type is MatchEventType.PlayerLost && context.LoseCondition != LoseCondition.Concede)
+		{
+			<div>
+				<label for="killer" class="form-label">Killer</label>
+				<InputSelectCustom id="killer" disabled="@State.IsBusy"
+				                   @bind-Value="context.Killer"
+				                   EmptyValueText="Select a player..."
+				                   ValuesProvider="() => context.PlayersInMatch.OrderBy(p => p.Name)">
+					<ItemTemplate Context="player">
+						<Avatar Player="player" Size="24"/>
+						<span>@player.Name</span>
+					</ItemTemplate>
+				</InputSelectCustom>
+				<ValidationMessage For="() => context.Killer" class="invalid-feedback"/>
+			</div>
+		}
+
 		<div>
 			<label for="notes" class="form-label">Notes</label>
 			<InputTextArea @bind-Value="context.Notes" class="form-control" id="notes"
 			               rows="3"
 			               disabled="@State.IsBusy"/>
+			<ValidationMessage For="() => context.Notes" class="invalid-feedback"/>
 		</div>
 
+		@* Advanced *@
 		<details>
 			<summary class="user-select-none">Advanced</summary>
 			<div class="d-flex flex-column gap-3 mt-2">
@@ -120,7 +127,7 @@
 					<label for="time" class="form-label">Time</label>
 					<InputDate @bind-Value="context.Time" class="form-control" id="time"
 					           Type="InputDateType.DateTimeLocal" step="1"
-					           disabled="@State.IsBusy" />
+					           disabled="@State.IsBusy"/>
 					@if (State.IsNew)
 					{
 						<span class="small text-muted">Leave empty to use current time upon saving.</span>

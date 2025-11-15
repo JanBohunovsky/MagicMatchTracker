@@ -6,6 +6,7 @@ public sealed class MatchEventEditModel
 {
 	private readonly MatchEvent _model;
 	private readonly List<MatchParticipation> _participationsToKill;
+	private MatchEventType _type;
 
 	public Player Player => _model.Participation.Player;
 	public IReadOnlyList<Player> PlayersInMatch { get; }
@@ -13,12 +14,21 @@ public sealed class MatchEventEditModel
 	public IEnumerable<Player> PlayersToKill => _participationsToKill.Select(mp => mp.Player);
 	public bool CanKillRemainingPlayers => _participationsToKill.Count > 0;
 
-	public MatchEventType Type { get; set; }
+	public MatchEventType Type
+	{
+		get => _type;
+		set
+		{
+			ResetValuesForEvent(value);
+			_type = value;
+		}
+	}
+
 	public int? Turn { get; set; }
 	public DateTimeOffset? Time { get; set; }
 	public string Notes { get; set; }
-	public Player? Killer { get; set; }
 	public LoseCondition? LoseCondition { get; set; }
+	public Player? Killer { get; set; }
 
 	public bool KillRemainingPlayers { get; set; }
 
@@ -45,8 +55,8 @@ public sealed class MatchEventEditModel
 
 		if (model.Type is MatchEventType.PlayerLost && model.Data is PlayerLostEventData data)
 		{
-			Killer = PlayersInMatch.FirstOrDefault(p => p.Id == data.KillerId);
 			LoseCondition = data.LoseCondition;
+			Killer = PlayersInMatch.FirstOrDefault(p => p.Id == data.KillerId);
 		}
 	}
 
@@ -55,16 +65,80 @@ public sealed class MatchEventEditModel
 		if (Type.IsTerminal())
 			_model.Participation.IsWinner = Type is MatchEventType.PlayerWon;
 
-		// TODO: Implement
+		_model.Turn = Turn;
 
-		// TODO: Handle concede case
-		//  - Add validator?
-		//  - Automatically set the correct player? Upon save or upon edit?
-		//  - Disallow concede and "other" values for winner when "kill remaining players" is checked?
+		// For new events, use the current time if it's not set
+		if (_model.Id == Guid.Empty && Time is null)
+			_model.Time = DateTimeOffset.Now;
+		else
+			_model.Time = Time;
 
-		// TODO: Clear values when switching event type?
+		_model.Data = GetEventDataForCurrentPlayer();
+
+		if (Type is MatchEventType.PlayerWon && KillRemainingPlayers && LoseCondition is not null)
+		{
+			ApplyLoseEventToRemainingPlayers(LoseCondition.Value);
+		}
 
 		return _model;
+
+		MatchEventData? GetEventDataForCurrentPlayer()
+		{
+			if (Type is MatchEventType.PlayerLost && LoseCondition is not null && Killer is not null)
+			{
+				return new PlayerLostEventData
+				{
+					LoseCondition = LoseCondition.Value,
+					KillerId = LoseCondition.Value.GetActualKiller(victim: Player, killer: Killer).Id,
+					Notes = Notes.TrimToNull(),
+				};
+			}
+
+			var notes = Notes.TrimToNull();
+			if (notes is not null)
+			{
+				return new MatchEventData
+				{
+					Notes = notes,
+				};
+			}
+
+			return null;
+		}
+
+		void ApplyLoseEventToRemainingPlayers(LoseCondition loseCondition)
+		{
+			foreach (var participation in _participationsToKill)
+			{
+				var matchEvent = new MatchEvent
+				{
+					Participation = participation,
+					Turn = _model.Turn,
+					Time = _model.Time,
+					Type = MatchEventType.PlayerLost,
+					Data = new PlayerLostEventData
+					{
+						LoseCondition = loseCondition,
+						KillerId = loseCondition.GetActualKiller(victim: participation.Player, killer: Player).Id,
+					},
+				};
+				participation.Events.Add(matchEvent);
+			}
+		}
+	}
+
+	private void ResetValuesForEvent(MatchEventType eventType)
+	{
+		if (eventType is MatchEventType.PlayerLost)
+		{
+			LoseCondition = null;
+			Killer = null;
+		}
+		else if (eventType is MatchEventType.PlayerWon)
+		{
+			KillRemainingPlayers = false;
+			LoseCondition = null;
+		}
 	}
 }
 
@@ -83,7 +157,7 @@ public sealed class MatchEventEditModelValidator : AbstractValidator<MatchEventE
 
 		RuleFor(m => m.Killer)
 			.NotEmpty()
-			.When(m => m.Type is MatchEventType.PlayerLost && m.LoseCondition is not null)
+			.When(m => m.Type is MatchEventType.PlayerLost && m.LoseCondition is not null && m.LoseCondition != LoseCondition.Concede)
 			.WithMessage("Killer is required when lose condition is selected");
 
 		RuleFor(m => m.LoseCondition)
@@ -95,5 +169,10 @@ public sealed class MatchEventEditModelValidator : AbstractValidator<MatchEventE
 			.NotEmpty()
 			.When(m => m.Type is MatchEventType.PlayerWon && m.KillRemainingPlayers)
 			.WithMessage("Lose condition is required when kill remaining players is selected");
+
+		RuleFor(m => m.Notes)
+			.NotEmpty()
+			.When(m => m.LoseCondition == LoseCondition.Other && (m.Type is MatchEventType.PlayerLost || m.KillRemainingPlayers))
+			.WithMessage("Describe the lose condition");
 	}
 }

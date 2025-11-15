@@ -10,7 +10,7 @@ public enum LoseCondition
 	WinEffect,
 	LoseEffect,
 	Concede,
-	Other,
+	Other = byte.MaxValue,
 }
 
 public static class LoseConditionExtensions
@@ -41,5 +41,12 @@ public static class LoseConditionExtensions
 		LoseCondition.Concede => "The player has conceded",
 		LoseCondition.Other => "Lost in a way that's not covered by the other conditions",
 		_ => throw new ArgumentException($"Invalid lose condition: {condition}", nameof(condition)),
+	};
+
+	public static Player GetActualKiller(this LoseCondition condition, Player victim, Player killer) => condition switch
+	{
+		// The player who conceded is always treated as the killer (of themselves)
+		LoseCondition.Concede => victim,
+		_ => killer,
 	};
 }
