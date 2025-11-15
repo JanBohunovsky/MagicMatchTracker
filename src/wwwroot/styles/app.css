@@ -63,6 +63,9 @@ h1:focus {
 .m-0\.5 {
 	margin: 0.125rem !important;
 }
+.ms-0\.5 {
+	margin-left: 0.125rem !important;
+}
 .me-0\.5 {
 	margin-right: 0.125rem !important;
 }

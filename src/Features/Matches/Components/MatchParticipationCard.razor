@@ -51,44 +51,60 @@
 			}
 		</div>
 	}
+	else if (Participation.Notes is not null)
+	{
+		<div class="card-body">
+			<div class="text-content small">
+				<span class="icon small">sticky_note_2</span>
+				<span>@Participation.Notes</span>
+			</div>
+		</div>
+	}
 
 	<div class="card-footer text-content justify-content-between">
 		<span class="text-content">
 			<Avatar Player="Player" Size="20"/>
 			<span>@Player.Name</span>
-			@if (Participation.IsWinner)
-			{
-				<span class="icon small filled">trophy</span>
-			}
-			else if (HasTerminalEvent)
-			{
-				// TODO: Show details of death
-				<span class="icon small">skull</span>
-			}
 		</span>
-		<div class="text-content" @onclick:stopPropagation="true">
-			@if (!State.Match.HasStarted)
-			{
-				<button class="btn btn-ghost-primary btn-sm"
-				        @onclick="() => State.EditParticipationAsync(Participation, CancellationToken)">
-					@if (Participation.Notes is null)
-					{
-						<span class="icon">note_stack_add</span>
-						<span>Add notes</span>
-					}
-					else
-					{
-						<span class="icon">edit_note</span>
-						<span>Edit notes</span>
-					}
-				</button>
-			}
 
-			@if (Deck is null)
-			{
-				<span class="icon text-danger" title="No deck selected">error</span>
-			}
-		</div>
+		@if (!State.Match.HasStarted)
+		{
+			<div class="text-content" @onclick:stopPropagation="true">
+				<button class="btn btn-ghost-primary btn-sm"
+				        @onclick="() => State.EditParticipationDetailsAsync(Participation, CancellationToken)">
+					<span class="icon">sticky_note_2</span>
+					<span>Edit notes</span>
+				</button>
+			</div>
+		}
+		else if (Participation.EndState is not null)
+		{
+			var endState = Participation.EndState;
+			@* TODO: Show turn? *@
+			<div class="text-content small">
+				@if (endState.IsWinner)
+				{
+					<span class="icon small filled">trophy</span>
+					<span>Winner</span>
+				}
+				else if (endState.LoseCondition is not null)
+				{
+					<LoseConditionIcon Value="endState.LoseCondition.Value" class="small"/>
+						<span class="text-nowrap">@endState.LoseCondition.Value.GetDisplayName()</span>
+						@if (endState.Killer is not null)
+					{
+						<span>by</span>
+						<Avatar Player="endState.Killer" Size="18" class="ms-0.5"/>
+						<span>@endState.Killer.Name</span>
+					}
+				}
+				else
+				{
+					<span class="icon small">skull</span>
+					<span>Lost</span>
+				}
+			</div>
+		}
 	</div>
 
 	@if (_isOptionsPopupVisible)
@@ -102,43 +118,31 @@
 						<span>@Player.Name</span>
 					</span>
 				</li>
-				@if (HasTerminalEvent)
-				{
-					var terminalEvent = Participation.Events.First(e => e.Type.IsTerminal());
-					<li>
-						<button class="dropdown-item" @onclick="() => State.EditEventAsync(terminalEvent, CancellationToken)">
-							<span class="icon">person_edit</span>
-							<span>Edit game state</span>
-						</button>
-					</li>
-				}
-				else
-				{
-					<li>
-						<button class="dropdown-item" @onclick="() => State.AddEventAsync(Participation, MatchEventType.PlayerWon, CancellationToken)">
-							<span class="icon">trophy</span>
-							<span>Update: Winner</span>
-						</button>
-					</li>
-					<li>
-						<button class="dropdown-item" @onclick="() => State.AddEventAsync(Participation, MatchEventType.PlayerLost, CancellationToken)">
-							<span class="icon">skull</span>
-							<span>Update: Died</span>
-						</button>
-					</li>
-				}
 				<li>
-					<button class="dropdown-item" @onclick="() => State.EditParticipationAsync(Participation, CancellationToken)">
-						@if (Participation.Notes is null)
+					<button class="dropdown-item" @onclick="() => State.EditParticipationEndStateAsync(Participation, CancellationToken)">
+						@if (Participation.EndState is null)
 						{
-							<span class="icon">note_stack_add</span>
-							<span>Add notes</span>
+							<span class="icon">swords</span>
+							<span>Set end state</span>
 						}
 						else
 						{
-							<span class="icon">edit_note</span>
-							<span>Edit notes</span>
+							@if (Participation.EndState.IsWinner)
+							{
+								<span class="icon">trophy</span>
+							}
+							else
+							{
+								<span class="icon">skull</span>
+							}
+							<span>Edit end state</span>
 						}
+					</button>
+				</li>
+				<li>
+					<button class="dropdown-item" @onclick="() => State.EditParticipationDetailsAsync(Participation, CancellationToken)">
+						<span class="icon">sticky_note_2</span>
+						<span>Edit notes</span>
 					</button>
 				</li>
 				<li>
@@ -162,7 +166,6 @@
 	private Player Player => Participation.Player;
 	private Deck? Deck => Participation.Deck;
 	private bool IsInteractive => State is { IsBusy: false, Match.HasEnded: false };
-	private bool HasTerminalEvent => Participation.Events.Any(e => e.Type.IsTerminal());
 
 	private async Task OnCardClickedAsync()
 	{
@@ -191,9 +194,6 @@
 			sb.Append(" disabled");
 		else if (State.Match is not null && State.Match.IsInProgress)
 			sb.Append(" position-relative");
-
-		if (Deck is null)
-			sb.Append(" border-danger");
 
 		return sb.ToString();
 	}

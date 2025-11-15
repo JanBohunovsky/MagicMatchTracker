@@ -23,6 +23,8 @@ public sealed class MatchParticipationConfiguration : IEntityTypeConfiguration<M
 			.WithMany(d => d.Matches)
 			.OnDelete(DeleteBehavior.Restrict);
 
+		builder.OwnsOne<MatchParticipationEndState>(mp => mp.EndState);
+
 		builder.Navigation(mp => mp.Match)
 			.AutoInclude();
 

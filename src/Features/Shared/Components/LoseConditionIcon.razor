@@ -1,0 +1,35 @@
+@if (_icon is not null)
+{
+	<span @attributes="AdditionalAttributes" class="@_cssClass">@_icon</span>
+}
+
+@code {
+
+	private string? _cssClass;
+	private string? _icon;
+
+	[Parameter, EditorRequired]
+    public required LoseCondition Value { get; set; }
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		_cssClass = AttributeUtilities.CombineClassNames(AdditionalAttributes, "icon");
+		_icon = Value switch
+		{
+			LoseCondition.CombatDamage => "swords",
+			LoseCondition.LifeLoss => "mode_heat",
+			LoseCondition.CommanderDamage => "crown",
+			LoseCondition.DeckedOut => "cyclone",
+			LoseCondition.Poison => "water_drop",
+			LoseCondition.WinEffect => "star_shine",
+			LoseCondition.LoseEffect => "bomb",
+			LoseCondition.Concede => "door_back",
+			LoseCondition.Other => "sticky_note_2",
+			_ => null,
+		};
+	}
+
+}

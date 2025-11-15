@@ -18,7 +18,7 @@ public static class LoseConditionExtensions
 	public static string GetDisplayName(this LoseCondition condition) => condition switch
 	{
 		LoseCondition.CombatDamage => "Combat damage",
-		LoseCondition.LifeLoss => "Non-combat damage / loss of life",
+		LoseCondition.LifeLoss => "Loss of life",
 		LoseCondition.CommanderDamage => "Commander damage",
 		LoseCondition.DeckedOut => "Decked out",
 		LoseCondition.Poison => "Poison",
@@ -43,10 +43,8 @@ public static class LoseConditionExtensions
 		_ => throw new ArgumentException($"Invalid lose condition: {condition}", nameof(condition)),
 	};
 
-	public static Player GetActualKiller(this LoseCondition condition, Player victim, Player killer) => condition switch
+	public static bool HasKiller(this LoseCondition condition)
 	{
-		// The player who conceded is always treated as the killer (of themselves)
-		LoseCondition.Concede => victim,
-		_ => killer,
-	};
+		return condition is not LoseCondition.Concede;
+	}
 }

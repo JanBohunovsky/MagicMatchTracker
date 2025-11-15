@@ -104,7 +104,33 @@
 		</button>
 	}
 
-	@foreach (var participation in State.Match.Participations.OrderBy(mp => mp.Player.Name))
+	@{
+		var showSplitter = State.Match.Participations.Any(mp => mp.EndState is null)
+			&& State.Match.Participations.Any(mp => mp.EndState is not null);
+
+		var inProgressParticipations = State.Match
+			.Participations
+			.Where(mp => mp.EndState is null)
+			.OrderBy(mp => mp.Player.Name);
+
+		var endedParticipations = State.Match
+			.Participations
+			.Where(mp => mp.EndState is not null)
+			.OrderByDescending(mp => mp.EndState!.IsWinner)
+			.ThenBy(mp => mp.Player.Name);
+	}
+
+	@foreach (var participation in inProgressParticipations)
+	{
+		<MatchParticipationCard Participation="participation"/>
+	}
+
+	@if (showSplitter)
+	{
+		<hr class="my-1"/>
+	}
+
+	@foreach (var participation in endedParticipations)
 	{
 		<MatchParticipationCard Participation="participation"/>
 	}
@@ -113,8 +139,8 @@
 <MatchEditDialog/>
 <MatchPlayerSelectDialog/>
 <MatchDeckSelectDialog/>
-<MatchParticipationEditDialog/>
-<MatchEventEditDialog/>
+<MatchParticipationDetailsEditDialog/>
+<MatchParticipationEndStateEditDialog/>
 
 @code {
 
@@ -135,7 +161,7 @@
 
 		return State.Match
 			.Participations
-			.SelectMany(mp => mp.Events)
+			.Choose(mp => mp.EndState)
 			.Select(e => e.Turn)
 			.DefaultIfEmpty(null)
 			.Max();

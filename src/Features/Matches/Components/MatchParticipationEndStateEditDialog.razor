@@ -1,8 +1,8 @@
 @using MagicMatchTracker.Features.Matches.Models
-@inherits StatefulComponentBase<MagicMatchTracker.Features.Matches.Services.MatchEventEditDialogState>
+@inherits StatefulComponentBase<MagicMatchTracker.Features.Matches.Services.MatchParticipationEndStateEditDialogState>
 
 <FormDialog
-	TModel="MatchEventEditModel"
+	TModel="MatchParticipationEndStateEditModel"
 	Model="State.Model"
 	OnSubmit="@(() => State.SaveAsync(CancellationToken))">
 	<div class="modal-header">
@@ -12,16 +12,24 @@
 		<button type="button" class="btn-close" aria-label="Close" @onclick="State.Cancel" disabled="@State.IsBusy"></button>
 	</div>
 	<div class="modal-body d-flex flex-column gap-3">
-		@* Event Type *@
+		@* End state *@
 		<div>
-			<label for="eventType" class="form-label">Event type</label>
-			<InputSelectCustom id="eventType" disabled="@State.IsBusy"
-			                   @bind-Value="context.Type"
+			<label for="isWinner" class="form-label">End state</label>
+			<InputSelectCustom id="isWinner" disabled="@State.IsBusy"
+			                   @bind-Value="context.IsWinner"
 			                   AllowEmptyValue="false"
-			                   ValuesProvider="GetEventTypeValues">
-				<ItemTemplate Context="eventType">
-					<span class="icon">@GetEventTypeIcon(eventType)</span>
-					<span>@eventType.GetDisplayName()</span>
+			                   ValuesProvider="GetEndStateValues">
+				<ItemTemplate Context="isWinner">
+					@if (isWinner)
+					{
+						<span class="icon">trophy</span>
+						<span>Player won</span>
+					}
+					else
+					{
+						<span class="icon">skull</span>
+						<span>Player lost</span>
+					}
 				</ItemTemplate>
 			</InputSelectCustom>
 		</div>
@@ -36,7 +44,7 @@
 		</div>
 
 		@* Kill Remaining Players (Winner only) *@
-		@if (context.Type is MatchEventType.PlayerWon && context.CanKillRemainingPlayers)
+		@if (context.IsWinner && context.CanKillRemainingPlayers)
 		{
 			<div class="form-check">
 				<InputCheckbox @bind-Value="context.KillRemainingPlayers" class="form-check-input" id="killRemainingPlayers"
@@ -69,7 +77,7 @@
 		}
 
 		@* Lose Condition *@
-		@if (context.Type is MatchEventType.PlayerLost || context.KillRemainingPlayers)
+		@if (!context.IsWinner || context.KillRemainingPlayers)
 		{
 			<div>
 				<label for="loseCondition" class="form-label">Lose condition</label>
@@ -81,7 +89,7 @@
 				                   ValuesProvider="GetLoseConditionValues">
 					<ItemTemplate Context="loseCondition">
 						<div class="text-content gap-2">
-							<span class="icon">@GetLoseConditionIcon(loseCondition!.Value)</span>
+							<LoseConditionIcon Value="loseCondition!.Value"/>
 							<div class="d-flex flex-column">
 								<span>@loseCondition.Value.GetDisplayName()</span>
 								<span class="small opacity-75 text-wrap">@loseCondition.Value.GetDescription()</span>
@@ -94,7 +102,7 @@
 		}
 
 		@* Killer (Lose only) *@
-		@if (context.Type is MatchEventType.PlayerLost && context.LoseCondition != LoseCondition.Concede)
+		@if (!context.IsWinner && context.LoseCondition?.HasKiller() is true)
 		{
 			<div>
 				<label for="killer" class="form-label">Killer</label>
@@ -116,7 +124,6 @@
 			<InputTextArea @bind-Value="context.Notes" class="form-control" id="notes"
 			               rows="3"
 			               disabled="@State.IsBusy"/>
-			<ValidationMessage For="() => context.Notes" class="invalid-feedback"/>
 		</div>
 
 		@* Advanced *@
@@ -150,33 +157,12 @@
 
 @code {
 
-	private string Title => State.IsNew ? "New event" : "Edit event";
+	private string Title => State.IsNew ? "Set end state" : "Edit end state";
 
-	private string? GetEventTypeIcon(MatchEventType eventType) => eventType switch
+	private IEnumerable<bool> GetEndStateValues()
 	{
-		MatchEventType.PlayerLost => "skull",
-		MatchEventType.PlayerWon => "trophy",
-		_ => null,
-	};
-
-	private string? GetLoseConditionIcon(LoseCondition loseCondition) => loseCondition switch
-	{
-		LoseCondition.CombatDamage => "swords",
-		LoseCondition.LifeLoss => "mode_heat",
-		LoseCondition.CommanderDamage => "crown",
-		LoseCondition.DeckedOut => "cyclone",
-		LoseCondition.Poison => "water_drop",
-		LoseCondition.WinEffect => "star_shine",
-		LoseCondition.LoseEffect => "skull",
-		LoseCondition.Concede => "door_back",
-		LoseCondition.Other => "sticky_note_2",
-		_ => null,
-	};
-
-	private IEnumerable<MatchEventType> GetEventTypeValues()
-	{
-		yield return MatchEventType.PlayerLost;
-		yield return MatchEventType.PlayerWon;
+		yield return false;
+		yield return true;
 	}
 
 	private IEnumerable<LoseCondition?> GetLoseConditionValues()

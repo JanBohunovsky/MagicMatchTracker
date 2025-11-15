@@ -9,7 +9,6 @@ public sealed class Database(DbContextOptions<Database> options) : DbContext(opt
 	public DbSet<Deck> Decks => Set<Deck>();
 	public DbSet<Match> Matches => Set<Match>();
 	public DbSet<MatchParticipation> MatchParticipations => Set<MatchParticipation>();
-	public DbSet<MatchEvent> MatchEvents => Set<MatchEvent>();
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{

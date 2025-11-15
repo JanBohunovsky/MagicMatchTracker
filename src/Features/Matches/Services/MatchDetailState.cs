@@ -9,8 +9,8 @@ public sealed class MatchDetailState(
 	MatchPlayerSelectionDialogState playerSelectionDialogState,
 	MatchEditDialogState editDialogState,
 	MatchDeckSelectionDialogState deckSelectionDialogState,
-	MatchParticipationEditDialogState participationEditDialogState,
-	MatchEventEditDialogState eventEditDialogState,
+	MatchParticipationDetailsEditDialogState participationDetailsEditDialogState,
+	MatchParticipationEndStateEditDialogState participationEndStateEditDialogState,
 	MatchCreationHelper matchCreationHelper) : StateBase
 {
 	public bool IsLoading { get; private set; }
@@ -31,7 +31,6 @@ public sealed class MatchDetailState(
 
 		Match = await database.Matches
 			.Include(m => m.Participations)
-			.ThenInclude(mp => mp.Events)
 			.FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
 
 		ExecuteWithStateChange(() => IsLoading = false);
@@ -67,37 +66,22 @@ public sealed class MatchDetailState(
 			NotifyStateChanged();
 	}
 
-	public async Task EditParticipationAsync(MatchParticipation participation, CancellationToken cancellationToken = default)
+	public async Task EditParticipationDetailsAsync(MatchParticipation participation, CancellationToken cancellationToken = default)
 	{
 		if (Match is null)
 			return;
 
-		var success = await participationEditDialogState.ShowDialogAsync(participation, cancellationToken);
+		var success = await participationDetailsEditDialogState.ShowDialogAsync(participation, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}
 
-	public async Task AddEventAsync(MatchParticipation participation, MatchEventType eventType, CancellationToken cancellationToken = default)
+	public async Task EditParticipationEndStateAsync(MatchParticipation participation, CancellationToken cancellationToken = default)
 	{
 		if (Match is null)
 			return;
 
-		var matchEvent = new MatchEvent
-		{
-			Participation = participation,
-			Type = eventType,
-		};
-		var success = await eventEditDialogState.ShowDialogAsync(matchEvent, cancellationToken);
-		if (success)
-			NotifyStateChanged();
-	}
-
-	public async Task EditEventAsync(MatchEvent matchEvent, CancellationToken cancellationToken = default)
-	{
-		if (Match is null)
-			return;
-
-		var success = await eventEditDialogState.ShowDialogAsync(matchEvent, cancellationToken);
+		var success = await participationEndStateEditDialogState.ShowDialogAsync(participation, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}

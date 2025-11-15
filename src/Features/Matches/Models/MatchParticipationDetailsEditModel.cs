@@ -1,6 +1,6 @@
 namespace MagicMatchTracker.Features.Matches.Models;
 
-public sealed class MatchParticipationEditModel(MatchParticipation model)
+public sealed class MatchParticipationDetailsEditModel(MatchParticipation model)
 {
 	public string Notes { get; set; } = model.Notes ?? string.Empty;
 
