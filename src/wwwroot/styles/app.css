@@ -3,6 +3,10 @@
 @import "mana.css";
 @import "buttons.css";
 
+#dotnet-compile-error:empty {
+	display: none;
+}
+
 :root {
 	--bs-font-sans-serif: "Noto Sans", system-ui, sans-serif;
 	--bs-font-monospace: "Noto Sans Mono", ui-monospace, monospace;

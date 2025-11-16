@@ -8,7 +8,7 @@
 
 <button class="btn btn-primary btn-fab"
         disabled="@(State.Matches is null || State.IsBusy)"
-        @onclick="() => State.AddNewMatchAsync(CancellationToken)">
+        @onclick="() => State.AddNewMatchAsync(cancellationToken: CancellationToken)">
 	@if (State.IsBusy)
 	{
 		<span class="spinner-border spinner-border-sm m-1" aria-hidden="true"></span>
@@ -35,8 +35,16 @@
 <div class="list-group list-group-flush">
 	@foreach (var match in State.Matches)
 	{
-		<a class="list-group-item list-group-item-action" href="/matches/@match.Id">
-			@match.GetTitle()
+		<a class="list-group-item list-group-item-action text-content" href="/matches/@match.Id">
+			<span>@match.GetTitle()</span>
+			@if (!match.HasStarted)
+			{
+				<span class="icon small">draft</span>
+			}
+			@if (match.IsInProgress)
+			{
+				<span class="icon small">timer</span>
+			}
 		</a>
 	}
 </div>

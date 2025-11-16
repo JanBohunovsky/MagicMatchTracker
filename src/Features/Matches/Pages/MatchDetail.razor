@@ -17,11 +17,11 @@
 	return;
 }
 
-@if (!State.Match.HasStarted)
+@if (!State.Match.HasStarted && State.Match.Participations.Count > 0)
 {
 	<button class="btn btn-primary btn-fab"
 	        @onclick="@(() => State.StartMatchAsync(CancellationToken))"
-	        disabled="@(!State.CanStartMatch || State.IsBusy)">
+	        disabled="@State.IsBusy">
 		@if (State.IsBusy)
 		{
 			<span class="spinner-border spinner-border-sm m-1" aria-hidden="true"></span>
@@ -31,6 +31,22 @@
 			<span class="icon filled" aria-hidden="true">swords</span>
 		}
 		<span>Start match</span>
+	</button>
+}
+else if (State.Match.HasEnded)
+{
+	<button class="btn btn-primary btn-fab"
+	        @onclick="@(() => State.PlayAgainAsync(CancellationToken))"
+	        disabled="@State.IsBusy">
+		@if (State.IsBusy)
+		{
+			<span class="spinner-border spinner-border-sm m-1" aria-hidden="true"></span>
+		}
+		else
+		{
+			<span class="icon filled">swords</span>
+		}
+		<span>Play again</span>
 	</button>
 }
 
@@ -50,41 +66,32 @@
 		<span class="icon">calendar_today</span>
 		<span>@State.Match.GetEffectiveDate().ToString("dddd, dd MMMM yyyy")</span>
 	</div>
-	@if (State.Match.HasStarted)
+	@{
+		var matchDurationDetails = GetMatchDurationDetails();
+	}
+	@if (matchDurationDetails is not null)
 	{
-		// TODO: Don't show this when the match has ended and it doesn't have turn count AND duration.
 		<div class="text-content gap-2">
 			<span class="icon">timer</span>
-			@if (!State.Match.HasEnded)
-			{
-				var formattedDuration = State.Match.GetFormattedDuration();
-				<span>
-					<span>In Progress</span>
-					@if (formattedDuration is not null)
-					{
-						<span> &bull; @formattedDuration</span>
-					}
-				</span>
-			}
-			else
-			{
-				var totalTurns = GetTotalTurns();
-				<span>
-					@if (totalTurns is not null)
-					{
-						<span>@totalTurns turns &bull; </span>
-					}
-					<span>@State.Match.GetFormattedDuration()</span>
-				</span>
-			}
+			<span>@matchDurationDetails</span>
 		</div>
 	}
 	@if (State.Match.Notes is not null)
 	{
-		<div class="d-flex gap-2">
+		<div class="text-content gap-2">
 			<span class="icon">sticky_note_2</span>
 			<span>@State.Match.Notes</span>
 		</div>
+	}
+	@if (State.ShowErrors)
+	{
+		@foreach (var error in State.GetErrors())
+		{
+			<div class="text-content gap-2 text-danger">
+				<span class="icon">error</span>
+				<span>@error.Message</span>
+			</div>
+		}
 	}
 </div>
 
@@ -103,36 +110,34 @@
 			<span>@buttonCaption</span>
 		</button>
 	}
-
-	@{
-		var showSplitter = State.Match.Participations.Any(mp => mp.EndState is null)
-			&& State.Match.Participations.Any(mp => mp.EndState is not null);
-
-		var inProgressParticipations = State.Match
-			.Participations
-			.Where(mp => mp.EndState is null)
-			.OrderBy(mp => mp.Player.Name);
-
-		var endedParticipations = State.Match
-			.Participations
-			.Where(mp => mp.EndState is not null)
-			.OrderByDescending(mp => mp.EndState!.IsWinner)
-			.ThenBy(mp => mp.Player.Name);
-	}
-
-	@foreach (var participation in inProgressParticipations)
+	else if (!State.Match.HasEnded && State.Match.Participations.All(mp => mp.EndState is not null))
 	{
-		<MatchParticipationCard Participation="participation"/>
+		@* End match button *@
+		<button class="btn btn-primary w-100 justify-content-center"
+		        @onclick="@(() => State.EndMatchAsync(CancellationToken))"
+		        disabled="@State.IsBusy">
+			<span class="icon filled">trophy</span>
+			<span>End the match</span>
+		</button>
 	}
 
-	@if (showSplitter)
+	@foreach (var participation in ParticipationsInProgress)
+	{
+		<MatchParticipationCard
+			Participation="participation"
+			HasError="HasParticipationError(participation)"/>
+	}
+
+	@if (HasMixedParticipations)
 	{
 		<hr class="my-1"/>
 	}
 
-	@foreach (var participation in endedParticipations)
+	@foreach (var participation in ParticipationsEnded)
 	{
-		<MatchParticipationCard Participation="participation"/>
+		<MatchParticipationCard
+			Participation="participation"
+			HasError="HasParticipationError(participation)"/>
 	}
 </div>
 
@@ -144,14 +149,74 @@
 
 @code {
 
+	private Guid _id;
+
 	private string PageTitle => State.Match?.GetTitle() ?? "Match Detail";
+
+	private bool HasMixedParticipations => State.Match is not null
+		&& State.Match.Participations.Any(mp => mp.EndState is null)
+		&& State.Match.Participations.Any(mp => mp.EndState is not null);
+
+	private IEnumerable<MatchParticipation> ParticipationsInProgress => State.Match?
+		.Participations
+		.Where(mp => mp.EndState is null)
+		.OrderBy(mp => mp.Player.Name) ?? Enumerable.Empty<MatchParticipation>();
+
+	private IEnumerable<MatchParticipation> ParticipationsEnded => State.Match?
+		.Participations
+		.Where(mp => mp.EndState is not null)
+		.OrderByDescending(mp => mp.EndState!.IsWinner)
+		.ThenByDescending(mp => mp.EndState!.Turn)
+		.ThenBy(mp => mp.Player.Name) ?? Enumerable.Empty<MatchParticipation>();
 
 	[Parameter, EditorRequired]
 	public Guid Id { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
+		_id = Id;
 		await State.LoadMatchAsync(Id, CancellationToken);
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (_id == Id)
+			return;
+
+		_id = Id;
+		await State.LoadMatchAsync(Id, CancellationToken);
+	}
+
+	private bool HasParticipationError(MatchParticipation participation)
+	{
+		if (!State.ShowErrors)
+			return false;
+
+		return State.GetErrors()
+			.Any(e => e.AffectedParticipations.Contains(participation));
+	}
+
+	private string? GetMatchDurationDetails()
+	{
+		if (State.Match is null || !State.Match.HasStarted)
+			return null;
+
+		var details = new List<string>();
+		if (State.Match.IsInProgress)
+			details.Add("In Progress");
+
+		var totalTurns = GetTotalTurns();
+		if (totalTurns is not null)
+			details.Add($"{totalTurns} turns");
+
+		var formattedDuration = State.Match.GetFormattedDuration();
+		if (formattedDuration is not null)
+			details.Add(formattedDuration);
+
+		if (details.Count == 0)
+			return null;
+
+		return details.JoinToString(" • ");
 	}
 
 	private int? GetTotalTurns()

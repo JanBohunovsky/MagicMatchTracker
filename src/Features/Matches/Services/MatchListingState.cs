@@ -21,29 +21,45 @@ public sealed class MatchListingState(
 
 		_matches = await database.Matches
 			.OrderByDescending(m => m.TimeStarted ?? m.CreatedAt)
-			.ToListAsync(cancellationToken: cancellationToken);
+			.ToListAsync(cancellationToken);
 	}
 
-	public async Task AddNewMatchAsync(CancellationToken cancellationToken = default)
+	public async Task AddNewMatchAsync(Match? templateMatch = null, CancellationToken cancellationToken = default)
 	{
 		if (_matches is null)
 			return;
 
 		IsBusy = true;
 
-		var today = DateTimeOffset.Now.ToDateOnly();
-		var matchNumber = await matchCreationHelper.GetNextMatchNumberAsync(today, cancellationToken);
-
 		var match = new Match
 		{
-			MatchNumber = matchNumber,
+			MatchNumber = await matchCreationHelper.GetNextMatchNumberAsync(DateTimeOffset.Now.ToDateOnly(), cancellationToken),
 		};
+
+		if (templateMatch is not null)
+		{
+			foreach (var templateMatchParticipation in templateMatch.Participations)
+			{
+				match.Participations.Add(new MatchParticipation
+				{
+					Match = match,
+					Player = templateMatchParticipation.Player,
+					Deck = templateMatchParticipation.Deck,
+				});
+			}
+
+			database.Matches.Add(match);
+			await database.SaveChangesAsync(cancellationToken);
+		}
 
 		IsBusy = false;
 
-		var success = await playerSelectionDialogState.ShowDialogAsync(match, cancellationToken);
-		if (!success)
-			return;
+		if (templateMatch is null)
+		{
+			var success = await playerSelectionDialogState.ShowDialogAsync(match, cancellationToken);
+			if (!success)
+				return;
+		}
 
 		_matches.Insert(0, match);
 		navigationManager.NavigateTo($"/matches/{match.Id}");

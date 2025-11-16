@@ -1,10 +1,5 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="MagicMatchTracker: watch" type="RunDotNetWatch" factoryName="RunDotNetWatch">
-    <option name="envs">
-      <map>
-        <entry key="DOTNET_USE_POLLING_FILE_WATCHER" value="true" />
-      </map>
-    </option>
     <option name="exePath" value="$PROJECT_DIR$/src/bin/Debug/net10.0/MagicMatchTracker" />
     <option name="programParameters" value="" />
     <option name="projectFilePath" value="$PROJECT_DIR$/src/MagicMatchTracker.csproj" />
@@ -12,6 +7,7 @@
     <option name="restartOnRudeEditEditor" value="true" />
     <option name="suppressBrowserLaunch" value="true" />
     <option name="terminalMode" value="Auto" />
+    <option name="usePollingFileWatcher" value="true" />
     <option name="watchParameters" value="" />
     <option name="workingDirectory" value="$PROJECT_DIR$/src" />
     <method v="2" />

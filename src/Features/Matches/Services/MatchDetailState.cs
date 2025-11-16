@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+using MagicMatchTracker.Features.Matches.Models;
 using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +6,7 @@ namespace MagicMatchTracker.Features.Matches.Services;
 
 public sealed class MatchDetailState(
 	Database database,
+	MatchListingState listingState,
 	MatchPlayerSelectionDialogState playerSelectionDialogState,
 	MatchEditDialogState editDialogState,
 	MatchDeckSelectionDialogState deckSelectionDialogState,
@@ -15,15 +16,29 @@ public sealed class MatchDetailState(
 {
 	public bool IsLoading { get; private set; }
 	public Match? Match { get; private set; }
+	public bool ShowErrors { get; private set; }
 
-	[MemberNotNullWhen(true, nameof(Match))]
-	public bool CanStartMatch => Match is not null
-		&& !Match.HasStarted
-		&& Match.Participations.Count > 0
-		&& Match.Participations.All(p => p.Deck is not null);
+	public IEnumerable<MatchError> GetErrors()
+	{
+		if (Match is null || Match.Participations.Count == 0)
+			yield break;
+
+		var missingDecks = Match.Participations
+			.Where(mp => mp.Deck is null)
+			.ToList();
+		if (missingDecks.Count > 0)
+			yield return new MatchError("Each player must have a deck selected", missingDecks);
+
+		var winners = Match.Participations
+			.Where(mp => mp.EndState?.IsWinner is true)
+			.ToList();
+		if (winners.Count > 1)
+			yield return new MatchError("Only one player can win a match", winners);
+	}
 
 	public async Task LoadMatchAsync(Guid id, CancellationToken cancellationToken = default)
 	{
+		ShowErrors = false;
 		if (Match?.Id == id)
 			return;
 
@@ -88,9 +103,16 @@ public sealed class MatchDetailState(
 
 	public async Task StartMatchAsync(CancellationToken cancellationToken = default)
 	{
-		if (!CanStartMatch)
+		if (Match is null || Match.HasStarted)
 			return;
 
+		if (GetErrors().Any())
+		{
+			ShowErrors = true;
+			return;
+		}
+
+		ShowErrors = false;
 		IsBusy = true;
 
 		var now = DateTimeOffset.Now;
@@ -104,6 +126,39 @@ public sealed class MatchDetailState(
 
 		Match.TimeStarted = now;
 		await database.SaveChangesAsync(cancellationToken);
+
+		IsBusy = false;
+	}
+
+	public async Task EndMatchAsync(CancellationToken cancellationToken = default)
+	{
+		if (Match is null || !Match.HasStarted || Match.HasEnded)
+			return;
+
+		if (GetErrors().Any())
+		{
+			ShowErrors = true;
+			return;
+		}
+
+		ShowErrors = false;
+		IsBusy = true;
+
+		Match.TimeEnded = DateTimeOffset.Now;
+		await database.SaveChangesAsync(cancellationToken);
+
+		IsBusy = false;
+	}
+
+	public async Task PlayAgainAsync(CancellationToken cancellationToken = default)
+	{
+		if (Match is null || !Match.HasEnded)
+			return;
+
+		IsBusy = true;
+
+		await listingState.LoadMatchesAsync(cancellationToken);
+		await listingState.AddNewMatchAsync(Match, cancellationToken);
 
 		IsBusy = false;
 	}

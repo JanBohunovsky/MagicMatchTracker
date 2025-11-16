@@ -65,6 +65,10 @@
 		<span class="text-content">
 			<Avatar Player="Player" Size="20"/>
 			<span>@Player.Name</span>
+			@if (HasError)
+			{
+				<span class="icon small text-danger">error</span>
+			}
 		</span>
 
 		@if (!State.Match.HasStarted)
@@ -80,28 +84,46 @@
 		else if (Participation.EndState is not null)
 		{
 			var endState = Participation.EndState;
-			@* TODO: Show turn? *@
-			<div class="text-content small">
+			<div class="end-state-details small">
 				@if (endState.IsWinner)
 				{
-					<span class="icon small filled">trophy</span>
-					<span>Winner</span>
-				}
-				else if (endState.LoseCondition is not null)
-				{
-					<LoseConditionIcon Value="endState.LoseCondition.Value" class="small"/>
-						<span class="text-nowrap">@endState.LoseCondition.Value.GetDisplayName()</span>
-						@if (endState.Killer is not null)
-					{
-						<span>by</span>
-						<Avatar Player="endState.Killer" Size="18" class="ms-0.5"/>
-						<span>@endState.Killer.Name</span>
-					}
+					<div class="end-state-entry">
+						<span class="icon small filled">trophy</span>
+						<span>Winner</span>
+					</div>
 				}
 				else
 				{
-					<span class="icon small">skull</span>
-					<span>Lost</span>
+					if (endState.LoseCondition is not null)
+					{
+						<div class="end-state-entry" title="@endState.LoseCondition.Value.GetDescription()">
+							<LoseConditionIcon Value="endState.LoseCondition.Value" class="small"/>
+							@if (endState.Killer is null)
+							{
+								<span class="text-nowrap">@endState.LoseCondition.Value.GetDisplayName()</span>
+							}
+							else
+							{
+								@* <Avatar Player="endState.Killer" Size="18"/> *@
+								<span>@endState.Killer.Name</span>
+							}
+						</div>
+					}
+					else
+					{
+						<div class="end-state-entry">
+							<span class="icon small">skull</span>
+							<span>Lost</span>
+						</div>
+					}
+
+					@if (endState.Turn is not null)
+					{
+						<div class="end-state-entry" title="Lost on turn @endState.Turn">
+							<span class="icon small">timer</span>
+							<span>@endState.Turn</span>
+						</div>
+					}
 				}
 			</div>
 		}
@@ -163,6 +185,9 @@
 	[Parameter, EditorRequired]
     public required MatchParticipation Participation { get; set; }
 
+	[Parameter]
+    public bool HasError { get; set; }
+
 	private Player Player => Participation.Player;
 	private Deck? Deck => Participation.Deck;
 	private bool IsInteractive => State is { IsBusy: false, Match.HasEnded: false };
@@ -192,8 +217,10 @@
 
 		if (!IsInteractive)
 			sb.Append(" disabled");
-		else if (State.Match is not null && State.Match.IsInProgress)
-			sb.Append(" position-relative");
+		if (HasError)
+			sb.Append(" border-danger");
+		if (Participation.Match.HasEnded && Participation.EndState?.IsWinner is true)
+			sb.Append(" winner");
 
 		return sb.ToString();
 	}

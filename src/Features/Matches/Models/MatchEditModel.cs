@@ -10,6 +10,7 @@ public sealed class MatchEditModel(Match model)
 	public string Notes { get; set; } = model.Notes ?? string.Empty;
 
 	public bool HasStarted { get; } = model.HasStarted;
+	public bool HasEnded { get; } = model.HasEnded;
 
 	public Match ApplyChanges()
 	{
@@ -31,6 +32,11 @@ public class MatchEditModelValidator : AbstractValidator<MatchEditModel>
 			.NotEmpty()
 			.When(m => m.HasStarted)
 			.WithMessage("Start time is required after the match has started");
+
+		RuleFor(m => m.TimeEnded)
+			.NotEmpty()
+			.When(m => m.HasEnded)
+			.WithMessage("End time is required after the match has ended");
 
 		RuleFor(m => m.TimeStarted)
 			.NotEmpty()
