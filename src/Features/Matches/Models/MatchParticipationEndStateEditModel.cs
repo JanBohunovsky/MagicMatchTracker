@@ -6,8 +6,6 @@ public sealed class MatchParticipationEndStateEditModel
 {
 	private readonly MatchParticipation _model;
 	private readonly List<MatchParticipation> _participationsToKill;
-	private bool _isWinner;
-	private LoseCondition? _loseCondition;
 
 	public Player Player => _model.Player;
 	public IReadOnlyList<Player> PlayersInMatch { get; }
@@ -17,22 +15,22 @@ public sealed class MatchParticipationEndStateEditModel
 
 	public bool IsWinner
 	{
-		get => _isWinner;
+		get;
 		set
 		{
 			LoseCondition = null;
 			KillRemainingPlayers = false;
-			_isWinner = value;
+			field = value;
 		}
 	}
 
 	public LoseCondition? LoseCondition
 	{
-		get => _loseCondition;
+		get;
 		set
 		{
-			_loseCondition = value;
-			if (_loseCondition is null || !_loseCondition.Value.HasKiller())
+			field = value;
+			if (field is null || !field.Value.HasKiller())
 				Killer = null;
 		}
 	}
