@@ -1,36 +1,3 @@
-@if (Deck is null)
-{
-	<div class="card h-100 placeholder-glow">
-		<div class="card-img-top bg-secondary-subtle" style="height: 139px"></div>
-		<div class="card-body">
-			<span class="card-title">
-				<span class="placeholder col-8"></span>
-			</span>
-			<span class="card-subtitle">
-				<span class="placeholder col-5 small text-secondary"></span>
-			</span>
-		</div>
-		<div class="card-footer d-flex justify-content-between small">
-			<div class="d-flex align-items-center gap-1">
-				<span class="placeholder placeholder-icon"></span>
-				<span class="placeholder placeholder-icon"></span>
-				<span class="placeholder placeholder-icon"></span>
-			</div>
-			<div class="deck-stats">
-				<div class="deck-stat gap-1">
-					<span class="placeholder placeholder-icon"></span>
-					<span class="placeholder placeholder-stat"></span>
-				</div>
-				<div class="deck-stat gap-1">
-					<span class="placeholder placeholder-icon"></span>
-					<span class="placeholder placeholder-stat"></span>
-				</div>
-			</div>
-		</div>
-	</div>
-	return;
-}
-
 <button class="card deck-card" @onclick="OnClick">
 	@if (Deck.ImageUri is null)
 	{
@@ -83,8 +50,8 @@
 
 @code {
 
-	[Parameter]
-    public Deck? Deck { get; set; }
+	[Parameter, EditorRequired]
+    public required Deck Deck { get; set; }
 
 	[Parameter]
     public EventCallback OnClick { get; set; }

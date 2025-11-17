@@ -15,19 +15,7 @@
 
 @if (State.Players is null)
 {
-	<ul class="list-group list-group-flush">
-		@for (int i = 0; i < 8; i++)
-		{
-			var width = i % 2 == 0 ? 8 : 6;
-			<li class="player-entry list-group-item placeholder-glow">
-				<span class="player-link">
-					<span class="placeholder placeholder-avatar"></span>
-					<span class="placeholder" style="width: @(width)rem;"></span>
-				</span>
-				<a class="btn btn-ghost-secondary btn-square my-2 disabled placeholder"></a>
-			</li>
-		}
-	</ul>
+	<PageLoading/>
 	return;
 }
 

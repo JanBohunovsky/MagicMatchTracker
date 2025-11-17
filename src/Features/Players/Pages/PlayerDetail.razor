@@ -7,20 +7,7 @@
 
 @if (State.IsBusy)
 {
-	<div class="heading placeholder-glow">
-		<span class="player-name">
-			<span class="placeholder placeholder-avatar"></span>
-			<h1><span class="placeholder" style="width: 6rem;"></span></h1>
-		</span>
-		<a class="btn btn-ghost-secondary btn-square disabled placeholder"></a>
-	</div>
-
-	<div class="deck-list">
-		@for (int i = 0; i < 6; i++)
-		{
-			<DeckCard/>
-		}
-	</div>
+	<PageLoading/>
 	return;
 }
 
