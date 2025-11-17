@@ -61,85 +61,99 @@ else if (State.Match.HasEnded)
 	</button>
 </div>
 
-<div class="d-flex flex-column gap-2 mb-3">
-	<div class="text-content gap-2">
-		<span class="icon">calendar_today</span>
-		<span>@State.Match.GetEffectiveDate().ToString("dddd, dd MMMM yyyy")</span>
-	</div>
-	@{
-		var matchDurationDetails = GetMatchDurationDetails();
-	}
-	@if (matchDurationDetails is not null)
-	{
-		<div class="text-content gap-2">
-			<span class="icon">timer</span>
-			<span>@matchDurationDetails</span>
+<div class="page-content">
+	<div class="match-details">
+		<div class="match-detail-entry">
+			<span class="icon">calendar_today</span>
+			<span>@State.Match.GetEffectiveDate().ToString("dddd, dd MMMM yyyy")</span>
 		</div>
-	}
-	@if (State.Match.Notes is not null)
-	{
-		<div class="text-content gap-2">
-			<span class="icon">sticky_note_2</span>
-			<span>@State.Match.Notes</span>
-		</div>
-	}
-	@if (State.ShowErrors)
-	{
-		@foreach (var error in State.GetErrors())
+		@{
+			var matchDurationDetails = GetMatchDurationDetails();
+		}
+		@if (matchDurationDetails is not null)
 		{
-			<div class="text-content gap-2 text-danger">
-				<span class="icon">error</span>
-				<span>@error.Message</span>
+			<div class="match-detail-entry">
+				<span class="icon">timer</span>
+				<span>@matchDurationDetails</span>
 			</div>
 		}
-	}
+		@if (State.Match.Notes is not null)
+		{
+			<div class="match-detail-entry">
+				<span class="icon">sticky_note_2</span>
+				<span>@State.Match.Notes</span>
+			</div>
+		}
+		@if (State.ShowErrors)
+		{
+			@foreach (var error in State.GetErrors())
+			{
+				<div class="match-detail-entry text-danger">
+					<span class="icon">error</span>
+					<span>@error.Message</span>
+				</div>
+			}
+		}
+
+		@if (!State.Match.HasStarted)
+		{
+			@* Player selection button *@
+			var hasPlayers = State.Match.Participations.Count > 0;
+			var buttonStyle = hasPlayers ? "btn-outline-secondary" : "btn-primary";
+			var buttonCaption = hasPlayers ? "Change players" : "Add players";
+			var iconFilledStyle = hasPlayers ? string.Empty : "filled";
+			<button class="match-action-button btn @buttonStyle hover-icon-filled"
+			        @onclick="@(() => State.SelectPlayersAsync(CancellationToken))"
+			        disabled="@State.IsBusy">
+				<span class="icon @iconFilledStyle">patient_list</span>
+				<span>@buttonCaption</span>
+			</button>
+		}
+		else if (!State.Match.HasEnded && State.Match.Participations.All(mp => mp.EndState is not null))
+		{
+			@* End match button *@
+			<button class="match-action-button btn btn-primary"
+			        @onclick="@(() => State.EndMatchAsync(CancellationToken))"
+			        disabled="@State.IsBusy">
+				<span class="icon filled">trophy</span>
+				<span>End the match</span>
+			</button>
+		}
+	</div>
+
+	<div class="match-participations">
+		@if (HasParticipationsInProgress)
+		{
+			<div class="participation-list">
+				@foreach (var participation in ParticipationsInProgress)
+				{
+					<MatchParticipationCard
+						Participation="participation"
+						HasError="HasParticipationError(participation)"/>
+				}
+			</div>
+		}
+
+		@if (HasParticipationsInProgress && HasParticipationsEnded)
+		{
+			<hr class="my-1"/>
+		}
+
+		@if (HasParticipationsEnded)
+		{
+			<div class="participation-list">
+				@foreach (var participation in ParticipationsEnded)
+				{
+					<MatchParticipationCard
+						Participation="participation"
+						HasError="HasParticipationError(participation)"/>
+				}
+			</div>
+		}
+	</div>
 </div>
 
-<div class="d-flex flex-column gap-3 mb-3">
-	@if (!State.Match.HasStarted)
-	{
-		@* Player selection button *@
-		var hasPlayers = State.Match.Participations.Count > 0;
-		var buttonStyle = hasPlayers ? "btn-outline-secondary" : "btn-primary";
-		var buttonCaption = hasPlayers ? "Change players" : "Add players";
-		var iconFilledStyle = hasPlayers ? string.Empty : "filled";
-		<button class="btn @buttonStyle hover-icon-filled w-100 justify-content-center"
-		        @onclick="@(() => State.SelectPlayersAsync(CancellationToken))"
-		        disabled="@State.IsBusy">
-			<span class="icon @iconFilledStyle">patient_list</span>
-			<span>@buttonCaption</span>
-		</button>
-	}
-	else if (!State.Match.HasEnded && State.Match.Participations.All(mp => mp.EndState is not null))
-	{
-		@* End match button *@
-		<button class="btn btn-primary w-100 justify-content-center"
-		        @onclick="@(() => State.EndMatchAsync(CancellationToken))"
-		        disabled="@State.IsBusy">
-			<span class="icon filled">trophy</span>
-			<span>End the match</span>
-		</button>
-	}
 
-	@foreach (var participation in ParticipationsInProgress)
-	{
-		<MatchParticipationCard
-			Participation="participation"
-			HasError="HasParticipationError(participation)"/>
-	}
-
-	@if (HasMixedParticipations)
-	{
-		<hr class="my-1"/>
-	}
-
-	@foreach (var participation in ParticipationsEnded)
-	{
-		<MatchParticipationCard
-			Participation="participation"
-			HasError="HasParticipationError(participation)"/>
-	}
-</div>
 
 <MatchEditDialog/>
 <MatchPlayerSelectDialog/>
@@ -153,8 +167,10 @@ else if (State.Match.HasEnded)
 
 	private string PageTitle => State.Match?.GetTitle() ?? "Match Detail";
 
-	private bool HasMixedParticipations => State.Match is not null
-		&& State.Match.Participations.Any(mp => mp.EndState is null)
+	private bool HasParticipationsInProgress => State.Match is not null
+		&& State.Match.Participations.Any(mp => mp.EndState is null);
+
+	private bool HasParticipationsEnded => State.Match is not null
 		&& State.Match.Participations.Any(mp => mp.EndState is not null);
 
 	private IEnumerable<MatchParticipation> ParticipationsInProgress => State.Match?

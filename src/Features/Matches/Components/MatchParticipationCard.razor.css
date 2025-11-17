@@ -1,3 +1,7 @@
+.card:not(:has(.card-body)) .card-img-top {
+	flex-grow: 1;
+}
+
 .participation-options {
 	display: block;
 
