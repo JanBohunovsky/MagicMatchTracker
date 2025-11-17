@@ -150,4 +150,18 @@ h1:focus {
 		--bs-modal-margin: 3.5rem;
 	}
 
+	.btn-fab {
+		top: 3.5rem;
+		left: 0;
+		right: unset;
+		bottom: unset;
+		margin: 1rem;
+		width: calc(250px - 2rem);
+		justify-content: center;
+	}
+
+	.nav-scrollable {
+		padding-top: 4.125rem;
+	}
+
 }
