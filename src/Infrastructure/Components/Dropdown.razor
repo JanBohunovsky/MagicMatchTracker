@@ -3,7 +3,7 @@
 
 	@if (IsMenuVisible)
 	{
-		<AutoClose OnClose="@HideMenu">
+		<AutoClose class="dropdown-menu-holder" OnClose="@HideMenu">
 			@Menu(this)
 		</AutoClose>
 	}

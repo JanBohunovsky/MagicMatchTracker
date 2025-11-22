@@ -36,7 +36,7 @@
 	margin-right: 1.25rem;
 	margin-bottom: 1.75rem;
 	padding: var(--bs-btn-padding-x);
-	z-index: 10;
+	z-index: 1030;
 
 	&:not(:disabled) {
 		box-shadow:
@@ -334,24 +334,26 @@ a.card {
 	transition:
 		box-shadow 0.15s ease-in-out,
 		border-color 0.15s ease-in-out;
+
+	&.disabled {
+		cursor: default;
+	}
 }
 
 button.card:not(:disabled),
-button.card:not(.disabled),
-a[href].card:not(:disabled),
-a[href].card:not(.disabled) {
+a[href].card:not(:disabled) {
 
-	&:hover {
+	&:not(.disabled):hover {
 		box-shadow: var(--bs-box-shadow);
 		border-color: var(--bs-secondary);
 	}
 
-	&:active {
+	&:not(.disabled):active {
 		box-shadow: var(--bs-box-shadow-sm);
 		border-color: var(--bs-secondary);
 	}
 
-	&:focus-visible {
+	&:not(.disabled):focus-visible {
 		border-color: var(--bs-secondary);
 		outline: 0;
 		box-shadow: 0 0 0 0.25rem rgba(var(--bs-secondary-rgb), .5);

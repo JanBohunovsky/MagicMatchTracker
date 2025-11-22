@@ -45,7 +45,7 @@
 @if (State.Player.Decks.Count == 0)
 {
 	<span class="center my-5 d-flex flex-column gap-3 align-items-center justify-content-start">
-		<span class="icon filled cover-icon text-primary">box_add</span>
+		<span class="icon filled huge text-primary">box_add</span>
 		<span>@State.Player.Name has no decks yet</span>
 		<button type="button" class="btn btn-primary" @onclick="() => State.AddNewDeckAsync(CancellationToken)">
 			<span class="icon">add</span>

@@ -88,4 +88,16 @@ public sealed class Match : IEntity
 
 		return sb.ToString();
 	}
+
+	public int? GetTotalTurns()
+	{
+		if (!HasEnded)
+			return null;
+
+		return Participations
+			.Choose(mp => mp.EndState)
+			.Select(e => e.Turn)
+			.DefaultIfEmpty(null)
+			.Max();
+	}
 }

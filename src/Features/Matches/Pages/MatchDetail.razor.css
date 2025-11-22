@@ -10,7 +10,8 @@
 	gap: 0.5rem;
 }
 
-.match-detail-entry {
+.match-detail-entry,
+::deep .match-detail-entry {
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
@@ -31,7 +32,7 @@
 
 .participation-list {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(25rem, 1fr));
 	gap: 1rem;
 }
 
@@ -66,7 +67,7 @@
 @media screen and (min-width: 1400px) {
 
 	.match-participations {
-		max-width: 51rem;
+		max-width: 61rem;
 	}
 
 }

@@ -1,0 +1,56 @@
+@using System.Text
+@if (Match.IsInProgress)
+{
+	<div @attributes="Attributes" class="@_containerClass">
+		<span class="icon">timer</span>
+		<span class="text-content">In Progress • @Match.GetFormattedDuration()</span>
+	</div>
+	return;
+}
+
+@if (Match.HasEnded)
+{
+	var formattedTurnsAndDuration = GetFormattedTurnsAndDuration();
+	if (formattedTurnsAndDuration is null)
+		return;
+
+	<div @attributes="Attributes" class="@_containerClass">
+		<span class="icon">timer</span>
+		<span class="text-content">@formattedTurnsAndDuration</span>
+	</div>
+}
+
+@code {
+
+	private string? _containerClass;
+
+	[Parameter, EditorRequired]
+    public required Match Match { get; set; }
+
+	[Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? Attributes { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		_containerClass = AttributeUtilities.CombineClassNames(Attributes, "text-content");
+	}
+
+	private string? GetFormattedTurnsAndDuration()
+	{
+		var totalTurns = Match.GetTotalTurns();
+		var duration = Match.GetFormattedDuration();
+		if (totalTurns is null && duration is null)
+			return null;
+
+		var sb = new StringBuilder();
+		if (totalTurns is not null)
+			sb.Append($"{totalTurns} turns");
+		if (totalTurns is not null && duration is not null)
+			sb.Append(" • ");
+		if (duration is not null)
+			sb.Append(duration);
+
+		return sb.ToString();
+	}
+
+}

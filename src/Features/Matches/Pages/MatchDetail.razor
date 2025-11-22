@@ -67,16 +67,8 @@ else if (State.Match.HasEnded)
 			<span class="icon">calendar_today</span>
 			<span>@State.Match.GetEffectiveDate().ToString("dddd, dd MMMM yyyy")</span>
 		</div>
-		@{
-			var matchDurationDetails = GetMatchDurationDetails();
-		}
-		@if (matchDurationDetails is not null)
-		{
-			<div class="match-detail-entry">
-				<span class="icon">timer</span>
-				<span>@matchDurationDetails</span>
-			</div>
-		}
+		<MatchDurationDisplay Match="State.Match" class="match-detail-entry"/>
+
 		@if (State.Match.Notes is not null)
 		{
 			<div class="match-detail-entry">
@@ -210,42 +202,6 @@ else if (State.Match.HasEnded)
 
 		return State.GetErrors()
 			.Any(e => e.AffectedParticipations.Contains(participation));
-	}
-
-	private string? GetMatchDurationDetails()
-	{
-		if (State.Match is null || !State.Match.HasStarted)
-			return null;
-
-		var details = new List<string>();
-		if (State.Match.IsInProgress)
-			details.Add("In Progress");
-
-		var totalTurns = GetTotalTurns();
-		if (totalTurns is not null)
-			details.Add($"{totalTurns} turns");
-
-		var formattedDuration = State.Match.GetFormattedDuration();
-		if (formattedDuration is not null)
-			details.Add(formattedDuration);
-
-		if (details.Count == 0)
-			return null;
-
-		return details.JoinToString(" • ");
-	}
-
-	private int? GetTotalTurns()
-	{
-		if (State.Match is null || !State.Match.HasEnded)
-			return null;
-
-		return State.Match
-			.Participations
-			.Choose(mp => mp.EndState)
-			.Select(e => e.Turn)
-			.DefaultIfEmpty(null)
-			.Max();
 	}
 
 }

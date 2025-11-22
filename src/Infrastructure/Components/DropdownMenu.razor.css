@@ -1,0 +1,10 @@
+.dropdown-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 1rem 0.5rem 0.75rem;
+}
+
+.dropdown-item:not(:has(.icon)) {
+	padding-left: 1rem;
+}

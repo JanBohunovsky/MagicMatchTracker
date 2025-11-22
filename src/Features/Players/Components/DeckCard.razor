@@ -1,48 +1,44 @@
 <button class="card deck-card" @onclick="OnClick">
 	@if (Deck.ImageUri is null)
 	{
-		<div class="card-img-top deck-cover deck-cover-placeholder icon filled">box</div>
+		<div class="card-img-side deck-cover deck-cover-placeholder icon filled">box</div>
 	}
 	else
 	{
-		<img src="@Deck.ImageUri" class="card-img-top deck-cover" alt="Deck image" height="139"/>
+		<img src="@Deck.ImageUri" class="card-img-side deck-cover" alt="Deck image"/>
 	}
-
-	<div class="card-body">
-		<div>
-			<span class="card-title fw-medium">@(Deck.Name ?? Deck.Commander)</span>
-			<span class="card-subtitle fw-normal">
-				<div class="d-flex flex-column text-secondary small">
-					@if (Deck.Name is not null)
-					{
-						<span>@Deck.Commander</span>
-					}
-					<span>@Deck.Partner</span>
-				</div>
-			</span>
+	<div class="card-layout-side">
+		<div class="card-body">
+			@if (Deck.DeckUri is not null)
+			{
+				<a class="btn btn-square btn-ghost-secondary hover-icon-filled float-end"
+				   @onclick:stopPropagation="true"
+				   href="@Deck.DeckUri"
+				   target="_blank"
+				   rel="noreferrer"
+				   title="Open decklist in new tab">
+					<span class="icon">open_in_new</span>
+				</a>
+			}
+			<div class="card-title fw-medium">@(Deck.Name ?? Deck.Commander)</div>
+			<div class="card-subtitle text-muted d-flex flex-column">
+				@if (Deck.Name is not null)
+				{
+					<span>@Deck.Commander</span>
+				}
+				<span>@Deck.Partner</span>
+			</div>
 		</div>
 
-		@if (Deck.DeckUri is not null)
-		{
-			<a class="btn btn-square btn-ghost-secondary btn-sm hover-icon-filled"
-			   @onclick:stopPropagation="true"
-			   href="@Deck.DeckUri"
-			   target="_blank"
-			   rel="noreferrer"
-			   title="View decklist">
-				<span class="icon">open_in_new</span>
-			</a>
-		}
-	</div>
-
-	<div class="card-footer d-flex justify-content-between small">
-		<ColoursDisplay Value="Deck.ColourIdentity"/>
-		<div class="deck-stats">
-			<div class="deck-stat" title="Win ratio">
-				<span class="icon">trophy</span> 25%
-			</div>
-			<div class="deck-stat" title="Games played">
-				<span class="icon">swords</span> 100
+		<div class="card-footer card-footer-borderless d-flex justify-content-between small">
+			<ColoursDisplay Value="Deck.ColourIdentity"/>
+			<div class="deck-stats">
+				<div class="deck-stat" title="Win ratio">
+					<span class="icon">trophy</span> 25%
+				</div>
+				<div class="deck-stat" title="Games played">
+					<span class="icon">swords</span> 100
+				</div>
 			</div>
 		</div>
 	</div>

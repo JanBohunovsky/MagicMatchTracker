@@ -6,26 +6,43 @@
 
 <button class="@GetCssClasses()"
         @onclick="OnCardClickedAsync"
-        disabled="@(!IsInteractive)"
         tabindex="@(IsInteractive ? "0" : "-1")">
 	@if (Deck is null)
 	{
-		<div class="card-img-top deck-cover deck-cover-placeholder icon filled">box_add</div>
+		<div class="card-img-side deck-cover deck-cover-placeholder icon filled">box_add</div>
 	}
 	else if (Deck.ImageUri is null)
 	{
-		<div class="card-img-top deck-cover deck-cover-placeholder icon filled">box</div>
+		<div class="card-img-side deck-cover deck-cover-placeholder icon filled">box</div>
 	}
 	else
 	{
-		<img class="card-img-top deck-cover" alt="Deck image" height="139" src="@Deck.ImageUri"/>
+		<img class="card-img-side deck-cover" alt="Deck image" height="139" src="@Deck.ImageUri"/>
 	}
 
-	@if (Deck is not null)
-	{
+	<div class="card-layout-side">
 		<div class="card-body">
-			<span class="card-title fw-medium">@(Deck.Name ?? Deck.Commander)</span>
-			<span class="card-subtitle fw-normal">
+			<Dropdown class="dropdown-menu-end float-end corner-button">
+				<Button>
+					<button class="btn btn-ghost-secondary btn-square hover-icon-filled"
+					        @onclick:stopPropagation="true"
+					        @onclick="context.ShowMenu">
+						<span class="icon">more_vert</span>
+					</button>
+				</Button>
+				<Menu>
+					<DropdownMenu
+						Dropdown="context"
+						ItemsProvider="GetDropdownItems"/>
+				</Menu>
+			</Dropdown>
+			<div class="card-title fw-medium text-content gap-2">
+				<Avatar Player="Player" Size="24"/>
+				<span>@Player.Name</span>
+			</div>
+			@if (Deck is not null)
+			{
+				<div>@(Deck.Name ?? Deck.Commander)</div>
 				<div class="d-flex flex-column text-muted small">
 					@if (Deck.Name is not null)
 					{
@@ -33,13 +50,14 @@
 					}
 					<span>@Deck.Partner</span>
 				</div>
-			</span>
 
-			@if (Deck.Owner != Player)
-			{
-				<span class="card-subtitle fw-normal small text-muted text-content mt-1">
-					Borrowed from <Avatar Player="Deck.Owner" Size="18"/> @Deck.Owner.Name
-				</span>
+				@if (Deck.Owner != Player)
+				{
+					<div class="text-content small text-content mt-2">
+						<span class="icon small">box</span>
+						<span class="text-content">Borrowed from <Avatar Player="Deck.Owner" Size="18"/> @Deck.Owner.Name</span>
+					</div>
+				}
 			}
 
 			@if (Participation.Notes is not null)
@@ -50,137 +68,62 @@
 				</div>
 			}
 		</div>
-	}
-	else if (Participation.Notes is not null)
-	{
-		<div class="card-body">
-			<div class="text-content small">
-				<span class="icon small">sticky_note_2</span>
-				<span>@Participation.Notes</span>
-			</div>
-		</div>
-	}
 
-	<div class="card-footer text-content justify-content-between">
-		<span class="text-content">
-			<Avatar Player="Player" Size="20"/>
-			<span>@Player.Name</span>
-			@if (HasError)
-			{
-				<span class="icon small text-danger">error</span>
-			}
-		</span>
-
-		@if (!State.Match.HasStarted)
-		{
-			<div class="text-content" @onclick:stopPropagation="true">
-				<button class="btn btn-ghost-primary btn-sm"
-				        @onclick="() => State.EditParticipationDetailsAsync(Participation, CancellationToken)">
-					<span class="icon">sticky_note_2</span>
-					<span>Edit notes</span>
-				</button>
-			</div>
-		}
-		else if (Participation.EndState is not null)
+		@if (Participation.EndState is not null)
 		{
 			var endState = Participation.EndState;
-			<div class="end-state-details small">
-				@if (endState.IsWinner)
-				{
-					<div class="end-state-entry">
-						<span class="icon small filled">trophy</span>
-						<span>Winner</span>
-					</div>
-				}
-				else
-				{
-					if (endState.LoseCondition is not null)
+			<div class="card-footer card-footer-borderless text-content justify-content-start">
+				<div class="end-state-details small">
+					@if (endState.IsWinner)
 					{
-						<div class="end-state-entry" title="@endState.LoseCondition.Value.GetDescription()">
-							<LoseConditionIcon Value="endState.LoseCondition.Value" class="small"/>
-							@if (endState.Killer is null)
-							{
-								<span class="text-nowrap">@endState.LoseCondition.Value.GetDisplayName()</span>
-							}
-							else
-							{
-								@* <Avatar Player="endState.Killer" Size="18"/> *@
-								<span>@endState.Killer.Name</span>
-							}
+						<div class="end-state-entry">
+							<span class="icon small filled">trophy</span>
+							<span>Winner</span>
 						</div>
 					}
 					else
 					{
-						<div class="end-state-entry">
-							<span class="icon small">skull</span>
-							<span>Lost</span>
-						</div>
-					}
-
-					@if (endState.Turn is not null)
-					{
-						<div class="end-state-entry" title="Lost on turn @endState.Turn">
-							<span class="icon small">timer</span>
-							<span>@endState.Turn</span>
-						</div>
-					}
-				}
-			</div>
-		}
-	</div>
-
-	@if (_isOptionsPopupVisible)
-	{
-		<AutoClose class="position-absolute w-100 h-100 bg-body-secondary bg-opacity-50 center rounded-1"
-		           OnClose="@(() => _isOptionsPopupVisible = false)">
-			<ul class="dropdown-menu participation-options">
-				<li>
-					<span class="dropdown-header text-content py-1">
-						<Avatar Player="Player" Size="18"/>
-						<span>@Player.Name</span>
-					</span>
-				</li>
-				<li>
-					<button class="dropdown-item" @onclick="() => State.EditParticipationEndStateAsync(Participation, CancellationToken)">
-						@if (Participation.EndState is null)
+						if (endState.LoseCondition is not null)
 						{
-							<span class="icon">swords</span>
-							<span>Set end state</span>
+							var loseCondition = endState.LoseCondition.Value;
+							<div class="end-state-entry">
+								<LoseConditionIcon Value="loseCondition" class="small"/>
+								<span class="text-content flex-wrap">
+									<span>@loseCondition.GetDisplayName()</span>
+									@if (endState.Killer is not null && loseCondition.HasKiller())
+									{
+										<span class="text-content">
+											<span>by</span>
+											<Avatar Player="endState.Killer" Size="18" class="ms-0.5"/>
+											<span>@endState.Killer.Name</span>
+										</span>
+									}
+								</span>
+							</div>
 						}
 						else
 						{
-							@if (Participation.EndState.IsWinner)
-							{
-								<span class="icon">trophy</span>
-							}
-							else
-							{
-								<span class="icon">skull</span>
-							}
-							<span>Edit end state</span>
+							<div class="end-state-entry">
+								<span class="icon small">skull</span>
+								<span>Lost</span>
+							</div>
 						}
-					</button>
-				</li>
-				<li>
-					<button class="dropdown-item" @onclick="() => State.EditParticipationDetailsAsync(Participation, CancellationToken)">
-						<span class="icon">sticky_note_2</span>
-						<span>Edit notes</span>
-					</button>
-				</li>
-				<li>
-					<button class="dropdown-item" @onclick="() => State.SelectDeckAsync(Participation, CancellationToken)">
-						<span class="icon">box</span>
-						<span>Change deck</span>
-					</button>
-				</li>
-			</ul>
-		</AutoClose>
-	}
+
+						@if (endState.Turn is not null)
+						{
+							<div class="end-state-entry">
+								<span class="icon small">timer</span>
+								<span>@endState.Turn turns</span>
+							</div>
+						}
+					}
+				</div>
+			</div>
+		}
+	</div>
 </button>
 
 @code {
-
-	private bool _isOptionsPopupVisible;
 
 	[Parameter, EditorRequired]
     public required MatchParticipation Participation { get; set; }
@@ -194,20 +137,54 @@
 
 	private async Task OnCardClickedAsync()
 	{
-		if (State.Match is null)
+		var match = State.Match;
+		if (match is null)
 			return;
 
-		if (!State.Match.HasStarted)
+		if (!match.HasStarted)
 		{
 			await State.SelectDeckAsync(Participation, CancellationToken);
 			return;
 		}
 
-		// TODO: Make the card interactive for finished matches and show some detailed info when interacted?
-		if (State.Match.HasEnded)
+		if (match.HasEnded)
 			return;
 
-		_isOptionsPopupVisible = !_isOptionsPopupVisible;
+		await State.EditParticipationEndStateAsync(Participation, CancellationToken);
+	}
+
+	private IEnumerable<DropdownItem> GetDropdownItems()
+	{
+		var match = State.Match;
+		if (match is null)
+			yield break;
+
+		if (match.HasEnded)
+		{
+			yield return new DropdownItem
+			{
+				Icon = "swords",
+				Label = "Edit end state",
+				Action = () => State.EditParticipationEndStateAsync(Participation, CancellationToken),
+			};
+		}
+
+		yield return new DropdownItem
+		{
+			Icon = "sticky_note_2",
+			Label = "Edit notes",
+			Action = () => State.EditParticipationDetailsAsync(Participation, CancellationToken),
+		};
+
+		if (match.HasStarted)
+		{
+			yield return new DropdownItem
+			{
+				Icon = "box",
+				Label = "Change deck",
+				Action = () => State.SelectDeckAsync(Participation, CancellationToken),
+			};
+		}
 	}
 
 	private string GetCssClasses()

@@ -14,8 +14,8 @@
 	<div class="modal-body d-flex flex-column gap-3">
 		@* End state *@
 		<div>
-			<label for="isWinner" class="form-label">End state</label>
-			<InputSelectCustom id="isWinner" disabled="@State.IsBusy"
+			<label for="endState" class="form-label">End state</label>
+			<InputSelectCustom id="endState" disabled="@(State.IsBusy || context.HasMatchEnded)"
 			                   @bind-Value="context.IsWinner"
 			                   AllowEmptyValue="false"
 			                   ValuesProvider="GetEndStateValues">

@@ -1,12 +1,7 @@
 .deck-card {
-	min-height: 139px;
+	min-height: 10rem;
 	height: 100%;
 	width: 100%;
-}
-
-.card-body {
-	display: flex;
-	justify-content: space-between;
 }
 
 .deck-stats {

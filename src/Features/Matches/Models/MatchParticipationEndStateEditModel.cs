@@ -7,6 +7,8 @@ public sealed class MatchParticipationEndStateEditModel
 	private readonly MatchParticipation _model;
 	private readonly List<MatchParticipation> _participationsToKill;
 
+	public bool HasMatchEnded => _model.Match.HasEnded;
+
 	public Player Player => _model.Player;
 	public IReadOnlyList<Player> PlayersInMatch { get; }
 
@@ -45,7 +47,13 @@ public sealed class MatchParticipationEndStateEditModel
 	public MatchParticipationEndStateEditModel(MatchParticipation model)
 	{
 		_model = model;
-		IsWinner = model.EndState?.IsWinner ?? false;
+		_participationsToKill = model.Match
+			.Participations
+			.Where(mp => mp.Player != model.Player)
+			.Where(mp => mp.EndState is null)
+			.ToList();
+
+		IsWinner = model.EndState?.IsWinner ?? _participationsToKill.Count == 0;
 		Turn = model.EndState?.Turn;
 		Time = model.EndState?.Time;
 		LoseCondition = model.EndState?.LoseCondition;
@@ -56,19 +64,17 @@ public sealed class MatchParticipationEndStateEditModel
 			.Participations
 			.Select(mp => mp.Player)
 			.ToList();
-
-		_participationsToKill = model.Match
-			.Participations
-			.Where(mp => mp.Player != model.Player)
-			.Where(mp => mp.EndState is null)
-			.ToList();
 	}
 
 	public MatchParticipation ApplyChanges()
 	{
 		var endState = _model.EndState ?? new MatchParticipationEndState();
 
-		endState.IsWinner = IsWinner;
+		if (!HasMatchEnded)
+		{
+			endState.IsWinner = IsWinner;
+		}
+
 		endState.Turn = Turn;
 
 		// For new results, use the current time if it's not set

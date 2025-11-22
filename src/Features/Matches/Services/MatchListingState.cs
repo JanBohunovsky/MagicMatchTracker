@@ -20,6 +20,7 @@ public sealed class MatchListingState(
 			return;
 
 		_matches = await database.Matches
+			.Include(m => m.Participations)
 			.OrderByDescending(m => m.TimeStarted ?? m.CreatedAt)
 			.ToListAsync(cancellationToken);
 	}

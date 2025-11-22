@@ -39,3 +39,7 @@
 .icon.small {
 	font-size: 21px;
 }
+
+.icon.huge {
+	font-size: 6rem;
+}

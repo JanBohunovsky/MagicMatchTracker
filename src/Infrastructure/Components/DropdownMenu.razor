@@ -1,0 +1,30 @@
+<ul class="dropdown-menu shadow" @onclick:stopPropagation="true">
+	@foreach (var item in ItemsProvider())
+	{
+		<li>
+			<button class="dropdown-item active-icon-filled" @onclick="() => SelectItemAsync(item.Action)">
+				@if (item.Icon is not null)
+				{
+					<span class="icon">@item.Icon</span>
+				}
+				<span>@item.Label</span>
+			</button>
+		</li>
+	}
+</ul>
+
+@code {
+
+	[Parameter, EditorRequired]
+    public Dropdown Dropdown { get; set; }
+
+	[Parameter, EditorRequired]
+    public Func<IEnumerable<DropdownItem>> ItemsProvider { get; set; }
+
+	private async Task SelectItemAsync(Func<Task> action)
+	{
+		Dropdown.HideMenu();
+		await action();
+	}
+
+}

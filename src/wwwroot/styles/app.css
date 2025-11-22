@@ -2,6 +2,10 @@
 @import "icons.css";
 @import "mana.css";
 @import "buttons.css";
+@import "cards.css";
+@import "inputs.css";
+@import "modals.css";
+@import "utils.css";
 
 #dotnet-compile-error:empty {
 	display: none;
@@ -51,93 +55,6 @@ h1:focus {
 			padding-right: 1.5rem;
 		}
 	}
-}
-
-.text-content {
-	display: flex;
-	align-items: center;
-	column-gap: 0.25rem;
-}
-
-.center {
-	display: grid;
-	place-items: center;
-}
-
-.m-0\.5 {
-	margin: 0.125rem !important;
-}
-.ms-0\.5 {
-	margin-left: 0.125rem !important;
-}
-.me-0\.5 {
-	margin-right: 0.125rem !important;
-}
-
-.modal.show {
-	display: block;
-}
-
-.modal-dialog {
-	animation: dialog-entry 0.15s ease-out;
-	overflow: hidden;
-}
-
-/* Workaround for dropdowns in modals - not a perfect solution, but works well enough for now. */
-.modal:has(.dropdown-menu) {
-	.modal-body {
-		overflow: visible;
-	}
-
-	.modal-content {
-		overflow: visible;
-	}
-}
-
-.modal-backdrop {
-	animation: backdrop-entry 0.15s linear;
-}
-
-.nested-modal-layer .modal {
-	--bs-modal-zindex: 1155 !important;
-}
-.nested-modal-layer .modal-backdrop {
-	--bs-backdrop-zindex: 1150 !important;
-}
-
-.floating-label {
-	font-size: 0.85rem;
-	opacity: 0.65;
-
-	position: absolute;
-	top: 0;
-	left: 0;
-	padding: 0.375rem 0.75rem;
-	pointer-events: none;
-}
-
-.cover-icon {
-	font-size: 6rem;
-}
-
-.deck-cover {
-	object-fit: cover;
-	object-position: 0 10%;
-	height: 139px;
-}
-
-.deck-cover-placeholder {
-	display: grid;
-	place-items: center;
-	font-size: 6rem;
-	color: var(--bs-secondary-border-subtle);
-	background-color: var(--bs-secondary-bg-subtle);
-}
-
-.input-text-spinner-sm-end {
-	position: absolute;
-	top: calc(0.625rem + 1px);
-	right: 0.75rem;
 }
 
 @media screen and (min-width: 768px) {

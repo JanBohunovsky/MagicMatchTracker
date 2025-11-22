@@ -1,0 +1,30 @@
+.modal.show {
+	display: block;
+}
+
+.modal-dialog {
+	animation: dialog-entry 0.15s ease-out;
+	overflow: hidden;
+}
+
+/* Workaround for dropdowns in modals - not a perfect solution, but works well enough for now. */
+.modal:has(.dropdown-menu) {
+	.modal-body {
+		overflow: visible;
+	}
+
+	.modal-content {
+		overflow: visible;
+	}
+}
+
+.modal-backdrop {
+	animation: backdrop-entry 0.15s linear;
+}
+
+.nested-modal-layer .modal {
+	--bs-modal-zindex: 1155 !important;
+}
+.nested-modal-layer .modal-backdrop {
+	--bs-backdrop-zindex: 1150 !important;
+}

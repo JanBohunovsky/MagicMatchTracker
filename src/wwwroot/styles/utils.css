@@ -1,0 +1,20 @@
+.text-content {
+	display: flex;
+	align-items: center;
+	column-gap: 0.25rem;
+}
+
+.center {
+	display: grid;
+	place-items: center;
+}
+
+.m-0\.5 {
+	margin: 0.125rem !important;
+}
+.ms-0\.5 {
+	margin-left: 0.125rem !important;
+}
+.me-0\.5 {
+	margin-right: 0.125rem !important;
+}

@@ -1,0 +1,21 @@
+.date-title {
+	font-size: 1.25rem;
+}
+
+.match-title {
+	font-weight: 500;
+}
+
+.list-group-item:has(+.date-title) {
+	border-bottom: 0;
+	margin-bottom: 1rem;
+}
+
+::deep .avatar-overlap {
+	border-radius: 50%;
+	border: 2px solid var(--bs-body-bg);
+}
+
+::deep .avatar-overlap:not(:first-child) {
+	margin-left: -0.5rem;
+}
