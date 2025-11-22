@@ -32,7 +32,7 @@ public sealed class MatchParticipationEndStateEditModel
 		set
 		{
 			field = value;
-			if (field is null || !field.Value.HasKiller())
+			if (field is null || !field.Value.HasKiller)
 				Killer = null;
 		}
 	}
@@ -90,7 +90,7 @@ public sealed class MatchParticipationEndStateEditModel
 		else
 		{
 			endState.LoseCondition = LoseCondition;
-			endState.Killer = LoseCondition?.HasKiller() is true ? Killer : null;
+			endState.Killer = LoseCondition?.HasKiller is true ? Killer : null;
 		}
 
 		_model.EndState = endState;
@@ -113,7 +113,7 @@ public sealed class MatchParticipationEndStateEditModel
 					Turn = Turn,
 					Time = Time,
 					LoseCondition = LoseCondition,
-					Killer = LoseCondition?.HasKiller() is true ? Player : null,
+					Killer = LoseCondition?.HasKiller is true ? Player : null,
 				};
 			}
 		}
@@ -135,7 +135,7 @@ public sealed class MatchEventEditModelValidator : AbstractValidator<MatchPartic
 
 		RuleFor(m => m.Killer)
 			.NotEmpty()
-			.When(m => !m.IsWinner && m.LoseCondition is not null && m.LoseCondition.Value.HasKiller())
+			.When(m => !m.IsWinner && m.LoseCondition is not null && m.LoseCondition.Value.HasKiller)
 			.WithMessage("Killer is required for this lose condition");
 	}
 }

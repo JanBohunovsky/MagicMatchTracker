@@ -91,8 +91,8 @@
 						<div class="text-content gap-2">
 							<LoseConditionIcon Value="loseCondition!.Value"/>
 							<div class="d-flex flex-column">
-								<span>@loseCondition.Value.GetDisplayName()</span>
-								<span class="small opacity-75 text-wrap">@loseCondition.Value.GetDescription()</span>
+								<span>@loseCondition.Value.DisplayName</span>
+								<span class="small opacity-75 text-wrap">@loseCondition.Value.Description</span>
 							</div>
 						</div>
 					</ItemTemplate>
@@ -102,7 +102,7 @@
 		}
 
 		@* Killer (Lose only) *@
-		@if (!context.IsWinner && context.LoseCondition?.HasKiller() is true)
+		@if (!context.IsWinner && context.LoseCondition?.HasKiller is true)
 		{
 			<div>
 				<label for="killer" class="form-label">Killer</label>

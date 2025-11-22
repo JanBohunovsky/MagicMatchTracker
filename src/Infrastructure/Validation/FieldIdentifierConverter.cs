@@ -10,7 +10,7 @@ namespace MagicMatchTracker.Infrastructure.Validation;
 /// <summary>
 /// Converts between Blazor's <see cref="FieldIdentifier"/> and FluentValidation's PropertyPath.
 /// </summary>
-public sealed class FieldIdentifierConverter
+public sealed class FieldIdentifierConverter(EditContext editContext)
 {
 	private class Node
 	{
@@ -22,17 +22,10 @@ public sealed class FieldIdentifierConverter
 
 	private static readonly char[] Separators = [',', '['];
 
-	private readonly EditContext _editContext;
-
-	public FieldIdentifierConverter(EditContext editContext)
-	{
-		_editContext = editContext;
-	}
-
 	// ReSharper disable once CognitiveComplexity
 	public FieldIdentifier ConvertFromPropertyPath(string propertyPath)
 	{
-		var model = _editContext.Model;
+		var model = editContext.Model;
 		var nextTokenEnd = propertyPath.IndexOfAny(Separators);
 
 		if (nextTokenEnd < 0)
@@ -110,7 +103,7 @@ public sealed class FieldIdentifierConverter
 		var nodes = new Stack<Node>();
 		nodes.Push(new Node
 		{
-			Model = _editContext.Model,
+			Model = editContext.Model,
 		});
 
 		while (nodes.Count > 0)

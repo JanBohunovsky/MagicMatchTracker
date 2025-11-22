@@ -89,8 +89,8 @@
 							<div class="end-state-entry">
 								<LoseConditionIcon Value="loseCondition" class="small"/>
 								<span class="text-content flex-wrap">
-									<span>@loseCondition.GetDisplayName()</span>
-									@if (endState.Killer is not null && loseCondition.HasKiller())
+									<span>@loseCondition.DisplayName</span>
+									@if (endState.Killer is not null && loseCondition.HasKiller)
 									{
 										<span class="text-content">
 											<span>by</span>

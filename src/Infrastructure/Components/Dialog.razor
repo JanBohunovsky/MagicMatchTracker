@@ -2,7 +2,7 @@
 @if (IsOpen)
 {
 	<div class="modal show" tabindex="-1" @onclick="OnCancel">
-		<AutoFocus class="@($"modal-dialog modal-dialog-scrollable {FullscreenMode.GetCssClass()}")" @onclick:stopPropagation="true">
+		<AutoFocus class="@($"modal-dialog modal-dialog-scrollable {FullscreenMode.CssClass}")" @onclick:stopPropagation="true">
 			<div class="modal-content">
 				@ChildContent
 			</div>

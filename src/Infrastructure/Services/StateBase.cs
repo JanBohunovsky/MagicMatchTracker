@@ -2,16 +2,14 @@ namespace MagicMatchTracker.Infrastructure.Services;
 
 public abstract class StateBase
 {
-	private bool _isBusy;
-
 	public event Action? StateChanged;
 
 	public bool IsBusy
 	{
-		get => _isBusy;
+		get;
 		protected set
 		{
-			_isBusy = value;
+			field = value;
 			NotifyStateChanged();
 		}
 	}

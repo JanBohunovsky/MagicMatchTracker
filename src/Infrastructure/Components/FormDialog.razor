@@ -4,7 +4,7 @@
 @if (Model is not null)
 {
 	<div class="modal show" tabindex="-1" @onclick="OnCancel">
-		<AutoFocus class="@($"modal-dialog modal-dialog-scrollable {FullscreenMode.GetCssClass()}")" @onclick:stopPropagation="true">
+		<AutoFocus class="@($"modal-dialog modal-dialog-scrollable {FullscreenMode.CssClass}")" @onclick:stopPropagation="true">
 			<EditForm EditContext="_editContext" OnValidSubmit="OnSubmit" class="modal-content">
 				<FluentValidator/>
 				@ChildContent(Model)
