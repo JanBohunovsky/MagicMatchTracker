@@ -127,21 +127,24 @@
 		</div>
 
 		@* Advanced *@
-		<details>
-			<summary class="user-select-none">Advanced</summary>
-			<div class="d-flex flex-column gap-3 mt-2">
-				<div>
-					<label for="time" class="form-label">Time</label>
-					<InputDate @bind-Value="context.Time" class="form-control" id="time"
-					           Type="InputDateType.DateTimeLocal" step="1"
-					           disabled="@State.IsBusy"/>
-					@if (State.IsNew)
-					{
-						<span class="small text-muted">Leave empty to use current time upon saving.</span>
-					}
+		@if (context.IsLive)
+		{
+			<details>
+				<summary class="user-select-none">Advanced</summary>
+				<div class="d-flex flex-column gap-3 mt-2">
+					<div>
+						<label for="time" class="form-label">Time</label>
+						<InputDate @bind-Value="context.Time" class="form-control" id="time"
+						           Type="InputDateType.DateTimeLocal" step="1"
+						           disabled="@State.IsBusy"/>
+						@if (State.IsNew)
+						{
+							<span class="small text-muted">Leave empty to use current time upon saving.</span>
+						}
+					</div>
 				</div>
-			</div>
-		</details>
+			</details>
+		}
 	</div>
 	<div class="modal-footer">
 		<button type="button" class="btn btn-outline-secondary" @onclick="State.Cancel" disabled="@State.IsBusy">Cancel</button>

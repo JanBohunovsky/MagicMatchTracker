@@ -12,7 +12,8 @@ public sealed class MatchDetailState(
 	MatchDeckSelectionDialogState deckSelectionDialogState,
 	MatchParticipationDetailsEditDialogState participationDetailsEditDialogState,
 	MatchParticipationEndStateEditDialogState participationEndStateEditDialogState,
-	MatchCreationHelper matchCreationHelper) : StateBase
+	MatchStartTransitionDialogState startTransitionDialogState,
+	MatchEndTransitionDialogState endTransitionDialogState) : StateBase
 {
 	public bool IsLoading { get; private set; }
 	public Match? Match { get; private set; }
@@ -113,21 +114,10 @@ public sealed class MatchDetailState(
 		}
 
 		ShowErrors = false;
-		IsBusy = true;
 
-		var now = DateTimeOffset.Now;
-		var today = now.ToDateOnly();
-
-		if (Match.CreatedAt.ToDateOnly() < today)
-		{
-			var matchNumber = await matchCreationHelper.GetNextMatchNumberAsync(today, cancellationToken);
-			Match.MatchNumber = matchNumber;
-		}
-
-		Match.TimeStarted = now;
-		await database.SaveChangesAsync(cancellationToken);
-
-		IsBusy = false;
+		var success = await startTransitionDialogState.ShowDialogAsync(Match, cancellationToken);
+		if (success)
+			NotifyStateChanged();
 	}
 
 	public async Task EndMatchAsync(CancellationToken cancellationToken = default)
@@ -142,12 +132,10 @@ public sealed class MatchDetailState(
 		}
 
 		ShowErrors = false;
-		IsBusy = true;
 
-		Match.TimeEnded = DateTimeOffset.Now;
-		await database.SaveChangesAsync(cancellationToken);
-
-		IsBusy = false;
+		var success = await endTransitionDialogState.ShowDialogAsync(Match, cancellationToken);
+		if (success)
+			NotifyStateChanged();
 	}
 
 	public async Task PlayAgainAsync(CancellationToken cancellationToken = default)
@@ -158,8 +146,9 @@ public sealed class MatchDetailState(
 		IsBusy = true;
 
 		await listingState.LoadMatchesAsync(cancellationToken);
-		await listingState.AddNewMatchAsync(Match, cancellationToken);
 
 		IsBusy = false;
+
+		await listingState.AddNewMatchAsync(Match, cancellationToken);
 	}
 }

@@ -27,19 +27,34 @@
 					<ValidationMessage For="() => context.MatchNumber" class="invalid-feedback"/>
 				</div>
 
-				<div>
-					<label for="timeStarted" class="form-label">Start time</label>
-					<InputDate Type="InputDateType.DateTimeLocal" step="1" @bind-Value="context.TimeStarted" class="form-control"
-					           id="timeStarted" disabled="@State.IsBusy"/>
-					<ValidationMessage For="() => context.TimeStarted" class="invalid-feedback"/>
-				</div>
+				@if (context.IsLive && context.HasStarted)
+				{
+					<div>
+						<label for="timeStarted" class="form-label">Start time</label>
+						<InputDate Type="InputDateType.DateTimeLocal" step="1" @bind-Value="context.TimeStarted" class="form-control"
+						           id="timeStarted" disabled="@State.IsBusy"/>
+						<ValidationMessage For="() => context.TimeStarted" class="invalid-feedback"/>
+					</div>
+				}
 
-				<div>
-					<label for="timeEnded" class="form-label">End time</label>
-					<InputDate Type="InputDateType.DateTimeLocal" step="1" @bind-Value="context.TimeEnded" class="form-control"
-					           id="timeEnded" disabled="@State.IsBusy"/>
-					<ValidationMessage For="() => context.TimeEnded" class="invalid-feedback"/>
-				</div>
+				@if (context.IsLive && context.HasEnded)
+				{
+					<div>
+						<label for="timeEnded" class="form-label">End time</label>
+						<InputDate Type="InputDateType.DateTimeLocal" step="1" @bind-Value="context.TimeEnded" class="form-control"
+						           id="timeEnded" disabled="@State.IsBusy"/>
+						<ValidationMessage For="() => context.TimeEnded" class="invalid-feedback"/>
+					</div>
+				}
+
+				@if (!context.IsLive && context.HasStarted)
+				{
+					<div>
+						<label for="date" class="form-label">Date</label>
+						<InputDate Type="InputDateType.Date" step="1" @bind-Value="context.Date" class="form-control"
+						           id="date" disabled="@State.IsBusy"/>
+					</div>
+				}
 			</div>
 		</details>
 	</div>

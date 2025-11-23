@@ -18,9 +18,24 @@
 	word-break: break-word;
 }
 
-.match-action-button {
+.match-actions {
 	margin-top: 0.5rem;
-	justify-content: center;
+
+	&:not(.btn) {
+		display: flex;
+		flex-direction: row;
+		gap: 0.5rem;
+		justify-content: stretch;
+	}
+
+	&.btn {
+		justify-content: center;
+	}
+
+	& .btn {
+		flex: 1;
+		justify-content: center;
+	}
 }
 
 .match-participations {
@@ -54,8 +69,12 @@
 		margin-right: 0.25rem;
 	}
 
-	.match-action-button {
+	.match-actions {
 		margin-top: 1rem;
+
+		&:not(.btn) {
+			flex-direction: column;
+		}
 	}
 
 	.match-participations {

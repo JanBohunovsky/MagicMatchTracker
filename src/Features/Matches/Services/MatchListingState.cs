@@ -7,7 +7,7 @@ namespace MagicMatchTracker.Features.Matches.Services;
 public sealed class MatchListingState(
 	Database database,
 	MatchPlayerSelectionDialogState playerSelectionDialogState,
-	MatchCreationHelper matchCreationHelper,
+	MatchNumberingHelper matchNumberingHelper,
 	NavigationManager navigationManager) : StateBase
 {
 	private List<Match>? _matches;
@@ -19,9 +19,11 @@ public sealed class MatchListingState(
 		if (_matches is not null)
 			return;
 
+		var today = DateOnly.Today;
 		_matches = await database.Matches
 			.Include(m => m.Participations)
-			.OrderByDescending(m => m.TimeStarted ?? m.CreatedAt)
+			.OrderByDescending(m => m.TimeStarted != null ? DateOnly.FromDateTime(m.TimeStarted.Value.Date) : today)
+			.ThenByDescending(m => m.MatchNumber)
 			.ToListAsync(cancellationToken);
 	}
 
@@ -34,7 +36,7 @@ public sealed class MatchListingState(
 
 		var match = new Match
 		{
-			MatchNumber = await matchCreationHelper.GetNextMatchNumberAsync(DateTimeOffset.Now.ToDateOnly(), cancellationToken),
+			MatchNumber = await matchNumberingHelper.GetNextMatchNumberAsync(DateOnly.Today, cancellationToken),
 		};
 
 		if (templateMatch is not null)
@@ -48,19 +50,13 @@ public sealed class MatchListingState(
 					Deck = templateMatchParticipation.Deck,
 				});
 			}
-
-			database.Matches.Add(match);
-			await database.SaveChangesAsync(cancellationToken);
 		}
 
 		IsBusy = false;
 
-		if (templateMatch is null)
-		{
-			var success = await playerSelectionDialogState.ShowDialogAsync(match, cancellationToken);
-			if (!success)
-				return;
-		}
+		var success = await playerSelectionDialogState.ShowDialogAsync(match, cancellationToken);
+		if (!success)
+			return;
 
 		_matches.Insert(0, match);
 		navigationManager.NavigateTo($"/matches/{match.Id}");

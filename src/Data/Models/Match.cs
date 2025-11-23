@@ -13,11 +13,11 @@ public sealed class Match : IEntity
 
 	public int MatchNumber { get; set; }
 
+	public bool IsLive { get; set; } = true;
+
 	public string? Notes { get; set; }
 
 	public List<MatchParticipation> Participations { get; set; } = [];
-
-	public DateTimeOffset CreatedAt { get; private init; } = DateTimeOffset.Now;
 
 	[MemberNotNullWhen(true, nameof(TimeStarted))]
 	public bool HasStarted => TimeStarted is not null;
@@ -27,7 +27,12 @@ public sealed class Match : IEntity
 
 	public bool IsInProgress => HasStarted && !HasEnded;
 
-	public DateOnly GetEffectiveDate() => TimeStarted?.Date.ToDateOnly() ?? CreatedAt.Date.ToDateOnly();
+	public DateOnly GetEffectiveDate() => TimeStarted?.Date.ToDateOnly() ?? DateOnly.Today;
+
+	public static DateTimeOffset GetDateTimeForNonLiveMatch(DateOnly date)
+	{
+		return new DateTimeOffset(date, new TimeOnly(12, 00), TimeSpan.Zero);
+	}
 
 	public string GetTitle(bool includeDate = true)
 	{
@@ -43,7 +48,7 @@ public sealed class Match : IEntity
 		sb.Append(" - ");
 
 		var date = GetEffectiveDate();
-		if (date.Year < DateTimeOffset.Now.Year)
+		if (date.Year < DateOnly.Today.Year)
 		{
 			sb.Append(date.ToString("dd MMMM yyyy"));
 		}
@@ -57,7 +62,7 @@ public sealed class Match : IEntity
 
 	public string? GetFormattedDuration()
 	{
-		if (!HasStarted)
+		if (!HasStarted || !IsLive)
 			return null;
 
 		var endTime = TimeEnded ?? DateTimeOffset.Now;
@@ -65,35 +70,11 @@ public sealed class Match : IEntity
 		if (duration <= TimeSpan.Zero)
 			return null;
 
-		if (duration.TotalMinutes < 1)
-			return "Less than a minute";
-		if (duration.TotalDays >= 1)
-			return "Over a day";
-
-		var sb = new StringBuilder();
-
-		if (duration.Hours > 1)
-			sb.Append($"{duration.Hours} hours ");
-		else if (duration.Hours > 0)
-			sb.Append($"{duration.Hours} hour ");
-
-		if (duration.Minutes > 1)
-			sb.Append($"{duration.Minutes} minutes ");
-		else if (duration.Minutes > 0)
-			sb.Append($"{duration.Minutes} minute ");
-
-		// Trim last space
-		if (sb.Length > 0)
-			sb.Length--;
-
-		return sb.ToString();
+		return duration.ToPrettyString();
 	}
 
 	public int? GetTotalTurns()
 	{
-		if (!HasEnded)
-			return null;
-
 		return Participations
 			.Choose(mp => mp.EndState)
 			.Select(e => e.Turn)

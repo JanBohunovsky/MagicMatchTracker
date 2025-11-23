@@ -1,27 +1,18 @@
-@using System.Text
-@if (Match.IsInProgress)
-{
-	<div @attributes="Attributes" class="@_containerClass">
-		<span class="icon">timer</span>
-		<span class="text-content">In Progress • @Match.GetFormattedDuration()</span>
-	</div>
+@{
+	var entries = GetEntries().JoinToString(" • ");
+	var icon = entries == NotRecordedLive ? "timer_off" : "timer";
+}
+@if (entries.IsEmpty())
 	return;
-}
 
-@if (Match.HasEnded)
-{
-	var formattedTurnsAndDuration = GetFormattedTurnsAndDuration();
-	if (formattedTurnsAndDuration is null)
-		return;
-
-	<div @attributes="Attributes" class="@_containerClass">
-		<span class="icon">timer</span>
-		<span class="text-content">@formattedTurnsAndDuration</span>
-	</div>
-}
+<div @attributes="Attributes" class="@_containerClass">
+	<span class="icon">@icon</span>
+	<span>@entries</span>
+</div>
 
 @code {
 
+	private const string NotRecordedLive = "Not recorded live";
 	private string? _containerClass;
 
 	[Parameter, EditorRequired]
@@ -35,22 +26,20 @@
 		_containerClass = AttributeUtilities.CombineClassNames(Attributes, "text-content");
 	}
 
-	private string? GetFormattedTurnsAndDuration()
+	private IEnumerable<string> GetEntries()
 	{
+		if (Match.IsInProgress)
+			yield return "In Progress";
+
 		var totalTurns = Match.GetTotalTurns();
-		var duration = Match.GetFormattedDuration();
-		if (totalTurns is null && duration is null)
-			return null;
+		if (Match.HasEnded && totalTurns is not null)
+			yield return $"{totalTurns} turns";
 
-		var sb = new StringBuilder();
-		if (totalTurns is not null)
-			sb.Append($"{totalTurns} turns");
-		if (totalTurns is not null && duration is not null)
-			sb.Append(" • ");
-		if (duration is not null)
-			sb.Append(duration);
-
-		return sb.ToString();
+		var formattedDuration = Match.IsLive
+			? Match.GetFormattedDuration()
+			: NotRecordedLive;
+		if (formattedDuration is not null)
+			yield return formattedDuration;
 	}
 
 }

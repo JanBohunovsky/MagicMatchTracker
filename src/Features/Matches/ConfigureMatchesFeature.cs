@@ -14,8 +14,10 @@ public static class ConfigureMatchesFeature
 			.AddScoped<MatchDeckSelectionDialogState>()
 			.AddScoped<MatchParticipationDetailsEditDialogState>()
 			.AddScoped<MatchParticipationEndStateEditDialogState>()
+			.AddScoped<MatchStartTransitionDialogState>()
+			.AddScoped<MatchEndTransitionDialogState>()
 			.AddScoped<MatchDeckSearchProvider>()
-			.AddScoped<MatchCreationHelper>();
+			.AddScoped<MatchNumberingHelper>();
 
 		return services;
 	}

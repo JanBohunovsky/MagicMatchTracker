@@ -6,16 +6,30 @@ public sealed class MatchEditModel(Match model)
 {
 	public DateTimeOffset? TimeStarted { get; set; } = model.TimeStarted;
 	public DateTimeOffset? TimeEnded { get; set; } = model.TimeEnded;
+	public DateOnly? Date { get; set; } = model.TimeStarted?.ToDateOnly();
 	public int MatchNumber { get; set; } = model.MatchNumber;
 	public string Notes { get; set; } = model.Notes ?? string.Empty;
 
+	public bool IsLive { get; } = model.IsLive;
 	public bool HasStarted { get; } = model.HasStarted;
 	public bool HasEnded { get; } = model.HasEnded;
 
 	public Match ApplyChanges()
 	{
-		model.TimeStarted = TimeStarted;
-		model.TimeEnded = TimeEnded;
+		if (HasStarted)
+		{
+			model.TimeStarted = IsLive
+				? TimeStarted
+				: Match.GetDateTimeForNonLiveMatch(Date!.Value);
+		}
+
+		if (HasEnded)
+		{
+			model.TimeEnded = IsLive
+				? TimeEnded
+				: Match.GetDateTimeForNonLiveMatch(Date!.Value);
+		}
+
 		model.MatchNumber = MatchNumber;
 		model.Notes = Notes.TrimToNull();
 
@@ -30,18 +44,13 @@ public class MatchEditModelValidator : AbstractValidator<MatchEditModel>
 	{
 		RuleFor(m => m.TimeStarted)
 			.NotEmpty()
-			.When(m => m.HasStarted)
-			.WithMessage("Start time is required after the match has started");
+			.When(m => m.IsLive && m.HasStarted)
+			.WithMessage("Enter the start time");
 
 		RuleFor(m => m.TimeEnded)
 			.NotEmpty()
-			.When(m => m.HasEnded)
-			.WithMessage("End time is required after the match has ended");
-
-		RuleFor(m => m.TimeStarted)
-			.NotEmpty()
-			.When(m => m.TimeEnded.HasValue && !m.HasStarted)
-			.WithMessage("End time requires start time");
+			.When(m => m.IsLive && m.HasEnded)
+			.WithMessage("Enter the end time");
 
 		RuleFor(m => m.TimeEnded)
 			.GreaterThanOrEqualTo(m => m.TimeStarted)
