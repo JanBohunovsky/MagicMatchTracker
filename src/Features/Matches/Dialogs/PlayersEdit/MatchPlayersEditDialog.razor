@@ -1,0 +1,91 @@
+@using MagicMatchTracker.Infrastructure.Dialogs
+@using Microsoft.EntityFrameworkCore
+@inherits StatefulComponentBase<MatchPlayersEditDialogState>
+@inject Database Database
+
+<FormDialog
+	TModel="MatchPlayersEditModel"
+	Model="State.Model"
+	FullscreenMode="DialogFullscreenMode.Never"
+	OnDialogShown="OnDialogShown"
+	OnDialogHidden="OnDialogHidden"
+	OnSubmit="@(() => State.SaveAsync(CancellationToken))">
+	<div class="modal-header">
+		<h5 class="modal-title">Select players</h5>
+		<button type="button" class="btn-close" aria-label="Close" @onclick="State.Cancel" disabled="@State.IsBusy"></button>
+	</div>
+	<div class="modal-body d-flex flex-column gap-3 p-0">
+		@if (_players is null)
+		{
+			<div class="center m-4">
+				<span class="spinner-border text-primary"></span>
+			</div>
+		}
+		else if (_players.Count == 0)
+		{
+			<div class="center m-4">
+				<span class="text-secondary">No players available</span>
+			</div>
+		}
+		else
+		{
+			<div class="list-group list-group-flush">
+				@foreach (var player in _players)
+				{
+					<div class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-0 pe-0">
+						<InputCheckbox class="form-check-input m-0" id="@player.Value.Id" @bind-Value="@player.IsChecked"/>
+						<label class="form-check-label text-content gap-2 py-2 w-100 user-select-none" for="@player.Value.Id">
+							<Avatar Player="player.Value" Size="28" class="my-1"/>
+							<span>@player.Value.Name</span>
+						</label>
+					</div>
+				}
+			</div>
+		}
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-secondary" @onclick="State.Cancel" disabled="@State.IsBusy">Cancel</button>
+		<button type="submit" class="btn btn-primary" disabled="@(State.IsBusy || _players is null)">
+			@if (State.IsBusy)
+			{
+				<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+			}
+			<span>@ConfirmCaption</span>
+		</button>
+	</div>
+</FormDialog>
+
+@code {
+
+	private CancellationTokenSource? _loadingCancellationSource;
+	private List<CheckboxBindingProxy<Player>>? _players;
+
+	private string ConfirmCaption => State.IsNew ? "Create" : "Save";
+
+	private async Task OnDialogShown(MatchPlayersEditModel model)
+	{
+		_loadingCancellationSource = new CancellationTokenSource();
+		var cancellationToken = _loadingCancellationSource.Token;
+
+		var players = await Database.Players
+			.Include(p => p.Decks)
+			.OrderBy(p => p.Name)
+			.ToListAsync(cancellationToken);
+
+		_players = players.Select(p => new CheckboxBindingProxy<Player>(p,
+				() => model.IsPlayerSelected(p),
+				value => model.TogglePlayerSelection(p, value)))
+			.ToList();
+
+		_loadingCancellationSource = null;
+	}
+
+	private async Task OnDialogHidden()
+	{
+		if (_loadingCancellationSource is not null)
+			await _loadingCancellationSource.CancelAsync();
+
+		_players = null;
+	}
+
+}

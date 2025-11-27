@@ -1,0 +1,45 @@
+@using MagicMatchTracker.Infrastructure.Dialogs
+@inherits StatefulComponentBase<MatchEndTransitionDialogState>
+
+<FormDialog
+	TModel="MatchEndTransitionModel"
+	Model="State.Model"
+	OnSubmit="@(() => State.SaveAsync(CancellationToken))">
+	<div class="modal-header">
+		<h5 class="modal-title">End match</h5>
+		<button type="button" class="btn-close" aria-label="Close" @onclick="State.Cancel" disabled="@State.IsBusy"></button>
+	</div>
+	<div class="modal-body d-flex flex-column gap-3">
+		<div class="d-flex flex-column gap-1">
+			@if (context.Winner is not null)
+			{
+				<div class="text-content">
+					<span>The winner is</span>
+					<Avatar Player="context.Winner" Size="20" class="ms-0.5"/>
+					<span>@context.Winner.Name.</span>
+				</div>
+			}
+			else
+			{
+				<div>The match ended in a draw.</div>
+			}
+
+			@if (context.FormattedDuration is not null)
+			{
+				<div>The match lasted @context.FormattedDuration.</div>
+			}
+		</div>
+
+		<div>Are you sure you want to end the match?</div>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-secondary" @onclick="State.Cancel" disabled="@State.IsBusy">Cancel</button>
+		<button type="submit" class="btn btn-primary" disabled="@State.IsBusy">
+			@if (State.IsBusy)
+			{
+				<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+			}
+			<span>End match</span>
+		</button>
+	</div>
+</FormDialog>

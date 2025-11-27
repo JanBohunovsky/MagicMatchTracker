@@ -1,3 +1,4 @@
+using MagicMatchTracker.Features.Shared.Dialogs.DeckEdit;
 using MagicMatchTracker.Features.Shared.Services;
 
 namespace MagicMatchTracker.Features.Shared;

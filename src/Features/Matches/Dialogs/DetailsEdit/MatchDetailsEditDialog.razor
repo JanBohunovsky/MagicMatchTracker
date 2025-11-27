@@ -1,0 +1,71 @@
+@using MagicMatchTracker.Infrastructure.Dialogs
+@inherits StatefulComponentBase<MatchDetailsEditDialogState>
+
+<FormDialog
+	TModel="MatchDetailsEditModel"
+	Model="State.Model"
+	FullscreenMode="DialogFullscreenMode.Never"
+	OnSubmit="@(() => State.SaveAsync(CancellationToken))">
+	<div class="modal-header">
+		<h5 class="modal-title">Edit Match</h5>
+		<button type="button" class="btn-close" aria-label="Close" @onclick="State.Cancel" disabled="@State.IsBusy"></button>
+	</div>
+	<div class="modal-body d-flex flex-column gap-3">
+		<div>
+			<label for="notes" class="form-label">Notes</label>
+			<InputTextArea @bind-Value="context.Notes" class="form-control" rows="3" id="notes" disabled="@State.IsBusy" autofocus/>
+		</div>
+
+		<details>
+			<summary class="user-select-none">Advanced</summary>
+
+			<div class="d-flex flex-column gap-3 mt-2">
+				<div>
+					<label for="matchNumber" class="form-label">Match Number</label>
+					<InputNumber min="1" step="1" @bind-Value="context.MatchNumber" class="form-control"
+					             id="matchNumber" disabled="@State.IsBusy"/>
+					<ValidationMessage For="() => context.MatchNumber" class="invalid-feedback"/>
+				</div>
+
+				@if (context.IsLive && context.HasStarted)
+				{
+					<div>
+						<label for="timeStarted" class="form-label">Start time</label>
+						<InputDate Type="InputDateType.DateTimeLocal" step="1" @bind-Value="context.TimeStarted" class="form-control"
+						           id="timeStarted" disabled="@State.IsBusy"/>
+						<ValidationMessage For="() => context.TimeStarted" class="invalid-feedback"/>
+					</div>
+				}
+
+				@if (context.IsLive && context.HasEnded)
+				{
+					<div>
+						<label for="timeEnded" class="form-label">End time</label>
+						<InputDate Type="InputDateType.DateTimeLocal" step="1" @bind-Value="context.TimeEnded" class="form-control"
+						           id="timeEnded" disabled="@State.IsBusy"/>
+						<ValidationMessage For="() => context.TimeEnded" class="invalid-feedback"/>
+					</div>
+				}
+
+				@if (!context.IsLive && context.HasStarted)
+				{
+					<div>
+						<label for="date" class="form-label">Date</label>
+						<InputDate Type="InputDateType.Date" step="1" @bind-Value="context.Date" class="form-control"
+						           id="date" disabled="@State.IsBusy"/>
+					</div>
+				}
+			</div>
+		</details>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-secondary" @onclick="State.Cancel" disabled="@State.IsBusy">Cancel</button>
+		<button type="submit" class="btn btn-primary" disabled="@State.IsBusy">
+			@if (State.IsBusy)
+			{
+				<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+			}
+			<span>Save</span>
+		</button>
+	</div>
+</FormDialog>

@@ -1,0 +1,38 @@
+@using MagicMatchTracker.Infrastructure.Dialogs
+@inherits StatefulComponentBase<PlayerEditDialogState>
+
+<FormDialog TModel="PlayerEditModel" Model="State.Model" OnSubmit="@(() => State.SaveAsync(CancellationToken))">
+	<div class="modal-header">
+		<h5 class="modal-title">@Title</h5>
+		<button type="button" class="btn-close" aria-label="Close" @onclick="State.Cancel" disabled="@State.IsBusy"></button>
+	</div>
+	<div class="modal-body d-flex flex-column gap-3">
+		<div>
+			<label for="playerName" class="form-label">Name</label>
+			<InputText @bind-Value="context.Name" class="form-control" id="playerName" disabled="@State.IsBusy" autofocus/>
+			<ValidationMessage For="() => context.Name" class="invalid-feedback"/>
+		</div>
+		<div>
+			<label for="avatarUrl" class="form-label">Avatar URL <span class="text-secondary small">(optional)</span></label>
+			<InputText @bind-Value="context.AvatarUri" class="form-control" id="avatarUrl" disabled="@State.IsBusy"/>
+			<ValidationMessage For="() => context.AvatarUri" class="invalid-feedback"/>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-secondary" @onclick="State.Cancel" disabled="@State.IsBusy">Cancel</button>
+		<button type="submit" class="btn btn-primary" disabled="@State.IsBusy">
+			@if (State.IsBusy)
+			{
+				<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+			}
+			<span>@ConfirmCaption</span>
+		</button>
+	</div>
+</FormDialog>
+
+@code {
+
+	private string Title => State.IsNew ? "Add new player" : "Edit player";
+	private string ConfirmCaption => State.IsNew ? "Add" : "Save";
+
+}

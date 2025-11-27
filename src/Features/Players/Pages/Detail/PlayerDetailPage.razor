@@ -1,0 +1,100 @@
+@page "/players/{id:guid}"
+@using MagicMatchTracker.Features.Players.Dialogs.Edit
+@using MagicMatchTracker.Features.Shared.Dialogs.DeckEdit
+@using MagicMatchTracker.Infrastructure.Pages
+@inherits StatefulComponentBase<PlayerDetailState>
+
+<PageTitle>@PageTitle - Match Tracker</PageTitle>
+
+@if (State.IsBusy)
+{
+	<PageLoading/>
+	return;
+}
+
+@if (State.Player is null)
+{
+	<NotFound/>
+	return;
+}
+
+<PlayerEditDialog/>
+<DeckEditDialog/>
+
+@if (State.Player.Decks.Count > 0)
+{
+	<button class="btn btn-primary btn-fab"
+	        @onclick="() => State.AddNewDeckAsync(CancellationToken)">
+		<span class="icon filled" aria-hidden="true">box_add</span>
+		<span>New deck</span>
+	</button>
+}
+
+<div class="heading">
+	<span class="player-name">
+		<Avatar Player="State.Player" Size="32"/>
+		<h1>@State.Player.Name</h1>
+	</span>
+
+	<button class="btn btn-ghost-secondary btn-square hover-icon-filled"
+	        title="Edit player"
+	        @onclick="() => State.EditPlayerAsync(CancellationToken)">
+		<span class="icon" aria-hidden="true">edit</span>
+	</button>
+</div>
+
+@if (State.Player.Decks.Count == 0)
+{
+	<span class="center my-5 d-flex flex-column gap-3 align-items-center justify-content-start">
+		<span class="icon filled huge text-primary">box_add</span>
+		<span>@State.Player.Name has no decks yet</span>
+		<button type="button" class="btn btn-primary" @onclick="() => State.AddNewDeckAsync(CancellationToken)">
+			<span class="icon">add</span>
+			<span>New deck</span>
+		</button>
+	</span>
+	return;
+}
+
+<ul class="deck-list">
+	@foreach (var deck in State.ActiveDecks)
+	{
+		<li>
+			<DeckCard Deck="deck" OnClick="@(() => State.EditDeckAsync(deck, CancellationToken))"/>
+		</li>
+	}
+</ul>
+
+@if (!State.ArchivedDecks.Any())
+{
+	return;
+}
+
+<details>
+	<summary class="fs-4">
+		<h4 class="heading-archive">Archived decks</h4>
+	</summary>
+
+	<ul class="deck-list">
+		@foreach (var deck in State.ArchivedDecks)
+		{
+			<li>
+				<DeckCard Deck="deck" OnClick="@(() => State.EditDeckAsync(deck, CancellationToken))"/>
+			</li>
+		}
+	</ul>
+</details>
+
+@code {
+
+	private string PageTitle => State.Player?.Name ?? "Player Detail";
+
+	[Parameter, EditorRequired]
+    public Guid Id { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await State.LoadPlayerAsync(Id, CancellationToken);
+	}
+
+}

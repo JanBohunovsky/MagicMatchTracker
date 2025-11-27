@@ -1,4 +1,6 @@
-using MagicMatchTracker.Features.Players.Services;
+using MagicMatchTracker.Features.Players.Dialogs.Edit;
+using MagicMatchTracker.Features.Players.Pages.Detail;
+using MagicMatchTracker.Features.Players.Pages.Listing;
 
 namespace MagicMatchTracker.Features.Players;
 

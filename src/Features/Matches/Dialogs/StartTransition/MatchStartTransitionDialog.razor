@@ -1,0 +1,89 @@
+@using MagicMatchTracker.Features.Matches.Services
+@using MagicMatchTracker.Infrastructure.Dialogs
+@inherits StatefulComponentBase<MatchStartTransitionDialogState>
+@inject MatchNumberingService MatchNumberingService
+
+<FormDialog
+	TModel="MatchStartTransitionModel"
+	Model="State.Model"
+	OnSubmit="@(() => State.SaveAsync(CancellationToken))">
+	<div class="modal-header">
+		<h5 class="modal-title">Start match</h5>
+		<button type="button" class="btn-close" aria-label="Close" @onclick="State.Cancel" disabled="@State.IsBusy"></button>
+	</div>
+	<div class="modal-body d-flex flex-column gap-3">
+		<div>Are you sure you want to start the match?</div>
+		<div class="form-check">
+			<InputCheckbox @bind-Value="context.IsLive" class="form-check-input" id="isLive"
+			               disabled="@State.IsBusy"/>
+			<label class="form-check-label d-flex flex-column" for="isLive">
+				<span>Live match</span>
+				@if (context.IsLive)
+				{
+					<span class="text-muted small">This match is recorded live. All time fields will be automatically filled with the current time.</span>
+				}
+				else
+				{
+					<span class="text-muted small">This match is NOT recorded live. You can only select the date and all time fields will be left empty.</span>
+				}
+			</label>
+		</div>
+
+		@if (!context.IsLive)
+		{
+			<div>
+				<label for="date" class="form-label">Date</label>
+				<InputDate @bind-Value="context.Date" class="form-control" id="date"
+				           @bind-Value:after="UpdateMatchNumberAsync"
+				           Type="InputDateType.Date" step="1"
+				           disabled="@State.IsBusy"/>
+			</div>
+			<div>
+				<label for="matchNumber" class="form-label">Match Number</label>
+				<div class="position-relative">
+					<InputNumber @bind-Value="context.MatchNumber" class="form-control" id="matchNumber"
+					             min="1" step="1"
+					             disabled="@State.IsBusy"/>
+					@if (_isGettingNextMatchNumber)
+					{
+						<span class="spinner-border spinner-border-sm text-primary input-text-spinner-sm-end me-4"></span>
+					}
+				</div>
+				<ValidationMessage For="() => context.MatchNumber" class="invalid-feedback"/>
+			</div>
+		}
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-secondary" @onclick="State.Cancel" disabled="@State.IsBusy">Cancel</button>
+		<button type="submit" class="btn btn-primary" disabled="@State.IsBusy">
+			@if (State.IsBusy)
+			{
+				<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+			}
+			<span>Start match</span>
+		</button>
+	</div>
+</FormDialog>
+
+@code {
+
+	private bool _isGettingNextMatchNumber;
+
+	private async Task UpdateMatchNumberAsync()
+	{
+		if (State.Model is null || State.Model.IsLive)
+			return;
+
+		_isGettingNextMatchNumber = true;
+
+		try
+		{
+			State.Model.MatchNumber = await MatchNumberingService.GetNextMatchNumberAsync(State.Model.Date, CancellationToken);
+		}
+		finally
+		{
+			_isGettingNextMatchNumber = false;
+		}
+	}
+
+}
