@@ -2,7 +2,7 @@ using MagicMatchTracker.Features.Shared;
 
 namespace MagicMatchTracker.Features.Matches.Models;
 
-public sealed class MatchPlayerSelectModel(Match model)
+public sealed class MatchPlayersEditModel(Match model)
 {
 	private readonly HashSet<Player> _selectedPlayers = model.Participations
 		.Select(mp => mp.Player)

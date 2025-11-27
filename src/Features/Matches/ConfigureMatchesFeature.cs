@@ -9,8 +9,8 @@ public static class ConfigureMatchesFeature
 		services
 			.AddScoped<MatchListingState>()
 			.AddScoped<MatchDetailState>()
-			.AddScoped<MatchEditDialogState>()
-			.AddScoped<MatchPlayerSelectionDialogState>()
+			.AddScoped<MatchDetailsEditDialogState>()
+			.AddScoped<MatchPlayersEditDialogState>()
 			.AddScoped<MatchDeckSelectionDialogState>()
 			.AddScoped<MatchParticipationDetailsEditDialogState>()
 			.AddScoped<MatchParticipationEndStateEditDialogState>()

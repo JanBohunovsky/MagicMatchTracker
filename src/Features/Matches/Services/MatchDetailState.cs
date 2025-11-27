@@ -1,14 +1,18 @@
+using MagicMatchTracker.Features.Matches.Events;
 using MagicMatchTracker.Features.Matches.Models;
 using MagicMatchTracker.Infrastructure.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Features.Matches.Services;
 
 public sealed class MatchDetailState(
 	Database database,
-	MatchListingState listingState,
-	MatchPlayerSelectionDialogState playerSelectionDialogState,
-	MatchEditDialogState editDialogState,
+	MatchNumberingHelper matchNumberingHelper,
+	NavigationManager navigationManager,
+	IMessageHub messageHub,
+	MatchPlayersEditDialogState playersEditDialogState,
+	MatchDetailsEditDialogState detailsEditDialogState,
 	MatchDeckSelectionDialogState deckSelectionDialogState,
 	MatchParticipationDetailsEditDialogState participationDetailsEditDialogState,
 	MatchParticipationEndStateEditDialogState participationEndStateEditDialogState,
@@ -57,7 +61,7 @@ public sealed class MatchDetailState(
 		if (Match is null)
 			return;
 
-		var success = await playerSelectionDialogState.ShowDialogAsync(Match, cancellationToken);
+		var success = await playersEditDialogState.ShowDialogAsync(Match, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}
@@ -67,9 +71,21 @@ public sealed class MatchDetailState(
 		if (Match is null)
 			return;
 
-		var success = await editDialogState.ShowDialogAsync(Match, cancellationToken);
+		var success = await detailsEditDialogState.ShowDialogAsync(Match, cancellationToken);
 		if (success)
 			NotifyStateChanged();
+	}
+
+	public async Task DeleteMatchAsync(CancellationToken cancellationToken = default)
+	{
+		if (Match is null || Match.Participations.Count > 0)
+			return;
+
+		database.Matches.Remove(Match);
+		await database.SaveChangesAsync(cancellationToken);
+		messageHub.Publish(new MatchDeletedEvent(Match));
+
+		navigationManager.NavigateTo("/matches");
 	}
 
 	public async Task SelectDeckAsync(MatchParticipation participation, CancellationToken cancellationToken = default)
@@ -145,10 +161,27 @@ public sealed class MatchDetailState(
 
 		IsBusy = true;
 
-		await listingState.LoadMatchesAsync(cancellationToken);
+		var match = new Match
+		{
+			MatchNumber = await matchNumberingHelper.GetNextMatchNumberAsync(DateOnly.Today, cancellationToken),
+		};
+
+		foreach (var participation in Match.Participations)
+		{
+			match.Participations.Add(new MatchParticipation
+			{
+				Match = match,
+				Player = participation.Player,
+				Deck = participation.Deck,
+			});
+		}
 
 		IsBusy = false;
 
-		await listingState.AddNewMatchAsync(Match, cancellationToken);
+		var success = await playersEditDialogState.ShowDialogAsync(match, cancellationToken);
+		if (!success)
+			return;
+
+		navigationManager.NavigateTo($"/matches/{match.Id}");
 	}
 }

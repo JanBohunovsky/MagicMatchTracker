@@ -1,18 +1,41 @@
+using MagicMatchTracker.Features.Matches.Events;
 using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Features.Matches.Services;
 
-public sealed class MatchListingState(
-	Database database,
-	MatchPlayerSelectionDialogState playerSelectionDialogState,
-	MatchNumberingHelper matchNumberingHelper,
-	NavigationManager navigationManager) : StateBase
+public sealed class MatchListingState : StateBase, IDisposable
 {
+	private readonly Database _database;
+	private readonly MatchPlayersEditDialogState _playersEditDialogState;
+	private readonly MatchNumberingHelper _matchNumberingHelper;
+	private readonly NavigationManager _navigationManager;
+	private readonly IMessageHub _messageHub;
+	private readonly Guid[] _eventSubscriptions;
+
 	private List<Match>? _matches;
 
 	public IReadOnlyList<Match>? Matches => _matches;
+
+	public MatchListingState(Database database,
+		MatchPlayersEditDialogState playersEditDialogState,
+		MatchNumberingHelper matchNumberingHelper,
+		NavigationManager navigationManager,
+		IMessageHub messageHub)
+	{
+		_database = database;
+		_playersEditDialogState = playersEditDialogState;
+		_matchNumberingHelper = matchNumberingHelper;
+		_navigationManager = navigationManager;
+		_messageHub = messageHub;
+
+		_eventSubscriptions =
+		[
+			messageHub.Subscribe<MatchCreatedEvent>(OnMatchCreated),
+			messageHub.Subscribe<MatchDeletedEvent>(OnMatchDeleted),
+		];
+	}
 
 	public async Task LoadMatchesAsync(CancellationToken cancellationToken = default)
 	{
@@ -20,14 +43,14 @@ public sealed class MatchListingState(
 			return;
 
 		var today = DateOnly.Today;
-		_matches = await database.Matches
+		_matches = await _database.Matches
 			.Include(m => m.Participations)
 			.OrderByDescending(m => m.TimeStarted != null ? DateOnly.FromDateTime(m.TimeStarted.Value.Date) : today)
 			.ThenByDescending(m => m.MatchNumber)
 			.ToListAsync(cancellationToken);
 	}
 
-	public async Task AddNewMatchAsync(Match? templateMatch = null, CancellationToken cancellationToken = default)
+	public async Task AddNewMatchAsync(CancellationToken cancellationToken = default)
 	{
 		if (_matches is null)
 			return;
@@ -36,30 +59,33 @@ public sealed class MatchListingState(
 
 		var match = new Match
 		{
-			MatchNumber = await matchNumberingHelper.GetNextMatchNumberAsync(DateOnly.Today, cancellationToken),
+			MatchNumber = await _matchNumberingHelper.GetNextMatchNumberAsync(DateOnly.Today, cancellationToken),
 		};
-
-		if (templateMatch is not null)
-		{
-			foreach (var templateMatchParticipation in templateMatch.Participations)
-			{
-				match.Participations.Add(new MatchParticipation
-				{
-					Match = match,
-					Player = templateMatchParticipation.Player,
-					Deck = templateMatchParticipation.Deck,
-				});
-			}
-		}
 
 		IsBusy = false;
 
-		var success = await playerSelectionDialogState.ShowDialogAsync(match, cancellationToken);
+		var success = await _playersEditDialogState.ShowDialogAsync(match, cancellationToken);
 		if (!success)
 			return;
 
-		_matches.Insert(0, match);
-		navigationManager.NavigateTo($"/matches/{match.Id}");
+		_navigationManager.NavigateTo($"/matches/{match.Id}");
 	}
 
+	public void Dispose()
+	{
+		foreach (var subscriptionToken in _eventSubscriptions)
+		{
+			_messageHub.Unsubscribe(subscriptionToken);
+		}
+	}
+
+	private void OnMatchCreated(MatchCreatedEvent eventData)
+	{
+		_matches?.Insert(0, eventData.Match);
+	}
+
+	private void OnMatchDeleted(MatchDeletedEvent eventData)
+	{
+		_matches?.Remove(eventData.Match);
+	}
 }

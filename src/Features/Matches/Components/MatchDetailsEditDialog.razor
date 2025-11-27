@@ -1,8 +1,8 @@
 @using MagicMatchTracker.Features.Matches.Models
-@inherits StatefulComponentBase<MagicMatchTracker.Features.Matches.Services.MatchEditDialogState>
+@inherits StatefulComponentBase<MagicMatchTracker.Features.Matches.Services.MatchDetailsEditDialogState>
 
 <FormDialog
-	TModel="MatchEditModel"
+	TModel="MatchDetailsEditModel"
 	Model="State.Model"
 	FullscreenMode="DialogFullscreenMode.Never"
 	OnSubmit="@(() => State.SaveAsync(CancellationToken))">

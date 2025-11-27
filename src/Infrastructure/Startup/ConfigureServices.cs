@@ -42,6 +42,7 @@ public static class ConfigureServices
 		{
 			builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 			builder.Services
+				.AddScoped<IMessageHub, MessageHub>()
 				.AddScoped<FocusService>()
 				.AddScoped<AutoCloseService>();
 		}

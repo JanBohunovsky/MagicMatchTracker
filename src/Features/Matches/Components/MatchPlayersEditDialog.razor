@@ -1,10 +1,10 @@
 @using MagicMatchTracker.Features.Matches.Models
 @using Microsoft.EntityFrameworkCore
-@inherits StatefulComponentBase<MagicMatchTracker.Features.Matches.Services.MatchPlayerSelectionDialogState>
+@inherits StatefulComponentBase<MagicMatchTracker.Features.Matches.Services.MatchPlayersEditDialogState>
 @inject Database Database
 
 <FormDialog
-	TModel="MatchPlayerSelectModel"
+	TModel="MatchPlayersEditModel"
 	Model="State.Model"
 	FullscreenMode="DialogFullscreenMode.Never"
 	OnDialogShown="OnDialogShown"
@@ -62,7 +62,7 @@
 
 	private string ConfirmCaption => State.IsNew ? "Create" : "Save";
 
-	private async Task OnDialogShown(MatchPlayerSelectModel model)
+	private async Task OnDialogShown(MatchPlayersEditModel model)
 	{
 		_loadingCancellationSource = new CancellationTokenSource();
 		var cancellationToken = _loadingCancellationSource.Token;

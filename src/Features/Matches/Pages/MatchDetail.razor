@@ -37,12 +37,23 @@
 <div class="heading">
 	<h1>@State.Match.GetTitle(includeDate: false)</h1>
 
-	<button class="btn btn-ghost-secondary btn-square hover-icon-filled"
-	        title="Edit match"
-	        @onclick="@(() => State.EditMatchAsync(CancellationToken))"
-	        disabled="@State.IsBusy">
-		<span class="icon" aria-hidden="true">edit</span>
-	</button>
+	<div class="match-toolbar">
+		@if (State.Match.Participations.Count == 0)
+		{
+			<button class="btn btn-ghost-danger btn-square hover-icon-filled"
+			        title="Delete match"
+			        @onclick="@(() => State.DeleteMatchAsync(CancellationToken))"
+			        disabled="@State.IsBusy">
+				<span class="icon" aria-hidden="true">delete</span>
+			</button>
+		}
+		<button class="btn btn-ghost-secondary btn-square hover-icon-filled"
+		        title="Edit match"
+		        @onclick="@(() => State.EditMatchAsync(CancellationToken))"
+		        disabled="@State.IsBusy">
+			<span class="icon" aria-hidden="true">edit</span>
+		</button>
+	</div>
 </div>
 
 <div class="page-content">
@@ -146,8 +157,8 @@
 
 
 
-<MatchEditDialog/>
-<MatchPlayerSelectDialog/>
+<MatchDetailsEditDialog/>
+<MatchPlayersEditDialog/>
 <MatchDeckSelectDialog/>
 <MatchParticipationDetailsEditDialog/>
 <MatchParticipationEndStateEditDialog/>

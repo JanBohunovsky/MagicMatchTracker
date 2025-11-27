@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace MagicMatchTracker.Features.Matches.Models;
 
-public sealed class MatchEditModel(Match model)
+public sealed class MatchDetailsEditModel(Match model)
 {
 	public DateTimeOffset? TimeStarted { get; set; } = model.TimeStarted;
 	public DateTimeOffset? TimeEnded { get; set; } = model.TimeEnded;
@@ -38,9 +38,9 @@ public sealed class MatchEditModel(Match model)
 }
 
 [UsedImplicitly]
-public class MatchEditModelValidator : AbstractValidator<MatchEditModel>
+public class MatchDetailsEditModelValidator : AbstractValidator<MatchDetailsEditModel>
 {
-	public MatchEditModelValidator()
+	public MatchDetailsEditModelValidator()
 	{
 		RuleFor(m => m.TimeStarted)
 			.NotEmpty()

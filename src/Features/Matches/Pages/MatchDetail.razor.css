@@ -4,6 +4,12 @@
 	gap: 1rem;
 }
 
+.match-toolbar {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+}
+
 .match-details {
 	display: flex;
 	flex-direction: column;
@@ -56,6 +62,10 @@
 	.page-content {
 		flex-direction: row;
 		align-items: start;
+	}
+
+	.match-toolbar {
+		flex-direction: row-reverse;
 	}
 
 	.match-details {
