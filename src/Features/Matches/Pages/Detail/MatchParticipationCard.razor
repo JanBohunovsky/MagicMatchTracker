@@ -17,7 +17,7 @@
 	}
 	else
 	{
-		<img class="card-img-side deck-cover" alt="Deck image" height="139" src="@Deck.ImageUri"/>
+		<img class="card-img-side deck-cover" alt="Deck image" src="@Deck.ImageUri"/>
 	}
 
 	<div class="card-layout-side">
@@ -190,14 +190,14 @@
 	private string GetCssClasses()
 	{
 		var sb = new StringBuilder();
-		sb.Append("card ");
+		sb.Append("card deck-card");
 
 		if (!IsInteractive)
 			sb.Append(" disabled");
 		if (HasError)
 			sb.Append(" border-danger");
 		if (Participation.Match.HasEnded && Participation.EndState?.IsWinner is true)
-			sb.Append(" winner");
+			sb.Append(" deck-card-highlight highlight-warning");
 
 		return sb.ToString();
 	}

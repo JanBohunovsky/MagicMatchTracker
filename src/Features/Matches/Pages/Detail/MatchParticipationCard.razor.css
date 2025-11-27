@@ -1,9 +1,3 @@
-.card {
-	min-height: 10rem;
-	width: 100%;
-	height: 100%;
-}
-
 ::deep .corner-button {
 	margin-top: -0.5rem;
 	margin-right: -0.5rem;

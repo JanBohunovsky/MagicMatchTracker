@@ -1,3 +1,48 @@
+button.card,
+a.card {
+	--icard-hover-shadow: var(--bs-box-shadow);
+	--icard-hover-border-color: var(--bs-secondary);
+
+	--icard-active-shadow: var(--bs-box-shadow-sm);
+	--icard-active-border-color: var(--bs-secondary);
+
+	--icard-focus-shadow: 0 0 0 0.25rem rgba(var(--bs-secondary-rgb), .5);
+	--icard-focus-border-color: var(--bs-secondary);
+
+	text-align: start;
+	text-decoration: none;
+	padding: 0;
+
+	transition:
+		box-shadow 0.15s ease-in-out,
+		border-color 0.15s ease-in-out;
+
+	&.disabled {
+		cursor: default;
+	}
+}
+
+button.card:not(:disabled),
+a[href].card:not(:disabled) {
+
+	&:not(.disabled):hover {
+		box-shadow: var(--icard-hover-shadow);
+		border-color: var(--icard-hover-border-color);
+	}
+
+	&:not(.disabled):active {
+		box-shadow: var(--icard-active-shadow);
+		border-color: var(--icard-active-border-color);
+	}
+
+	&:not(.disabled):focus-visible {
+		border-color: var(--icard-focus-border-color);
+		outline: 0;
+		box-shadow: var(--icard-focus-shadow);
+	}
+
+}
+
 .card-img-side {
 	border-bottom-left-radius: var(--bs-border-radius);
 	border-top-left-radius: var(--bs-border-radius);
@@ -8,12 +53,6 @@
 
 	& .card-img-side {
 		width: 30%;
-	}
-
-	& .deck-cover {
-		object-fit: cover;
-		object-position: center;
-		height: 100%;
 	}
 
 	& .deck-cover-placeholder {
@@ -36,10 +75,15 @@
 	background: rgba(var(--bs-body-color-rgb), 0.05);
 }
 
+.deck-card {
+	min-height: 10rem;
+	height: 100%;
+	width: 100%;
+}
+
 .deck-cover {
 	object-fit: cover;
-	object-position: 0 10%;
-	height: 139px;
+	object-position: center 10%;
 }
 
 .deck-cover-placeholder {
@@ -48,4 +92,82 @@
 	font-size: 6rem;
 	color: var(--bs-secondary-border-subtle);
 	background-color: var(--bs-secondary-bg-subtle);
+}
+
+.deck-card-highlight {
+	--icard-hover-shadow: 0 0.25rem 2rem -0.25rem var(--card-highlight-base-color) !important;
+	--icard-hover-border-color: var(--card-highlight-base-color) !important;
+
+	--icard-active-shadow: 0 0 0.75rem -0.25rem var(--card-highlight-base-color) !important;
+	--icard-active-border-color: var(--card-highlight-base-color) !important;
+
+	--icard-focus-shadow: 0 0 0 0.5rem rgba(var(--card-highlight-base-color-rgb), .25) !important;
+	--icard-focus-border-color: var(--card-highlight-base-color) !important;
+
+	border-color: var(--card-highlight-base-color);
+	box-shadow: 0 0 1.25rem -0.25rem var(--card-highlight-base-color);
+
+	& .deck-cover-placeholder {
+		background-color: var(--card-highlight-base-color);
+		color: var(--card-highlight-icon-color);
+
+		&.card-img-side {
+			border-bottom-left-radius: var(--bs-border-radius-sm);
+			border-top-left-radius: var(--bs-border-radius-sm);
+		}
+	}
+
+	& .card-footer {
+		background: var(--card-highlight-subtle-color);
+		color: var(--card-highlight-text-color);
+	}
+
+
+	&.highlight-primary {
+		--card-highlight-base-color: var(--bs-primary);
+		--card-highlight-base-color-rgb: var(--bs-primary-rgb);
+		--card-highlight-subtle-color: var(--bs-primary-bg-subtle);
+		--card-highlight-text-color: var(--bs-primary-text-emphasis);
+		--card-highlight-icon-color: var(--bs-primary-border-subtle);
+	}
+
+	&.highlight-secondary {
+		--card-highlight-base-color: var(--bs-secondary);
+		--card-highlight-base-color-rgb: var(--bs-secondary-rgb);
+		--card-highlight-subtle-color: var(--bs-secondary-bg-subtle);
+		--card-highlight-text-color: var(--bs-secondary-text-emphasis);
+		--card-highlight-icon-color: var(--bs-secondary-border-subtle);
+	}
+
+	&.highlight-success {
+		--card-highlight-base-color: var(--bs-success);
+		--card-highlight-base-color-rgb: var(--bs-success-rgb);
+		--card-highlight-subtle-color: var(--bs-success-bg-subtle);
+		--card-highlight-text-color: var(--bs-success-text-emphasis);
+		--card-highlight-icon-color: var(--bs-success-border-subtle);
+	}
+
+	&.highlight-danger {
+		--card-highlight-base-color: var(--bs-danger);
+		--card-highlight-base-color-rgb: var(--bs-danger-rgb);
+		--card-highlight-subtle-color: var(--bs-danger-bg-subtle);
+		--card-highlight-text-color: var(--bs-danger-text-emphasis);
+		--card-highlight-icon-color: var(--bs-danger-border-subtle);
+	}
+
+	&.highlight-warning {
+		--card-highlight-base-color: var(--bs-warning);
+		--card-highlight-base-color-rgb: var(--bs-warning-rgb);
+		--card-highlight-subtle-color: var(--bs-warning-bg-subtle);
+		--card-highlight-text-color: var(--bs-warning-text-emphasis);
+		--card-highlight-icon-color: var(--bs-warning-border-subtle);
+	}
+
+	&.highlight-info {
+		--card-highlight-base-color: var(--bs-info);
+		--card-highlight-base-color-rgb: var(--bs-info-rgb);
+		--card-highlight-subtle-color: var(--bs-info-bg-subtle);
+		--card-highlight-text-color: var(--bs-info-text-emphasis);
+		--card-highlight-icon-color: var(--bs-info-border-subtle);
+	}
 }

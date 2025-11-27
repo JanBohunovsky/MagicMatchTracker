@@ -1,0 +1,117 @@
+@using MagicMatchTracker.Features.Matches.Components
+@{
+	var winner = Match.HasEnded
+		? Match.Participations.FirstOrDefault(mp => mp.EndState?.IsWinner is true)
+		: null;
+	var deckImageUri = winner?.Deck?.ImageUri;
+}
+<a class="card deck-card @GetMatchStateClass()" href="/matches/@Match.Id">
+
+	@if (deckImageUri is not null)
+	{
+		<img class="card-img-side deck-cover" alt="Deck image" src="@deckImageUri"/>
+	}
+	else
+	{
+		<div class="card-img-side deck-cover deck-cover-placeholder icon filled">@GetMatchStateIcon()</div>
+	}
+
+	<div class="card-layout-side">
+		<div class="card-body">
+
+			<div class="card-title fw-medium text-content">
+				<span>@Match.GetTitle(includeDate: false)</span>
+				@if (Match.HasEnded)
+				{
+					<span class="text-muted mx-1">&bull;</span>
+					@if (winner is not null)
+					{
+						<Avatar Player="winner.Player" Size="24"/>
+						<span>@winner.Player.Name</span>
+					}
+					else
+					{
+						<span>Draw</span>
+					}
+				}
+			</div>
+
+			@if (winner?.Deck is not null)
+			{
+				var deck = winner.Deck;
+				<div>@(deck.Name ?? deck.Commander)</div>
+				<div class="d-flex flex-column text-muted small">
+					@if (deck.Name is not null)
+					{
+						<span>@deck.Commander</span>
+					}
+					<span>@deck.Partner</span>
+				</div>
+
+			}
+
+			@* Durartion *@
+			<MatchDurationDisplay Match="Match" IconClass="small" class="small mt-2"/>
+
+			@* Notes *@
+			@if (Match.Notes is not null)
+			{
+				<div class="text-content small mt-2">
+					<span class="icon small">sticky_note_2</span>
+					<span>@Match.Notes</span>
+				</div>
+			}
+
+		</div>
+
+		@* Players *@
+		@if (Match.Participations.Count > 0)
+		{
+			var players = Match.Participations
+				.Select(mp => mp.Player)
+				.OrderBy(p => p.Name)
+				.ToList();
+
+			<div class="card-footer card-footer-borderless">
+				<div class="d-flex align-items-center" title="@players.Select(p => p.Name).JoinToString(", ")">
+					@foreach (var player in players)
+					{
+						<Avatar Player="player" Size="18" class="avatar-overlap"/>
+					}
+					<span class="ms-1 small">@Match.Participations.Count players</span>
+				</div>
+			</div>
+		}
+	</div>
+</a>
+
+@code {
+
+	[Parameter, EditorRequired]
+    public required Match Match { get; set; }
+
+	private string? GetMatchStateClass()
+	{
+		if (Match.IsInProgress)
+			return "deck-card-highlight highlight-primary";
+
+		return null;
+	}
+
+	private string GetMatchStateIcon()
+	{
+		var hasWinner = Match.Participations.Any(mp => mp.EndState?.IsWinner is true);
+		if (Match.HasEnded && hasWinner)
+			return "box";
+
+		if (Match.HasEnded && !hasWinner)
+			return "skull";
+
+		if (Match.IsInProgress)
+			return "swords";
+
+		// Not started
+		return "add";
+	}
+
+}

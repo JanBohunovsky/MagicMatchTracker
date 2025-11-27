@@ -1,21 +1,20 @@
 .date-title {
 	font-size: 1.25rem;
+	margin-right: -1.5rem;
+	margin-left: -1.5rem;
+	padding: 0.5rem 1.5rem;
+
+	/* TODO: Set these when sticky */
+	/*background: white;*/
+	/*box-shadow: var(--bs-box-shadow-sm);*/
+
+	transition:
+		background-color 0.15s ease-in-out,
+		box-shadow 0.15s ease-in-out;
 }
 
-.match-title {
-	font-weight: 500;
-}
-
-.list-group-item:has(+.date-title) {
-	border-bottom: 0;
-	margin-bottom: 1rem;
-}
-
-::deep .avatar-overlap {
-	border-radius: 50%;
-	border: 2px solid var(--bs-body-bg);
-}
-
-::deep .avatar-overlap:not(:first-child) {
-	margin-left: -0.5rem;
+.match-list {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1rem;
 }

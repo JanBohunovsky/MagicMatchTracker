@@ -6,7 +6,7 @@
 	return;
 
 <div @attributes="Attributes" class="@_containerClass">
-	<span class="icon">@icon</span>
+	<span class="icon @IconClass">@icon</span>
 	<span>@entries</span>
 </div>
 
@@ -17,6 +17,9 @@
 
 	[Parameter, EditorRequired]
     public required Match Match { get; set; }
+
+	[Parameter]
+    public string? IconClass { get; set; }
 
 	[Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? Attributes { get; set; }
