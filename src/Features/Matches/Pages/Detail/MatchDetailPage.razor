@@ -54,6 +54,23 @@
 				<span class="icon" aria-hidden="true">delete</span>
 			</button>
 		}
+
+		<div class="d-flex flex-row gap-2">
+			<button class="btn btn-ghost-secondary btn-square"
+			        title="Previous match"
+			        @onclick="State.GoToPreviousMatch"
+			        disabled="@(State.IsBusy || !State.HasPreviousMatch)">
+				<span class="icon" aria-hidden="true">chevron_backward</span>
+			</button>
+
+			<button class="btn btn-ghost-secondary btn-square"
+			        title="Next match"
+			        @onclick="State.GoToNextMatch"
+			        disabled="@(State.IsBusy || !State.HasNextMatch)">
+				<span class="icon" aria-hidden="true">chevron_forward</span>
+			</button>
+		</div>
+
 		<button class="btn btn-ghost-secondary btn-square hover-icon-filled"
 		        title="Edit match"
 		        @onclick="@(() => State.EditMatchAsync(CancellationToken))"

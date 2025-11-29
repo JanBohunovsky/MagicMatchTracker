@@ -1,7 +1,7 @@
-@using MagicMatchTracker.Features.Matches.Services
+@using MagicMatchTracker.Features.Matches.Extensions
 @using MagicMatchTracker.Infrastructure.Dialogs
 @inherits StatefulComponentBase<MatchStartTransitionDialogState>
-@inject MatchNumberingService MatchNumberingService
+@inject Database Database
 
 <FormDialog
 	TModel="MatchStartTransitionModel"
@@ -78,7 +78,7 @@
 
 		try
 		{
-			State.Model.MatchNumber = await MatchNumberingService.GetNextMatchNumberAsync(State.Model.Date, CancellationToken);
+			State.Model.MatchNumber = await Database.Matches.GetNewMatchNumberAsync(State.Model.Date, CancellationToken);
 		}
 		finally
 		{

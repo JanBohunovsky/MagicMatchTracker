@@ -1,6 +1,6 @@
 using MagicMatchTracker.Features.Matches.Dialogs.PlayersEdit;
 using MagicMatchTracker.Features.Matches.Events;
-using MagicMatchTracker.Features.Matches.Services;
+using MagicMatchTracker.Features.Matches.Extensions;
 using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,6 @@ public sealed class MatchListingState : StateBase, IDisposable
 {
 	private readonly Database _database;
 	private readonly MatchPlayersEditDialogState _playersEditDialogState;
-	private readonly MatchNumberingService _matchNumberingService;
 	private readonly NavigationManager _navigationManager;
 	private readonly IMessageHub _messageHub;
 	private readonly Guid[] _eventSubscriptions;
@@ -22,13 +21,11 @@ public sealed class MatchListingState : StateBase, IDisposable
 
 	public MatchListingState(Database database,
 		MatchPlayersEditDialogState playersEditDialogState,
-		MatchNumberingService matchNumberingService,
 		NavigationManager navigationManager,
 		IMessageHub messageHub)
 	{
 		_database = database;
 		_playersEditDialogState = playersEditDialogState;
-		_matchNumberingService = matchNumberingService;
 		_navigationManager = navigationManager;
 		_messageHub = messageHub;
 
@@ -61,7 +58,7 @@ public sealed class MatchListingState : StateBase, IDisposable
 
 		var match = new Match
 		{
-			MatchNumber = await _matchNumberingService.GetNextMatchNumberAsync(DateOnly.Today, cancellationToken),
+			MatchNumber = await _database.Matches.GetNewMatchNumberAsync(DateOnly.Today, cancellationToken),
 		};
 
 		IsBusy = false;

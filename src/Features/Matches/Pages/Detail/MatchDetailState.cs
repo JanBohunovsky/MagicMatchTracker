@@ -6,7 +6,7 @@ using MagicMatchTracker.Features.Matches.Dialogs.ParticipationEndStateEdit;
 using MagicMatchTracker.Features.Matches.Dialogs.PlayersEdit;
 using MagicMatchTracker.Features.Matches.Dialogs.StartTransition;
 using MagicMatchTracker.Features.Matches.Events;
-using MagicMatchTracker.Features.Matches.Services;
+using MagicMatchTracker.Features.Matches.Extensions;
 using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +15,6 @@ namespace MagicMatchTracker.Features.Matches.Pages.Detail;
 
 public sealed class MatchDetailState(
 	Database database,
-	MatchNumberingService matchNumberingService,
 	NavigationManager navigationManager,
 	IMessageHub messageHub,
 	MatchPlayersEditDialogState playersEditDialogState,
@@ -26,9 +25,15 @@ public sealed class MatchDetailState(
 	MatchStartTransitionDialogState startTransitionDialogState,
 	MatchEndTransitionDialogState endTransitionDialogState) : StateBase
 {
+	private Guid? _nextMatchId;
+	private Guid? _previousMatchId;
+
 	public bool IsLoading { get; private set; }
 	public Match? Match { get; private set; }
 	public bool ShowErrors { get; private set; }
+
+	public bool HasNextMatch => _nextMatchId is not null;
+	public bool HasPreviousMatch => _previousMatchId is not null;
 
 	public IEnumerable<MatchError> GetErrors()
 	{
@@ -59,6 +64,20 @@ public sealed class MatchDetailState(
 		Match = await database.Matches
 			.Include(m => m.Participations)
 			.FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
+
+		_nextMatchId = Match is not null
+			? await database.Matches
+				.QueryNextMatches(Match)
+				.Select(m => (Guid?)m.Id)
+				.FirstOrDefaultAsync(cancellationToken)
+			: null;
+
+		_previousMatchId = Match is not null
+			? await database.Matches
+				.QueryPreviousMatches(Match)
+				.Select(m => (Guid?)m.Id)
+				.FirstOrDefaultAsync(cancellationToken)
+			: null;
 
 		ExecuteWithStateChange(() => IsLoading = false);
 	}
@@ -170,7 +189,7 @@ public sealed class MatchDetailState(
 
 		var match = new Match
 		{
-			MatchNumber = await matchNumberingService.GetNextMatchNumberAsync(DateOnly.Today, cancellationToken),
+			MatchNumber = await database.Matches.GetNewMatchNumberAsync(DateOnly.Today, cancellationToken),
 		};
 
 		foreach (var participation in Match.Participations)
@@ -190,5 +209,21 @@ public sealed class MatchDetailState(
 			return;
 
 		navigationManager.NavigateTo($"/matches/{match.Id}");
+	}
+
+	public void GoToNextMatch()
+	{
+		if (!HasNextMatch)
+			return;
+
+		navigationManager.NavigateTo($"/matches/{_nextMatchId}");
+	}
+
+	public void GoToPreviousMatch()
+	{
+		if (!HasPreviousMatch)
+			return;
+
+		navigationManager.NavigateTo($"/matches/{_previousMatchId}");
 	}
 }

@@ -7,7 +7,6 @@ using MagicMatchTracker.Features.Matches.Dialogs.PlayersEdit;
 using MagicMatchTracker.Features.Matches.Dialogs.StartTransition;
 using MagicMatchTracker.Features.Matches.Pages.Detail;
 using MagicMatchTracker.Features.Matches.Pages.Listing;
-using MagicMatchTracker.Features.Matches.Services;
 
 namespace MagicMatchTracker.Features.Matches;
 
@@ -25,8 +24,7 @@ public static class ConfigureMatchesFeature
 			.AddScoped<MatchParticipationEndStateEditDialogState>()
 			.AddScoped<MatchStartTransitionDialogState>()
 			.AddScoped<MatchEndTransitionDialogState>()
-			.AddScoped<MatchDeckSearchProvider>()
-			.AddScoped<MatchNumberingService>();
+			.AddScoped<MatchDeckSearchProvider>();
 
 		return services;
 	}
