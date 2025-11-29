@@ -44,7 +44,8 @@ public static class ConfigureServices
 			builder.Services
 				.AddScoped<IMessageHub, MessageHub>()
 				.AddScoped<FocusService>()
-				.AddScoped<AutoCloseService>();
+				.AddScoped<AutoCloseService>()
+				.AddScoped<StickyDetectorService>();
 		}
 
 		private void AddFeatures()

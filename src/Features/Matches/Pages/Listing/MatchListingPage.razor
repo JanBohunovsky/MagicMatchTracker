@@ -36,7 +36,9 @@
 	@foreach (var group in State.Matches.GroupBy(m => m.GetEffectiveDate()))
 	{
 		<div class="d-flex flex-column gap-1">
-			<div class="date-title sticky-top">@FormatDate(group.Key)</div>
+			<StickyDetector class="date-title sticky-top">
+				@FormatDate(group.Key)
+			</StickyDetector>
 
 			<div class="match-list">
 				@foreach (var match in group)

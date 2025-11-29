@@ -1,0 +1,7 @@
+.sticky-top {
+	top: -1px !important;
+}
+
+.sticky-bottom {
+	bottom: -1px !important;
+}

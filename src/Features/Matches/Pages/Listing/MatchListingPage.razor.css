@@ -1,16 +1,15 @@
-.date-title {
+::deep .date-title {
 	font-size: 1.25rem;
-	margin-right: -1.5rem;
-	margin-left: -1.5rem;
+	margin: 0 -1.5rem;
 	padding: 0.5rem 1.5rem;
+	border-top: 1px solid transparent;
 
-	/* TODO: Set these when sticky */
-	/*background: white;*/
-	/*box-shadow: var(--bs-box-shadow-sm);*/
+	transition: box-shadow 0.15s ease-in-out;
+}
 
-	transition:
-		background-color 0.15s ease-in-out,
-		box-shadow 0.15s ease-in-out;
+::deep .date-title.is-stuck {
+	background: white;
+	box-shadow: var(--bs-box-shadow-sm);
 }
 
 .match-list {

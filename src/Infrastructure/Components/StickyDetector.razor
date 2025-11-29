@@ -1,0 +1,38 @@
+@using MagicMatchTracker.Infrastructure.Services
+@implements IAsyncDisposable
+@inject StickyDetectorService Service
+
+<div @ref="_container" @attributes="Attributes">
+	@ChildContent
+</div>
+
+@code {
+
+	private ElementReference _container;
+
+	[Parameter, EditorRequired]
+	public required RenderFragment ChildContent { get; set; }
+
+	/// <summary>
+	/// Class to set when the element is detected to be sticky.
+	/// </summary>
+	/// <remarks>Defaults to <c>is-stuck</c>.</remarks>
+	[Parameter]
+	public string StickyClassName { get; set; } = "is-stuck";
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public Dictionary<string, object>? Attributes { get; set; }
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender)
+			return;
+
+		await Service.TrackAsync(_container, StickyClassName);
+	}
+
+	public async ValueTask DisposeAsync()
+	{
+		await Service.UntrackAsync(_container);
+	}
+}
