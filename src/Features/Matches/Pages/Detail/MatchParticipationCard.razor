@@ -9,18 +9,18 @@
         tabindex="@(IsInteractive ? "0" : "-1")">
 	@if (Deck is null)
 	{
-		<div class="card-img-side deck-cover deck-cover-placeholder icon filled">box_add</div>
+		<div class="deck-cover deck-cover-placeholder icon filled">box_add</div>
 	}
 	else if (Deck.ImageUri is null)
 	{
-		<div class="card-img-side deck-cover deck-cover-placeholder icon filled">box</div>
+		<div class="deck-cover deck-cover-placeholder icon filled">box</div>
 	}
 	else
 	{
-		<img class="card-img-side deck-cover" alt="Deck image" src="@Deck.ImageUri"/>
+		<img class="deck-cover" alt="Deck image" src="@Deck.ImageUri"/>
 	}
 
-	<div class="card-layout-side">
+	<div class="card-layout">
 		<div class="card-body">
 			<Dropdown class="dropdown-menu-end float-end corner-button">
 				<Button>

@@ -1,13 +1,13 @@
 <button class="card deck-card" @onclick="OnClick">
 	@if (Deck.ImageUri is null)
 	{
-		<div class="card-img-side deck-cover deck-cover-placeholder icon filled">box</div>
+		<div class="deck-cover deck-cover-placeholder icon filled">box</div>
 	}
 	else
 	{
-		<img src="@Deck.ImageUri" class="card-img-side deck-cover" alt="Deck image"/>
+		<img src="@Deck.ImageUri" class="deck-cover" alt="Deck image"/>
 	}
-	<div class="card-layout-side">
+	<div class="card-layout">
 		<div class="card-body">
 			@if (Deck.DeckUri is not null)
 			{

@@ -65,38 +65,40 @@
 
 <div class="page-content">
 	<div class="match-details">
-		<div class="match-detail-entry">
-			<span class="icon">calendar_today</span>
-			<span>@State.Match.GetEffectiveDate().ToString("dddd, dd MMMM yyyy")</span>
-		</div>
-
-		<MatchDurationDisplay Match="State.Match" class="match-detail-entry"/>
-
-		@if (State.Match.Notes is not null)
-		{
-			<div class="match-detail-entry">
-				<span class="icon">sticky_note_2</span>
-				<span>@State.Match.Notes</span>
+		<div class="detail-entries">
+			<div class="detail-entry">
+				<span class="icon">calendar_today</span>
+				<span>@State.Match.GetEffectiveDate().ToString("dddd, dd MMMM yyyy")</span>
 			</div>
-		}
-		@if (State.ShowErrors)
-		{
-			@foreach (var error in State.GetErrors())
+
+			<MatchDurationDisplay Match="State.Match" class="detail-entry"/>
+
+			@if (State.Match.Notes is not null)
 			{
-				<div class="match-detail-entry text-danger">
-					<span class="icon">error</span>
-					<span>@error.Message</span>
+				<div class="detail-entry">
+					<span class="icon">sticky_note_2</span>
+					<span>@State.Match.Notes</span>
 				</div>
 			}
-		}
+			@if (State.ShowErrors)
+			{
+				@foreach (var error in State.GetErrors())
+				{
+					<div class="detail-entry text-danger">
+						<span class="icon">error</span>
+						<span>@error.Message</span>
+					</div>
+				}
+			}
+		</div>
 
-		@if (!State.Match.HasStarted)
-		{
-			var hasPlayers = State.Match.Participations.Count > 0;
-			var buttonStyle = hasPlayers ? "btn-outline-secondary" : "btn-primary";
-			var buttonCaption = hasPlayers ? "Change players" : "Add players";
-			var iconFilledStyle = hasPlayers ? string.Empty : "filled";
-			<div class="match-actions">
+		<div class="match-actions">
+			@if (!State.Match.HasStarted)
+			{
+				var hasPlayers = State.Match.Participations.Count > 0;
+				var buttonStyle = hasPlayers ? "btn-outline-secondary" : "btn-primary";
+				var buttonCaption = hasPlayers ? "Change players" : "Add players";
+				var iconFilledStyle = hasPlayers ? string.Empty : "filled";
 				@* Player selection button *@
 				<button class="btn @buttonStyle hover-icon-filled"
 				        @onclick="@(() => State.SelectPlayersAsync(CancellationToken))"
@@ -115,19 +117,19 @@
 						<span>Start match</span>
 					</button>
 				}
-			</div>
-		}
+			}
 
-		@if (State.Match.IsInProgress && State.Match.Participations.All(mp => mp.EndState is not null))
-		{
-			@* End match button *@
-			<button class="match-actions btn btn-primary"
-			        @onclick="@(() => State.EndMatchAsync(CancellationToken))"
-			        disabled="@State.IsBusy">
-				<span class="icon filled">trophy</span>
-				<span>End the match</span>
-			</button>
-		}
+			@if (State.Match.IsInProgress && State.Match.Participations.All(mp => mp.EndState is not null))
+			{
+				@* End match button *@
+				<button class="btn btn-primary"
+				        @onclick="@(() => State.EndMatchAsync(CancellationToken))"
+				        disabled="@State.IsBusy">
+					<span class="icon filled">trophy</span>
+					<span>End the match</span>
+				</button>
+			}
+		</div>
 	</div>
 
 	<div class="match-participations">

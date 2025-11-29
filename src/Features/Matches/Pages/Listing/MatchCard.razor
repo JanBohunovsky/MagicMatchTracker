@@ -9,14 +9,14 @@
 
 	@if (deckImageUri is not null)
 	{
-		<img class="card-img-side deck-cover" alt="Deck image" src="@deckImageUri"/>
+		<img class="deck-cover" alt="Deck image" src="@deckImageUri"/>
 	}
 	else
 	{
-		<div class="card-img-side deck-cover deck-cover-placeholder icon filled">@GetMatchStateIcon()</div>
+		<div class="deck-cover deck-cover-placeholder icon filled">@GetMatchStateIcon()</div>
 	}
 
-	<div class="card-layout-side">
+	<div class="card-layout">
 		<div class="card-body">
 
 			<div class="card-title fw-medium text-content">

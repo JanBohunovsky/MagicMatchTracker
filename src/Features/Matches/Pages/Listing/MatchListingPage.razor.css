@@ -14,7 +14,17 @@
 }
 
 .match-list {
-	display: grid;
-	grid-template-columns: 1fr;
+	display: flex;
+	flex-direction: column;
 	gap: 1rem;
+}
+
+
+@media screen and (min-width: 768px) {
+
+	.match-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, 17rem);
+	}
+
 }
