@@ -57,6 +57,24 @@ h1:focus {
 	}
 }
 
+.stats {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.stats-entry {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.25rem;
+
+	& .icon {
+		font-size: 19px;
+	}
+}
+
 @media screen and (min-width: 768px) {
 
 	.heading {

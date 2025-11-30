@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Humanizer;
 
 namespace MagicMatchTracker.Data.Models;
 
@@ -70,7 +71,7 @@ public sealed class Match : IEntity
 		if (duration <= TimeSpan.Zero)
 			return null;
 
-		return duration.ToPrettyString();
+		return duration.Humanize(precision: 2, maxUnit: TimeUnit.Day, minUnit: TimeUnit.Minute, collectionSeparator: " ");
 	}
 
 	public int? GetTotalTurns()

@@ -30,25 +30,33 @@
 <ul class="list-group list-group-flush">
 	@foreach (var player in State.Players)
 	{
-		<li class="player-entry list-group-item">
-			<a href="/players/@player.Id" class="player-link text-body text-decoration-none">
-				<Avatar Player="player" Size="28"/>
-				<span>@player.Name</span>
-			</a>
-			<button class="btn btn-ghost-secondary btn-square hover-icon-filled my-2"
-			        title="Edit player"
-			        @onclick="() => State.EditPlayerAsync(player, CancellationToken)">
-				<span class="icon" aria-hidden="true">edit</span>
-			</button>
-		</li>
+		<PlayerEntry
+			Player="player"
+			Stats="State.PlayerStats.GetValueOrDefault(player.Id, Stats.Empty)"
+			OnEditClick="() => State.EditPlayerAsync(player, CancellationToken)"/>
 	}
 </ul>
 
 @code {
 
+	private bool _firstLoad;
+
 	protected override async Task OnInitializedAsync()
 	{
+		_firstLoad = true;
+		await State.LoadStatsAsync(CancellationToken);
 		await State.LoadPlayersAsync(CancellationToken);
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (_firstLoad)
+		{
+			_firstLoad = false;
+			return;
+		}
+
+		await State.LoadStatsAsync(CancellationToken);
 	}
 
 }

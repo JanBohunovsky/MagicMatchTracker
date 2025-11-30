@@ -1,0 +1,56 @@
+<li class="player-entry list-group-item">
+	<a href="/players/@Player.Id" class="player-link text-body text-decoration-none">
+		<Avatar Player="Player" Size="36"/>
+		<div class="d-flex flex-column py-2">
+			<span>@Player.Name</span>
+			<div class="stats small text-muted">
+				@if (Stats is not null)
+				{
+					<div class="stats-entry" title="Matches played">
+						<span class="icon">swords</span>
+						@if (Stats.Matches > 0)
+						{
+							<span>@Stats.Matches</span>
+						}
+						else
+						{
+							<span>No matches yet</span>
+						}
+					</div>
+					@if (Stats.WinRate is not null)
+					{
+						<div class="stats-entry" title="Win rate">
+							<span class="icon">trophy</span>
+							<span>@(Stats.WinRate)%</span>
+						</div>
+					}
+					@if (Stats.LastPlayed is not null)
+					{
+						<div class="stats-entry" title="Last played">
+							<span class="icon">calendar_today</span>
+							<span>@Stats.LastPlayed.Value.HumanizeDay()</span>
+						</div>
+					}
+				}
+			</div>
+		</div>
+	</a>
+	<button class="btn btn-ghost-secondary btn-square hover-icon-filled my-2"
+	        title="Edit player"
+	        @onclick="OnEditClick">
+		<span class="icon" aria-hidden="true">edit</span>
+	</button>
+</li>
+
+@code {
+
+	[Parameter, EditorRequired]
+    public required Player Player { get; set; }
+
+	[Parameter]
+    public Stats? Stats { get; set; }
+
+	[Parameter]
+    public EventCallback OnEditClick { get; set; }
+
+}

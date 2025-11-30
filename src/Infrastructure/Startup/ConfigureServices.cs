@@ -27,15 +27,12 @@ public static class ConfigureServices
 
 		private void AddDatabase()
 		{
-			builder.Services.AddNpgsql<Database>(builder.Configuration.GetConnectionString("Default"),
-				npgsqlOptions =>
-				{
-					npgsqlOptions.SetPostgresVersion(17, 5);
-				},
-				dbContextOptions =>
-				{
-					dbContextOptions.UseSnakeCaseNamingConvention();
-				});
+			builder.Services.AddDbContext<Database>(options =>
+			{
+				options.UseSnakeCaseNamingConvention();
+				options.UseNpgsql(builder.Configuration.GetConnectionString("Default"),
+					npgsql => npgsql.SetPostgresVersion(17, 5));
+			});
 		}
 
 		private void AddInfrastructure()

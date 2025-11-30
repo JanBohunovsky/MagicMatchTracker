@@ -32,13 +32,21 @@
 
 		<div class="card-footer card-footer-borderless d-flex justify-content-between small">
 			<ColoursDisplay Value="Deck.ColourIdentity"/>
-			<div class="deck-stats">
-				<div class="deck-stat" title="Win ratio">
-					<span class="icon">trophy</span> 25%
-				</div>
-				<div class="deck-stat" title="Games played">
-					<span class="icon">swords</span> 100
-				</div>
+			<div class="stats">
+				@if (Stats is not null)
+				{
+					@if (Stats.WinRate is not null)
+					{
+						<div class="stats-entry" title="Win rate">
+							<span class="icon">trophy</span>
+							<span>@(Stats.WinRate)%</span>
+						</div>
+					}
+					<div class="stats-entry" title="Matches played">
+						<span class="icon">swords</span>
+						<span>@Stats.Matches</span>
+					</div>
+				}
 			</div>
 		</div>
 	</div>
@@ -48,6 +56,9 @@
 
 	[Parameter, EditorRequired]
     public required Deck Deck { get; set; }
+
+	[Parameter]
+    public Stats? Stats { get; set; }
 
 	[Parameter]
     public EventCallback OnClick { get; set; }

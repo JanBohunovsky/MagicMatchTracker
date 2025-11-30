@@ -16,11 +16,7 @@ public sealed class MatchEndTransitionModel
 			.Select(mp => mp.Player)
 			.FirstOrDefault();
 
-		var now = DateTimeOffset.Now;
-		if (match.IsLive && match.TimeStarted < now)
-		{
-			FormattedDuration = (now - match.TimeStarted.Value).ToPrettyString().ToLower();
-		}
+		FormattedDuration = match.GetFormattedDuration();
 	}
 
 	public Match ApplyChanges()

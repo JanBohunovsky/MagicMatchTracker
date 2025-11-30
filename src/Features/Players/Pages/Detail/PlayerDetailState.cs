@@ -1,5 +1,6 @@
 using MagicMatchTracker.Features.Players.Dialogs.Edit;
 using MagicMatchTracker.Features.Shared.Dialogs.DeckEdit;
+using MagicMatchTracker.Features.Shared.Extensions;
 using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ namespace MagicMatchTracker.Features.Players.Pages.Detail;
 public sealed class PlayerDetailState(Database database, PlayerEditDialogState playerEditDialogState, DeckEditDialogState deckEditDialogState) : StateBase
 {
 	public Player? Player { get; private set; }
+	public IReadOnlyDictionary<Guid, Stats> DeckStats { get; private set; } = new Dictionary<Guid, Stats>();
 
 	public IEnumerable<Deck> ActiveDecks => Player is not null
 		? Player.Decks
@@ -33,6 +35,17 @@ public sealed class PlayerDetailState(Database database, PlayerEditDialogState p
 			.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
 		IsBusy = false;
+	}
+
+	public async Task LoadDeckStatsAsync(CancellationToken cancellationToken = default)
+	{
+		if (Player is null)
+			return;
+
+		var playerDecks = Player.Decks.Select(d => d.Id);
+		DeckStats = await database.QueryDeckStats()
+			.Where(d => playerDecks.Contains(d.DeckId))
+			.ToDictionaryAsync(d => d.DeckId, d => (Stats)d, cancellationToken);
 	}
 
 	public async Task EditPlayerAsync(CancellationToken cancellationToken = default)

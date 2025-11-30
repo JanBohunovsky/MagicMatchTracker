@@ -32,7 +32,7 @@
 
 <div class="heading">
 	<span class="player-name">
-		<Avatar Player="State.Player" Size="32"/>
+		<Avatar Player="State.Player" Size="36"/>
 		<h1>@State.Player.Name</h1>
 	</span>
 
@@ -60,7 +60,10 @@
 	@foreach (var deck in State.ActiveDecks)
 	{
 		<li>
-			<DeckCard Deck="deck" OnClick="@(() => State.EditDeckAsync(deck, CancellationToken))"/>
+			<DeckCard
+				Deck="deck"
+				Stats="State.DeckStats.GetValueOrDefault(deck.Id)"
+				OnClick="@(() => State.EditDeckAsync(deck, CancellationToken))"/>
 		</li>
 	}
 </ul>
@@ -79,13 +82,18 @@
 		@foreach (var deck in State.ArchivedDecks)
 		{
 			<li>
-				<DeckCard Deck="deck" OnClick="@(() => State.EditDeckAsync(deck, CancellationToken))"/>
+				<DeckCard
+					Deck="deck"
+					Stats="State.DeckStats.GetValueOrDefault(deck.Id)"
+					OnClick="@(() => State.EditDeckAsync(deck, CancellationToken))"/>
 			</li>
 		}
 	</ul>
 </details>
 
 @code {
+
+	private bool _firstLoad;
 
 	private string PageTitle => State.Player?.Name ?? "Player Detail";
 
@@ -94,7 +102,20 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		_firstLoad = true;
 		await State.LoadPlayerAsync(Id, CancellationToken);
+		await State.LoadDeckStatsAsync(CancellationToken);
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (_firstLoad)
+		{
+			_firstLoad = false;
+			return;
+		}
+
+		await State.LoadDeckStatsAsync(CancellationToken);
 	}
 
 }

@@ -1,4 +1,5 @@
 using MagicMatchTracker.Features.Players.Dialogs.Edit;
+using MagicMatchTracker.Features.Shared.Extensions;
 using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,7 @@ public sealed class PlayerListingState(Database database, PlayerEditDialogState 
 	private List<Player>? _players;
 
 	public IReadOnlyList<Player>? Players => _players;
+	public IReadOnlyDictionary<Guid, Stats> PlayerStats { get; private set; } = new Dictionary<Guid, Stats>();
 
 	public async Task LoadPlayersAsync(CancellationToken cancellationToken = default)
 	{
@@ -18,6 +20,12 @@ public sealed class PlayerListingState(Database database, PlayerEditDialogState 
 		_players = await database.Players
 			.OrderBy(p => p.Name)
 			.ToListAsync(cancellationToken);
+	}
+
+	public async Task LoadStatsAsync(CancellationToken cancellationToken = default)
+	{
+		PlayerStats = await database.QueryPlayerStats()
+			.ToDictionaryAsync(p => p.PlayerId, p => (Stats)p, cancellationToken);
 	}
 
 	public async Task AddNewPlayerAsync(CancellationToken cancellationToken = default)
