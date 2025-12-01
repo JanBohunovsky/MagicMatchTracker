@@ -1,0 +1,10 @@
+@media screen and (min-width: 768px) {
+
+	.list-group {
+		border-radius: var(--bs-list-group-border-radius);
+		border: var(--bs-list-group-border-width) solid var(--bs-list-group-border-color);
+		max-width: 32rem;
+		margin: 0;
+	}
+
+}

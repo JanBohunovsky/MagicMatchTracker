@@ -10,6 +10,7 @@
 	display: flex;
 	align-items: center;
 	gap: 0.75rem;
+	padding: 0.75rem 0;
 }
 
 .player-entry:has(a.player-link:hover),
@@ -19,4 +20,17 @@
 
 .player-entry:has(a.player-link:active) {
 	background-color: var(--bs-list-group-action-active-bg);
+}
+
+
+@media screen and (min-width: 768px) {
+
+	.player-entry {
+		padding: 0 1rem 0 0 !important;
+	}
+
+	.player-link {
+		padding-left: 1rem;
+	}
+
 }
