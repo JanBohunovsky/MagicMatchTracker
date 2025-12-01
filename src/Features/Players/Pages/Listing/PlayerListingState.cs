@@ -17,9 +17,7 @@ public sealed class PlayerListingState(Database database, PlayerEditDialogState 
 		if (_players is not null)
 			return;
 
-		_players = await database.Players
-			.OrderBy(p => p.Name)
-			.ToListAsync(cancellationToken);
+		_players = await database.Players.ToListAsync(cancellationToken);
 	}
 
 	public async Task LoadStatsAsync(CancellationToken cancellationToken = default)
@@ -41,9 +39,7 @@ public sealed class PlayerListingState(Database database, PlayerEditDialogState 
 		if (!success)
 			return;
 
-		_players = _players.Append(player)
-			.OrderBy(p => p.Name)
-			.ToList();
+		_players.Add(player);
 		NotifyStateChanged();
 	}
 

@@ -11,18 +11,6 @@ public sealed class PlayerDetailState(Database database, PlayerEditDialogState p
 	public Player? Player { get; private set; }
 	public IReadOnlyDictionary<Guid, Stats> DeckStats { get; private set; } = new Dictionary<Guid, Stats>();
 
-	public IEnumerable<Deck> ActiveDecks => Player is not null
-		? Player.Decks
-			.Where(d => !d.IsArchived)
-			.OrderBy(d => d.Name ?? d.Commander)
-		: [];
-
-	public IEnumerable<Deck> ArchivedDecks => Player is not null
-		? Player.Decks
-			.Where(d => d.IsArchived)
-			.OrderBy(d => d.Name ?? d.Commander)
-		: [];
-
 	public async Task LoadPlayerAsync(Guid id, CancellationToken cancellationToken = default)
 	{
 		if (Player?.Id == id)

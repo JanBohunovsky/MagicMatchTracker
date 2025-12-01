@@ -28,7 +28,7 @@
 }
 
 <ul class="list-group list-group-flush">
-	@foreach (var player in State.Players)
+	@foreach (var player in GetSortedPlayers(State.Players))
 	{
 		<PlayerEntry
 			Player="player"
@@ -57,6 +57,11 @@
 		}
 
 		await State.LoadStatsAsync(CancellationToken);
+	}
+
+	private IEnumerable<Player> GetSortedPlayers(IEnumerable<Player> players)
+	{
+		return players.OrderBy(p => p.Name);
 	}
 
 }

@@ -41,11 +41,8 @@ public sealed class MatchListingState : StateBase, IDisposable
 		if (_matches is not null)
 			return;
 
-		var today = DateOnly.Today;
 		_matches = await _database.Matches
 			.Include(m => m.Participations)
-			.OrderByDescending(m => m.TimeStarted != null ? DateOnly.FromDateTime(m.TimeStarted.Value.Date) : today)
-			.ThenByDescending(m => m.MatchNumber)
 			.ToListAsync(cancellationToken);
 	}
 
@@ -80,7 +77,7 @@ public sealed class MatchListingState : StateBase, IDisposable
 
 	private void OnMatchCreated(MatchCreatedEvent eventData)
 	{
-		_matches?.Insert(0, eventData.Match);
+		_matches?.Add(eventData.Match);
 	}
 
 	private void OnMatchDeleted(MatchDeletedEvent eventData)

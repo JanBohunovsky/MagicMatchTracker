@@ -33,7 +33,7 @@
 }
 
 <div class="d-flex flex-column gap-5">
-	@foreach (var group in State.Matches.GroupBy(m => m.GetEffectiveDate()))
+	@foreach (var group in GetGroupedMatchesByDay(State.Matches))
 	{
 		<div class="d-flex flex-column gap-1">
 			<StickyDetector class="date-title sticky-top">
@@ -73,6 +73,13 @@
 			return date.ToString("dddd, dd MMMM");
 
 		return date.ToString("dd MMMM yyyy");
+	}
+
+	private IEnumerable<IGrouping<DateOnly, Match>> GetGroupedMatchesByDay(IEnumerable<Match> matches)
+	{
+		return matches.OrderByDescending(m => m.GetEffectiveDate())
+			.ThenByDescending(m => m.MatchNumber)
+			.GroupBy(m => m.GetEffectiveDate());
 	}
 
 }

@@ -65,19 +65,7 @@ public sealed class MatchDetailState(
 			.Include(m => m.Participations)
 			.FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
 
-		_nextMatchId = Match is not null
-			? await database.Matches
-				.QueryNextMatches(Match)
-				.Select(m => (Guid?)m.Id)
-				.FirstOrDefaultAsync(cancellationToken)
-			: null;
-
-		_previousMatchId = Match is not null
-			? await database.Matches
-				.QueryPreviousMatches(Match)
-				.Select(m => (Guid?)m.Id)
-				.FirstOrDefaultAsync(cancellationToken)
-			: null;
+		await LoadNextAndPreviousMatchesAsync(cancellationToken);
 
 		ExecuteWithStateChange(() => IsLoading = false);
 	}
@@ -98,8 +86,11 @@ public sealed class MatchDetailState(
 			return;
 
 		var success = await detailsEditDialogState.ShowDialogAsync(Match, cancellationToken);
-		if (success)
-			NotifyStateChanged();
+		if (!success)
+			return;
+
+		await LoadNextAndPreviousMatchesAsync(cancellationToken);
+		NotifyStateChanged();
 	}
 
 	public async Task DeleteMatchAsync(CancellationToken cancellationToken = default)
@@ -225,5 +216,25 @@ public sealed class MatchDetailState(
 			return;
 
 		navigationManager.NavigateTo($"/matches/{_previousMatchId}");
+	}
+
+	private async Task LoadNextAndPreviousMatchesAsync(CancellationToken cancellationToken = default)
+	{
+		if (Match is null)
+		{
+			_nextMatchId = null;
+			_previousMatchId = null;
+			return;
+		}
+
+		_nextMatchId = await database.Matches
+			.QueryNextMatches(Match)
+			.Select(m => (Guid?)m.Id)
+			.FirstOrDefaultAsync(cancellationToken);
+
+		_previousMatchId = await database.Matches
+			.QueryPreviousMatches(Match)
+			.Select(m => (Guid?)m.Id)
+			.FirstOrDefaultAsync(cancellationToken);
 	}
 }

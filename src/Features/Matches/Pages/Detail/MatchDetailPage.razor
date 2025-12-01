@@ -90,6 +90,14 @@
 
 			<MatchDurationDisplay Match="State.Match" class="detail-entry"/>
 
+			@if (State.Match.HasEnded && State.Match.Participations.All(mp => mp.EndState?.IsWinner is false))
+			{
+				<div class="detail-entry">
+					<span class="icon">skull</span>
+					<span>The match ended in a draw</span>
+				</div>
+			}
+
 			@if (State.Match.Notes is not null)
 			{
 				<div class="detail-entry">
@@ -183,11 +191,12 @@
 
 <MatchDetailsEditDialog/>
 <MatchPlayersEditDialog/>
+<MatchStartTransitionDialog/>
+<MatchEndTransitionDialog/>
+
 <MatchDeckSelectDialog/>
 <MatchParticipationDetailsEditDialog/>
 <MatchParticipationEndStateEditDialog/>
-<MatchStartTransitionDialog/>
-<MatchEndTransitionDialog/>
 
 @code {
 

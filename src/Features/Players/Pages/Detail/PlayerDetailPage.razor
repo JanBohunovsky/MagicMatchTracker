@@ -45,7 +45,7 @@
 
 @if (State.Player.Decks.Count == 0)
 {
-	<span class="center my-5 d-flex flex-column gap-3 align-items-center justify-content-start">
+	<span class="my-5 d-flex flex-column gap-3 align-items-center justify-content-start">
 		<span class="icon filled huge text-primary">box_add</span>
 		<span>@State.Player.Name has no decks yet</span>
 		<button type="button" class="btn btn-primary" @onclick="() => State.AddNewDeckAsync(CancellationToken)">
@@ -57,7 +57,7 @@
 }
 
 <ul class="deck-list">
-	@foreach (var deck in State.ActiveDecks)
+	@foreach (var deck in GetActiveDecks(State.Player))
 	{
 		<li>
 			<DeckCard
@@ -68,7 +68,10 @@
 	}
 </ul>
 
-@if (!State.ArchivedDecks.Any())
+@{
+	var archivedDecks = GetArchivedDecks(State.Player);
+}
+@if (archivedDecks.Count == 0)
 {
 	return;
 }
@@ -79,7 +82,7 @@
 	</summary>
 
 	<ul class="deck-list">
-		@foreach (var deck in State.ArchivedDecks)
+		@foreach (var deck in archivedDecks)
 		{
 			<li>
 				<DeckCard
@@ -116,6 +119,22 @@
 		}
 
 		await State.LoadDeckStatsAsync(CancellationToken);
+	}
+
+	private IReadOnlyList<Deck> GetActiveDecks(Player player)
+	{
+		return player.Decks
+			.Where(d => !d.IsArchived)
+			.OrderBy(d => d.Name ?? d.Commander)
+			.ToList();
+	}
+
+	private IReadOnlyList<Deck> GetArchivedDecks(Player player)
+	{
+		return player.Decks
+			.Where(d => d.IsArchived)
+			.OrderBy(d => d.Name ?? d.Commander)
+			.ToList();
 	}
 
 }
