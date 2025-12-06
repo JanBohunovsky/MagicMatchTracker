@@ -1,0 +1,78 @@
+<li class="match-entry list-group-item">
+	<a href="/matches/@Participation.Match.Id" class="match-link list-group-item-action list-group-item-deck-background text-body text-decoration-none"
+	   style="--deck-image-url: url('@Participation.Deck?.ImageUri');">
+		<div>@Participation.Match.GetTitle()</div>
+		<div class="match-entry-details small">
+			@if (Participation.EndState is not null)
+			{
+				var endState = Participation.EndState;
+				if (endState.IsWinner)
+				{
+					<div class="text-content">
+						<span class="icon small" aria-hidden="true">trophy</span>
+						<span>Winner</span>
+					</div>
+				}
+				else if (endState.LoseCondition is not null)
+				{
+					var loseCondition = endState.LoseCondition.Value;
+					<div class="text-content">
+						<LoseConditionIcon Value="loseCondition" class="small"/>
+						<span>@loseCondition.DisplayName</span>
+						@if (endState.Killer is not null && loseCondition.HasKiller)
+						{
+							<span>by</span>
+							<Avatar Player="endState.Killer" Size="18" class="ms-0.5"/>
+							<span>@endState.Killer.Name</span>
+						}
+					</div>
+				}
+				else
+				{
+					<div class="text-content">
+						<span class="icon small" aria-hidden="true">skull</span>
+						<span>Lost</span>
+					</div>
+				}
+			}
+
+			@if (Participation.Deck is not null)
+			{
+				var deck = Participation.Deck;
+				<div class="text-content">
+					<span class="icon small" aria-hidden="true">box</span>
+					<span>@(deck.Name ?? deck.Commander)</span>
+				</div>
+			}
+
+			<div class="text-content" title="@_players.Select(p => p.Name).JoinToString(", ")">
+				<div class="d-flex align-items-center">
+					@foreach (var player in _players)
+					{
+						<Avatar Player="player" Size="18" class="avatar-overlap"/>
+					}
+				</div>
+				<span>@_players.Count players</span>
+			</div>
+		</div>
+	</a>
+</li>
+
+@code {
+
+	private IReadOnlyList<Player> _players = [];
+
+	[Parameter, EditorRequired]
+    public required MatchParticipation Participation { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		_players = Participation
+			.Match
+			.Participations
+			.Select(mp => mp.Player)
+			.OrderBy(p => p.Name)
+			.ToList();
+	}
+
+}

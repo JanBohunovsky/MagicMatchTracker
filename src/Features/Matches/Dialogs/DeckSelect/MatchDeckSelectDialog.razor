@@ -89,7 +89,7 @@
 					@foreach (var deck in _decks)
 					{
 						var isTaken = context.IsDeckTakenByAnotherPlayer(deck);
-						<div class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-0 deck-list-item @(isTaken ? "disabled" : null)"
+						<div class="list-group-item list-group-item-action list-group-item-deck-background d-flex align-items-center gap-3 py-0 deck-list-item @(isTaken ? "disabled" : null)"
 						     style="--deck-image-url: url('@deck.ImageUri');">
 							<InputRadio TValue="Guid?" class="form-check-input m-0" id="@deck.Id" Value="@deck.Id" disabled="@isTaken"/>
 							<label class="form-check-label flex-grow-1 d-flex flex-column user-select-none py-2" for="@deck.Id">

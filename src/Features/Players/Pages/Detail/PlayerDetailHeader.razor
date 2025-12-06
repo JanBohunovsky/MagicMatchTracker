@@ -1,0 +1,63 @@
+@using MagicMatchTracker.Features.Players.Dialogs.Edit
+@inherits LifecycleComponentBase
+
+@if (State.Player is null)
+{
+	return;
+}
+
+<div class="heading">
+	<span class="d-flex align-items-center gap-2">
+		<Avatar Player="State.Player" Size="36"/>
+		<h1>@State.Player.Name</h1>
+	</span>
+
+	<button class="btn btn-ghost-secondary btn-square hover-icon-filled"
+	        title="Edit player"
+	        @onclick="() => State.EditPlayerAsync(CancellationToken)">
+		<span class="icon" aria-hidden="true">edit</span>
+	</button>
+</div>
+
+<ul class="nav nav-pills">
+	<li class="nav-item">
+		<NavLink class="nav-link text-content justify-content-center" href=@($"/players/{State.Player.Id}/decks")>
+			<span class="icon" aria-hidden="true">box</span>
+			<span>Decks</span>
+		</NavLink>
+	</li>
+	<li class="nav-item">
+		<NavLink class="nav-link text-content justify-content-center" href=@($"/players/{State.Player.Id}/matches")>
+			<span class="icon" aria-hidden="true">swords</span>
+			<span>Matches</span>
+		</NavLink>
+	</li>
+</ul>
+
+<PlayerEditDialog/>
+
+@code {
+
+	private PlayerDetailStateBase? _previousState;
+
+	[Parameter, EditorRequired]
+    public required PlayerDetailStateBase State { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		if (_previousState == State)
+			return;
+
+		if (_previousState is not null)
+			_previousState.StateChanged -= StateHasChanged;
+
+		State.StateChanged += StateHasChanged;
+		_previousState = State;
+	}
+
+	protected override void DisposeCore()
+	{
+		State.StateChanged -= StateHasChanged;
+	}
+
+}

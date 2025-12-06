@@ -1,28 +1,22 @@
 using MagicMatchTracker.Features.Players.Dialogs.Edit;
 using MagicMatchTracker.Features.Shared.Dialogs.DeckEdit;
 using MagicMatchTracker.Features.Shared.Extensions;
-using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace MagicMatchTracker.Features.Players.Pages.Detail;
+namespace MagicMatchTracker.Features.Players.Pages.Detail.DeckListing;
 
-public sealed class PlayerDetailState(Database database, PlayerEditDialogState playerEditDialogState, DeckEditDialogState deckEditDialogState) : StateBase
+public sealed class PlayerDeckListingState(
+	Database database,
+	DeckEditDialogState deckEditDialogState,
+	PlayerEditDialogState playerEditDialogState) : PlayerDetailStateBase(playerEditDialogState)
 {
-	public Player? Player { get; private set; }
 	public IReadOnlyDictionary<Guid, Stats> DeckStats { get; private set; } = new Dictionary<Guid, Stats>();
 
-	public async Task LoadPlayerAsync(Guid id, CancellationToken cancellationToken = default)
+	protected override async Task<Player?> LoadPlayerCoreAsync(Guid id, CancellationToken cancellationToken)
 	{
-		if (Player?.Id == id)
-			return;
-
-		IsBusy = true;
-
-		Player = await database.Players
+		return await database.Players
 			.Include(p => p.Decks)
 			.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
-
-		IsBusy = false;
 	}
 
 	public async Task LoadDeckStatsAsync(CancellationToken cancellationToken = default)
@@ -34,16 +28,6 @@ public sealed class PlayerDetailState(Database database, PlayerEditDialogState p
 		DeckStats = await database.QueryDeckStats()
 			.Where(d => playerDecks.Contains(d.DeckId))
 			.ToDictionaryAsync(d => d.DeckId, d => (Stats)d, cancellationToken);
-	}
-
-	public async Task EditPlayerAsync(CancellationToken cancellationToken = default)
-	{
-		if (Player is null)
-			return;
-
-		var success = await playerEditDialogState.ShowDialogAsync(Player, cancellationToken);
-		if (success)
-			NotifyStateChanged();
 	}
 
 	public async Task AddNewDeckAsync(CancellationToken cancellationToken = default)

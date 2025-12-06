@@ -1,0 +1,20 @@
+.more-matches {
+	width: 100%;
+}
+
+@media screen and (min-width: 768px) {
+
+	.more-matches {
+		max-width: 40rem;
+		margin-bottom: 2rem !important;
+	}
+
+	.list-group-md-nonflush {
+		max-width: 40rem;
+
+		&:not(:has(+ .more-matches)) {
+			margin-bottom: 2rem;
+		}
+	}
+
+}

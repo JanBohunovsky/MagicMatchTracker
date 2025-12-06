@@ -1,0 +1,57 @@
+@page "/players/{id:guid}/matches"
+@using MagicMatchTracker.Infrastructure.Pages
+@inherits StatefulComponentBase<PlayerMatchHistoryState>
+
+<PageTitle>@PageTitle - Match Tracker</PageTitle>
+
+@if (State.IsLoading)
+{
+	<PageLoading/>
+	return;
+}
+
+@if (State.Player is null)
+{
+	<NotFound/>
+	return;
+}
+
+<PlayerDetailHeader State="State"/>
+
+@if (State.FinishedMatchParticipations.Count == 0)
+{
+	<p>@State.Player.Name hasn't played a match yet.</p>
+	return;
+}
+
+<ul class="list-group list-group-flush list-group-md-nonflush">
+	@foreach (var participation in State.FinishedMatchParticipations)
+	{
+		<PlayerMatchEntry Participation="participation"/>
+	}
+</ul>
+
+@if (State.HasMoreMatches)
+{
+	<button class="more-matches btn btn-outline-primary justify-content-center my-3"
+	        @onclick="() => State.LoadMoreMatchesAsync(CancellationToken)"
+	        disabled="@State.IsBusy">
+		<span>Load more matches</span>
+	</button>
+}
+
+@code {
+
+	private string PageTitle => State.Player is null
+		? "Player Matches"
+		: $"{State.Player.Name.ToPossessive()} Matches";
+
+	[Parameter, EditorRequired]
+	public Guid Id { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await State.LoadPlayerAsync(Id, CancellationToken);
+	}
+
+}

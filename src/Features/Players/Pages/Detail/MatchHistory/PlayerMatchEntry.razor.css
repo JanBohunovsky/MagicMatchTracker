@@ -1,0 +1,15 @@
+.match-link {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding-top: 1rem !important;
+	padding-bottom: 1rem !important;
+
+	--avatar-border-color: var(--image-cover-colour);
+}
+
+.match-entry-details {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}

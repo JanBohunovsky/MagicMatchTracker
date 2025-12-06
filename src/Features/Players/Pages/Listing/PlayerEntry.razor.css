@@ -2,7 +2,6 @@
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
-	padding: 0 1.5rem;
 }
 
 .player-link {
@@ -10,27 +9,18 @@
 	display: flex;
 	align-items: center;
 	gap: 0.75rem;
-	padding: 0.75rem 0;
+	padding-right: 0 !important;
 }
 
-.player-entry:has(a.player-link:hover),
-.player-entry:has(a.player-link:focus) {
-	background-color: var(--bs-list-group-action-hover-bg);
-}
-
-.player-entry:has(a.player-link:active) {
-	background-color: var(--bs-list-group-action-active-bg);
+.player-edit {
+	margin-right: 1.5rem;
 }
 
 
 @media screen and (min-width: 768px) {
 
-	.player-entry {
-		padding: 0 1rem 0 0 !important;
-	}
-
-	.player-link {
-		padding-left: 1rem;
+	.player-edit {
+		margin-right: 1rem;
 	}
 
 }

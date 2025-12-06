@@ -16,11 +16,11 @@ public sealed class MatchParticipationConfiguration : IEntityTypeConfiguration<M
 			.OnDelete(DeleteBehavior.Restrict);
 
 		builder.HasOne<Player>(mp => mp.Player)
-			.WithMany(p => p.Matches)
+			.WithMany()
 			.OnDelete(DeleteBehavior.Restrict);
 
 		builder.HasOne<Deck>(mp => mp.Deck)
-			.WithMany(d => d.Matches)
+			.WithMany()
 			.OnDelete(DeleteBehavior.Restrict);
 
 		builder.OwnsOne<MatchParticipationEndState>(mp => mp.EndState);

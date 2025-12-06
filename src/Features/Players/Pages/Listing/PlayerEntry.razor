@@ -1,6 +1,6 @@
 @using Humanizer
 <li class="player-entry list-group-item">
-	<a href="/players/@Player.Id" class="player-link text-body text-decoration-none">
+	<a href="/players/@Player.Id/decks" class="player-link list-group-item-action text-body text-decoration-none">
 		<Avatar Player="Player" Size="36"/>
 		<div class="d-flex flex-column">
 			<span>@Player.Name</span>
@@ -40,7 +40,7 @@
 			</div>
 		</div>
 	</a>
-	<button class="btn btn-ghost-secondary btn-square hover-icon-filled my-2"
+	<button class="player-edit btn btn-ghost-secondary btn-square hover-icon-filled"
 	        title="Edit player"
 	        @onclick="OnEditClick">
 		<span class="icon" aria-hidden="true">edit</span>

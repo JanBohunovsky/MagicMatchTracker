@@ -1,12 +1,3 @@
 .card {
-	--avatar-border-color: var(--card-highlight-subtle-color, color-mix(in hsl shorter hue, var(--bs-body-color) 5%, var(--bs-body-bg)));
-}
-
-::deep .avatar-overlap {
-	border-radius: 50%;
-	border: 2px solid var(--avatar-border-color);
-}
-
-::deep .avatar-overlap:not(:first-child) {
-	margin-left: -0.5rem;
+	--avatar-border-color: var(--card-highlight-subtle-color);
 }

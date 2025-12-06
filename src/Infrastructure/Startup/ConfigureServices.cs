@@ -49,7 +49,7 @@ public static class ConfigureServices
 		{
 			builder.Services
 				.AddSharedFeature()
-				.AddPlayersFeature()
+				.AddPlayersFeature(builder.Configuration)
 				.AddMatchesFeature(builder.Configuration);
 		}
 	}

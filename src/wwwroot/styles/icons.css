@@ -36,6 +36,10 @@
 	--icon-fill: 1;
 }
 
+.nav-item a.active .icon {
+	--icon-fill: 1;
+}
+
 .icon.small {
 	font-size: 21px;
 }

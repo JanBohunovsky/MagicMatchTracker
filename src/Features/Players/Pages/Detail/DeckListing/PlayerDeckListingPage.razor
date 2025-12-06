@@ -1,12 +1,11 @@
-@page "/players/{id:guid}"
-@using MagicMatchTracker.Features.Players.Dialogs.Edit
+@page "/players/{id:guid}/decks"
 @using MagicMatchTracker.Features.Shared.Dialogs.DeckEdit
 @using MagicMatchTracker.Infrastructure.Pages
-@inherits StatefulComponentBase<PlayerDetailState>
+@inherits StatefulComponentBase<PlayerDeckListingState>
 
 <PageTitle>@PageTitle - Match Tracker</PageTitle>
 
-@if (State.IsBusy)
+@if (State.IsLoading)
 {
 	<PageLoading/>
 	return;
@@ -18,7 +17,6 @@
 	return;
 }
 
-<PlayerEditDialog/>
 <DeckEditDialog/>
 
 @if (State.Player.Decks.Count > 0)
@@ -30,18 +28,7 @@
 	</button>
 }
 
-<div class="heading">
-	<span class="player-name">
-		<Avatar Player="State.Player" Size="36"/>
-		<h1>@State.Player.Name</h1>
-	</span>
-
-	<button class="btn btn-ghost-secondary btn-square hover-icon-filled"
-	        title="Edit player"
-	        @onclick="() => State.EditPlayerAsync(CancellationToken)">
-		<span class="icon" aria-hidden="true">edit</span>
-	</button>
-</div>
+<PlayerDetailHeader State="State"/>
 
 @if (State.Player.Decks.Count == 0)
 {
@@ -98,7 +85,9 @@
 
 	private bool _firstLoad;
 
-	private string PageTitle => State.Player?.Name ?? "Player Detail";
+	private string PageTitle => State.Player is null
+		? "Player Decks"
+		: $"{State.Player.Name.ToPossessive()} Decks";
 
 	[Parameter, EditorRequired]
     public Guid Id { get; set; }
