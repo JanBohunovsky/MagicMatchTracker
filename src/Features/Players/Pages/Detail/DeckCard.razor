@@ -1,3 +1,4 @@
+@using Humanizer
 <button class="card deck-card" @onclick="OnClick">
 	@if (Deck.ImageUri is null)
 	{
@@ -35,6 +36,10 @@
 			<div class="stats">
 				@if (Stats is not null)
 				{
+					var matchesTooltip = Stats.WinRate is null
+						? $"Matches played ({"win".ToQuantity(Stats.Wins)})"
+						: "Matches played";
+
 					@if (Stats.WinRate is not null)
 					{
 						<div class="stats-entry" title="Win rate">
@@ -42,7 +47,7 @@
 							<span>@(Stats.WinRate)%</span>
 						</div>
 					}
-					<div class="stats-entry" title="Matches played">
+					<div class="stats-entry" title="@matchesTooltip">
 						<span class="icon">swords</span>
 						<span>@Stats.Matches</span>
 					</div>

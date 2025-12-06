@@ -1,3 +1,4 @@
+@using Humanizer
 <li class="player-entry list-group-item">
 	<a href="/players/@Player.Id" class="player-link text-body text-decoration-none">
 		<Avatar Player="Player" Size="36"/>
@@ -6,7 +7,11 @@
 			<div class="stats small text-muted">
 				@if (Stats is not null)
 				{
-					<div class="stats-entry" title="Matches played">
+					var matchesTooltip = Stats.WinRate is null && Stats.Matches > 0
+						? $"Matches played ({"win".ToQuantity(Stats.Wins)})"
+						: "Matches played";
+
+					<div class="stats-entry" title="@matchesTooltip">
 						<span class="icon">swords</span>
 						@if (Stats.Matches > 0)
 						{
