@@ -48,6 +48,15 @@
 			</div>
 		</div>
 	}
+
+	@if (State.HasMoreMatches)
+	{
+		<button class="btn btn-outline-primary justify-content-center align-self-md-start"
+		        @onclick="() => State.LoadMoreMatchesAsync(CancellationToken)"
+		        disabled="@State.IsBusy">
+			<span>Load more matches</span>
+		</button>
+	}
 </div>
 
 <MatchPlayersEditDialog/>

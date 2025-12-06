@@ -50,7 +50,7 @@ public static class ConfigureServices
 			builder.Services
 				.AddSharedFeature()
 				.AddPlayersFeature()
-				.AddMatchesFeature();
+				.AddMatchesFeature(builder.Configuration);
 		}
 	}
 }

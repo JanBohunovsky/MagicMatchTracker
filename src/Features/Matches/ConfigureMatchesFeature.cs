@@ -12,7 +12,7 @@ namespace MagicMatchTracker.Features.Matches;
 
 public static class ConfigureMatchesFeature
 {
-	public static IServiceCollection AddMatchesFeature(this IServiceCollection services)
+	public static IServiceCollection AddMatchesFeature(this IServiceCollection services, IConfiguration configuration)
 	{
 		services
 			.AddScoped<MatchListingState>()
@@ -25,6 +25,8 @@ public static class ConfigureMatchesFeature
 			.AddScoped<MatchStartTransitionDialogState>()
 			.AddScoped<MatchEndTransitionDialogState>()
 			.AddScoped<MatchDeckSearchProvider>();
+
+		services.Configure<MatchListingOptions>(configuration.GetSection(MatchListingOptions.SectionName));
 
 		return services;
 	}

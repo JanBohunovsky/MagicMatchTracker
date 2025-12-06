@@ -25,7 +25,7 @@ public static class MatchDbSetExtensions
 			var today = DateOnly.Today;
 			var date = match.GetEffectiveDate();
 
-			var query = matches.Select(m => new
+			return matches.Select(m => new
 				{
 					Match = m,
 					EffectiveDate = m.TimeStarted != null ? DateOnly.FromDateTime(m.TimeStarted.Value.Date) : today,
@@ -34,8 +34,6 @@ public static class MatchDbSetExtensions
 				.OrderBy(x => x.EffectiveDate)
 				.ThenBy(x => x.Match.MatchNumber)
 				.Select(x => x.Match);
-
-			return query;
 		}
 
 		public IQueryable<Match> QueryPreviousMatches(Match match)
@@ -43,7 +41,7 @@ public static class MatchDbSetExtensions
 			var today = DateOnly.Today;
 			var date = match.GetEffectiveDate();
 
-			var query = matches.Select(m => new
+			return matches.Select(m => new
 				{
 					Match = m,
 					EffectiveDate = m.TimeStarted != null ? DateOnly.FromDateTime(m.TimeStarted.Value.Date) : today,
@@ -52,8 +50,15 @@ public static class MatchDbSetExtensions
 				.OrderByDescending(x => x.EffectiveDate)
 				.ThenByDescending(x => x.Match.MatchNumber)
 				.Select(x => x.Match);
+		}
 
-			return query;
+		public IQueryable<DateOnly> QueryMatchDates()
+		{
+			var today = DateOnly.Today;
+
+			return matches.Select(m => m.TimeStarted != null ? DateOnly.FromDateTime(m.TimeStarted.Value.Date) : today)
+				.Distinct()
+				.OrderDescending();
 		}
 	}
 }
