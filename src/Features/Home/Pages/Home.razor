@@ -1,7 +1,31 @@
 ﻿@page "/"
+@using MagicMatchTracker.Infrastructure.Authentication.Discord
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize]
 
 <PageTitle>Match Tracker</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Match Tracker - Commander</h1>
 
-<p>Welcome to your new app.</p>
+<AuthorizeView>
+	<Authorized>
+		<div class="d-flex align-items-center gap-2">
+			<span class="text-muted small">Signed in as @(context.User.Identity?.DisplayName)</span>
+			<form action="/account/signout" method="post">
+				<AntiforgeryToken/>
+				<input type="hidden" name="ReturnUrl" value=""/>
+				<button type="submit" class="btn btn-link p-0 d-flex">
+					<span class="small">Sign out</span>
+				</button>
+			</form>
+		</div>
+
+		@if (!context.User.IsInRole(Roles.Owner))
+		{
+			<div class="alert alert-warning text-content d-inline-flex align-items-start gap-2 mt-3" role="alert">
+				<span class="icon filled">warning</span>
+				<span>You don't have permission to access the rest of the website.</span>
+			</div>
+		}
+	</Authorized>
+</AuthorizeView>

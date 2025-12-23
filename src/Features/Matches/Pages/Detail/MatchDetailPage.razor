@@ -9,6 +9,7 @@
 @using MagicMatchTracker.Features.Matches.Dialogs.StartTransition
 @using MagicMatchTracker.Infrastructure.Pages
 @inherits StatefulComponentBase<MatchDetailState>
+@attribute [Authorize(Roles = Roles.Owner)]
 
 <PageTitle>@PageTitle - Match Tracker</PageTitle>
 

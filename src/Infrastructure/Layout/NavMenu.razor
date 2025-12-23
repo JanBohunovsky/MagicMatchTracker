@@ -1,29 +1,36 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Microsoft.AspNetCore.Components.Authorization
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Match Tracker</a>
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<AuthorizeView Roles="@Roles.Owner">
+	<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+</AuthorizeView>
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="icon" aria-hidden="true">home</span> Home
-            </NavLink>
-        </div>
+	<nav class="nav flex-column">
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="matches">
-                <span class="icon" aria-hidden="true">swords</span> Matches
-            </NavLink>
-        </div>
+		@* Don't show navigation for unauthorized users *@
+		<AuthorizeView Roles="@Roles.Owner">
+			<div class="nav-item px-3">
+				<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+					<span class="icon" aria-hidden="true">home</span> Home
+				</NavLink>
+			</div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="players">
-                <span class="icon" aria-hidden="true">group</span> Players
-            </NavLink>
-        </div>
-    </nav>
+			<div class="nav-item px-3">
+				<NavLink class="nav-link" href="matches">
+					<span class="icon" aria-hidden="true">swords</span> Matches
+				</NavLink>
+			</div>
+
+			<div class="nav-item px-3">
+				<NavLink class="nav-link" href="players">
+					<span class="icon" aria-hidden="true">group</span> Players
+				</NavLink>
+			</div>
+		</AuthorizeView>
+	</nav>
 </div>

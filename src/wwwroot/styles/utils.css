@@ -18,3 +18,27 @@
 .me-0\.5 {
 	margin-right: 0.125rem !important;
 }
+
+.m-6 {
+	margin: 6rem !important;
+}
+.mt-6 {
+	margin-top: 6rem !important;
+}
+.mb-6 {
+	margin-bottom: 6rem !important;
+}
+.ms-6 {
+	margin-left: 6rem !important;
+}
+.me-6 {
+	margin-right: 6rem !important;
+}
+.mx-6 {
+	margin-right: 6rem !important;
+	margin-left: 6rem !important;
+}
+.my-6 {
+	margin-top: 6rem !important;
+	margin-bottom: 6rem !important;
+}

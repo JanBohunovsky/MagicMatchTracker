@@ -1,3 +1,4 @@
+using MagicMatchTracker.Infrastructure.Authentication;
 using MagicMatchTracker.Infrastructure.Layout;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +36,8 @@ public static class ConfigureApp
 			app.MapStaticAssets();
 			app.MapRazorComponents<App>()
 				.AddInteractiveServerRenderMode();
+
+			app.MapAuthenticationEndpoints();
 		}
 
 		private async Task InitializeDatabaseAsync()

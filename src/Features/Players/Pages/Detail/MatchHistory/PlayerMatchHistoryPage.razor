@@ -1,6 +1,7 @@
 @page "/players/{id:guid}/matches"
 @using MagicMatchTracker.Infrastructure.Pages
 @inherits StatefulComponentBase<PlayerMatchHistoryState>
+@attribute [Authorize(Roles = Roles.Owner)]
 
 <PageTitle>@PageTitle - Match Tracker</PageTitle>
 

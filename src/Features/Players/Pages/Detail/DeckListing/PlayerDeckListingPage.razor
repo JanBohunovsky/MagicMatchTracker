@@ -2,6 +2,7 @@
 @using MagicMatchTracker.Features.Shared.Dialogs.DeckEdit
 @using MagicMatchTracker.Infrastructure.Pages
 @inherits StatefulComponentBase<PlayerDeckListingState>
+@attribute [Authorize(Roles = Roles.Owner)]
 
 <PageTitle>@PageTitle - Match Tracker</PageTitle>
 

@@ -1,6 +1,7 @@
 @page "/players"
 @using MagicMatchTracker.Features.Players.Dialogs.Edit
 @inherits StatefulComponentBase<PlayerListingState>
+@attribute [Authorize(Roles = Roles.Owner)]
 
 <PageTitle>Players - Match Tracker</PageTitle>
 

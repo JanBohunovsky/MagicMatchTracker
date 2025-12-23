@@ -2,6 +2,7 @@ using FluentValidation;
 using MagicMatchTracker.Features.Matches;
 using MagicMatchTracker.Features.Players;
 using MagicMatchTracker.Features.Shared;
+using MagicMatchTracker.Infrastructure.Authentication;
 using MagicMatchTracker.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,6 +38,8 @@ public static class ConfigureServices
 
 		private void AddInfrastructure()
 		{
+			builder.Services.AddDiscordAuthentication(builder.Configuration);
+			builder.Services.AddCascadingAuthenticationState();
 			builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 			builder.Services
 				.AddScoped<IMessageHub, MessageHub>()
