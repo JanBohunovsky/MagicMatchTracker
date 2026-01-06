@@ -52,6 +52,43 @@
 				<ValidationMessage For="() => context.MatchNumber" class="invalid-feedback"/>
 			</div>
 		}
+
+		<div class="form-check">
+			<InputCheckbox @bind-Value="context.HasTurnOrder" class="form-check-input" id="hasTurnOrder"
+			               disabled="@State.IsBusy"/>
+			<label class="form-check-label d-flex flex-column" for="hasTurnOrder">
+				<span>Turn order</span>
+			</label>
+		</div>
+
+		@if (context.HasTurnOrder)
+		{
+			<ol class="list-group list-group-numbered">
+				@foreach (var (index, player) in context.Players.Index())
+				{
+					<li class="list-group-item d-flex gap-2 align-items-center">
+						<div class="d-flex justify-content-between flex-grow-1">
+							<div class="text-content gap-1.5">
+								<Avatar Player="player" Size="24"/>
+								<span>@player.Name</span>
+							</div>
+							<div class="d-flex gap-2">
+								<button type="button" class="btn btn-ghost-secondary btn-circle"
+								        @onclick="@(() => context.MovePlayerUp(player))"
+								        disabled="@(State.IsBusy || index == 0)">
+									<span class="icon disabled-hidden">arrow_upward</span>
+								</button>
+								<button type="button" class="btn btn-ghost-secondary btn-circle"
+								        @onclick="@(() => context.MovePlayerDown(player))"
+								        disabled="@(State.IsBusy || index == context.Players.Count - 1)">
+									<span class="icon disabled-hidden">arrow_downward</span>
+								</button>
+							</div>
+						</div>
+					</li>
+				}
+			</ol>
+		}
 	</div>
 	<div class="modal-footer">
 		<button type="button" class="btn btn-outline-secondary" @onclick="State.Cancel" disabled="@State.IsBusy">Cancel</button>

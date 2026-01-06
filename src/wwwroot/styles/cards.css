@@ -1,3 +1,7 @@
+.card-title:last-child {
+	margin-bottom: 0;
+}
+
 button.card,
 a.card {
 	--icard-hover-shadow: var(--bs-box-shadow);

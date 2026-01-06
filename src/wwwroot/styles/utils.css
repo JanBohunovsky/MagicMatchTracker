@@ -9,6 +9,11 @@
 	place-items: center;
 }
 
+.disabled .disabled-hidden,
+:disabled .disabled-hidden {
+	display: none;
+}
+
 .m-0\.5 {
 	margin: 0.125rem !important;
 }

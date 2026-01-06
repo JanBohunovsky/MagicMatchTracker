@@ -190,6 +190,7 @@ public sealed class MatchDetailState(
 				Match = match,
 				Player = participation.Player,
 				Deck = participation.Deck,
+				TurnOrder = participation.TurnOrder,
 			});
 		}
 

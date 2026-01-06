@@ -39,6 +39,10 @@
 			<div class="card-title fw-medium text-content gap-2">
 				<Avatar Player="Player" Size="24"/>
 				<span>@Player.Name</span>
+				@if (State.Match.HasStarted && Participation.TurnOrder is not null)
+				{
+					<span class="icon text-secondary small" title="Turn Order">counter_@Participation.TurnOrder</span>
+				}
 			</div>
 			@if (Deck is not null)
 			{
