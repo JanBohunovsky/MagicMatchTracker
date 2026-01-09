@@ -23,7 +23,7 @@
 						{
 							<span>by</span>
 							<Avatar Player="endState.Killer" Size="18" class="ms-0.5"/>
-							<span>@endState.Killer.Name</span>
+							<span title="@endState.Killer.Alias">@endState.Killer.Name</span>
 						}
 					</div>
 				}
@@ -39,13 +39,16 @@
 			@if (Participation.Deck is not null)
 			{
 				var deck = Participation.Deck;
-				<div class="text-content">
+				var toolTip = deck.Owner != Participation.Player
+					? $"Borrowed from {deck.Owner.NameWithAlias}"
+					: null;
+				<div class="text-content" title="@toolTip">
 					<span class="icon small" aria-hidden="true">box</span>
 					<span>@(deck.Name ?? deck.Commander)</span>
 				</div>
 			}
 
-			<div class="text-content" title="@_players.Select(p => p.Name).JoinToString(", ")">
+			<div class="text-content" title="@_players.Select(p => p.NameWithAlias).JoinToString(", ")">
 				<div class="d-flex align-items-center">
 					@foreach (var player in _players)
 					{

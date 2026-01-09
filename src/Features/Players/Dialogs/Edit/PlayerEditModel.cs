@@ -5,11 +5,13 @@ namespace MagicMatchTracker.Features.Players.Dialogs.Edit;
 public sealed class PlayerEditModel(Player model)
 {
 	public string Name { get; set; } = model.Name;
+	public string Alias { get; set; } = model.Alias ?? string.Empty;
 	public string AvatarUri { get; set; } = model.AvatarUri ?? string.Empty;
 
 	public Player ApplyChanges()
 	{
 		model.Name = Name.Trim();
+		model.Alias = Alias.TrimToNull();
 		model.AvatarUri = AvatarUri.TrimToNull();
 
 		return model;

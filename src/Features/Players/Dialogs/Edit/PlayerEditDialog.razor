@@ -13,6 +13,11 @@
 			<ValidationMessage For="() => context.Name" class="invalid-feedback"/>
 		</div>
 		<div>
+			<label for="playerAlias" class="form-label">Alias <span class="text-secondary small">(optional)</span></label>
+			<InputText @bind-Value="context.Alias" class="form-control" id="playerAlias" disabled="@State.IsBusy"/>
+			<ValidationMessage For="() => context.Alias" class="invalid-feedback"/>
+		</div>
+		<div>
 			<label for="avatarUrl" class="form-label">Avatar URL <span class="text-secondary small">(optional)</span></label>
 			<InputText @bind-Value="context.AvatarUri" class="form-control" id="avatarUrl" disabled="@State.IsBusy"/>
 			<ValidationMessage For="() => context.AvatarUri" class="invalid-feedback"/>

@@ -104,9 +104,14 @@
 								}
 								@if (_selectedPlayerId == Guid.Empty)
 								{
-									<span class="small text-content">
-										<Avatar Player="deck.Owner" Size="16"/> @deck.Owner.Name
-									</span>
+									<div class="small text-content">
+										<Avatar Player="deck.Owner" Size="16"/>
+										<span>@deck.Owner.Name</span>
+										@if (deck.Owner.Alias is not null)
+										{
+											<span class="text-muted small ms-0.5">@deck.Owner.Alias</span>
+										}
+									</div>
 								}
 							</label>
 						</div>

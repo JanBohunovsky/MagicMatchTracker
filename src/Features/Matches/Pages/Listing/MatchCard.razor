@@ -27,7 +27,7 @@
 					@if (winner is not null)
 					{
 						<Avatar Player="winner.Player" Size="24"/>
-						<span>@winner.Player.Name</span>
+						<span title="@winner.Player.Alias">@winner.Player.Name</span>
 					}
 					else
 					{
@@ -73,7 +73,7 @@
 				.ToList();
 
 			<div class="card-footer card-footer-borderless">
-				<div class="d-flex align-items-center" title="@players.Select(p => p.Name).JoinToString(", ")">
+				<div class="d-flex align-items-center" title="@players.Select(p => p.NameWithAlias).JoinToString(", ")">
 					@foreach (var player in players)
 					{
 						<Avatar Player="player" Size="18" class="avatar-overlap"/>

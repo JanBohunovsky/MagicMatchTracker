@@ -112,7 +112,11 @@
 				                   ValuesProvider="() => context.PlayersInMatch.OrderBy(p => p.Name)">
 					<ItemTemplate Context="player">
 						<Avatar Player="player" Size="24"/>
-						<span>@player!.Name</span>
+						<span>@player.Name</span>
+						@if (player.Alias is not null)
+						{
+							<span class="opacity-75 small ms-0.5">@player.Alias</span>
+						}
 					</ItemTemplate>
 				</InputSelectCustom>
 				<ValidationMessage For="() => context.Killer" class="invalid-feedback"/>

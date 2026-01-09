@@ -37,6 +37,10 @@
 						<label class="form-check-label text-content gap-2 py-2 w-100 user-select-none" for="@player.Value.Id">
 							<Avatar Player="player.Value" Size="28" class="my-1"/>
 							<span>@player.Value.Name</span>
+							@if (player.Value.Alias is not null)
+							{
+								<span class="text-muted small">@player.Value.Alias</span>
+							}
 						</label>
 					</div>
 				}

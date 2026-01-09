@@ -38,7 +38,7 @@
 			</Dropdown>
 			<div class="card-title fw-medium text-content gap-2">
 				<Avatar Player="Player" Size="24"/>
-				<span>@Player.Name</span>
+				<span title="@Player.Alias">@Player.Name</span>
 				@if (State.Match.HasStarted && Participation.TurnOrder is not null)
 				{
 					<span class="icon text-secondary small" title="Turn Order">counter_@Participation.TurnOrder</span>
@@ -59,7 +59,9 @@
 				{
 					<div class="text-content small text-content mt-2">
 						<span class="icon small">box</span>
-						<span class="text-content">Borrowed from <Avatar Player="Deck.Owner" Size="18"/> @Deck.Owner.Name</span>
+						<span class="text-content">
+							Borrowed from <Avatar Player="Deck.Owner" Size="18"/> <span title="@Deck.Owner.Alias">@Deck.Owner.Name</span>
+						</span>
 					</div>
 				}
 			}
@@ -99,7 +101,7 @@
 										<span class="text-content">
 											<span>by</span>
 											<Avatar Player="endState.Killer" Size="18" class="ms-0.5"/>
-											<span>@endState.Killer.Name</span>
+											<span title="@endState.Killer.Alias">@endState.Killer.Name</span>
 										</span>
 									}
 								</span>

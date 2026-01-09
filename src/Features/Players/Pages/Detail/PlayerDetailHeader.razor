@@ -9,7 +9,13 @@
 <div class="heading">
 	<span class="d-flex align-items-center gap-2">
 		<Avatar Player="State.Player" Size="36"/>
-		<h1>@State.Player.Name</h1>
+		<h1 class="text-content gap-2">
+			<span>@State.Player.Name</span>
+			@if (State.Player.Alias is not null)
+			{
+				<span class="text-muted small fw-light">@State.Player.Alias</span>
+			}
+		</h1>
 	</span>
 
 	<button class="btn btn-ghost-secondary btn-square hover-icon-filled"
