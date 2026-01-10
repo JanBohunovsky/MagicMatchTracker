@@ -36,14 +36,20 @@
 
 		<div>
 			<label for="imageUrl" class="form-label">Image URL <span class="text-secondary small">(optional)</span></label>
-			<div class="position-relative">
+			<div class="input-group">
 				<InputText @bind-Value="context.ImageUri" class="form-control" id="imageUrl" disabled="@(State.IsBusy || _isSearchingForImage)"/>
 				@if (_isSearchingForImage)
 				{
-					<span class="spinner-border spinner-border-sm text-primary input-text-spinner-sm-end"></span>
+					<div>
+						<span class="spinner-border spinner-border-sm text-primary input-text-spinner-sm-start"></span>
+					</div>
 				}
+				<CacheImageButton
+					@bind-Url="context.ImageUri"
+					Folder="deck_covers"
+					IsDisabled="State.IsBusy || _isSearchingForImage"/>
+				<ValidationMessage For="() => context.ImageUri" class="invalid-feedback"/>
 			</div>
-			<ValidationMessage For="() => context.ImageUri" class="invalid-feedback"/>
 		</div>
 
 		<div>

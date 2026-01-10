@@ -19,8 +19,14 @@
 		</div>
 		<div>
 			<label for="avatarUrl" class="form-label">Avatar URL <span class="text-secondary small">(optional)</span></label>
-			<InputText @bind-Value="context.AvatarUri" class="form-control" id="avatarUrl" disabled="@State.IsBusy"/>
-			<ValidationMessage For="() => context.AvatarUri" class="invalid-feedback"/>
+			<div class="input-group">
+				<InputText @bind-Value="context.AvatarUri" class="form-control" id="avatarUrl" disabled="@State.IsBusy"/>
+				<CacheImageButton
+					@bind-Url="context.AvatarUri"
+					Folder="avatars"
+					IsDisabled="State.IsBusy"/>
+				<ValidationMessage For="() => context.AvatarUri" class="invalid-feedback"/>
+			</div>
 		</div>
 	</div>
 	<div class="modal-footer">

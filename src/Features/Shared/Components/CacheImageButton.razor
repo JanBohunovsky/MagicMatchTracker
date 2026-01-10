@@ -1,0 +1,52 @@
+@using MagicMatchTracker.Features.Shared.Services
+@inject ImageCachingService ImageCachingService
+
+<button type="button"
+        class="btn btn-form-addon btn-square"
+        title="Cache image"
+        @onclick="DownloadImageAsync"
+        disabled="@(IsDisabled || !IsValidUrl || _isDownloadingImage)">
+	@if (!_isDownloadingImage)
+	{
+		<span class="icon" aria-hidden="true">download</span>
+	}
+	else
+	{
+		<span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span>
+	}
+</button>
+
+@code {
+
+	private bool _isDownloadingImage;
+
+	[Parameter, EditorRequired]
+	public required string Url { get; set; }
+
+	[Parameter]
+	public EventCallback<string> UrlChanged { get; set; }
+
+	[Parameter, EditorRequired]
+	public required string Folder { get; set; }
+
+	[Parameter]
+	public CancellationToken CancellationToken { get; set; }
+
+	[Parameter]
+	public bool IsDisabled { get; set; }
+
+	private bool IsValidUrl => Url.IsNotEmpty() && Uri.IsWellFormedUriString(Url, UriKind.Absolute);
+
+	private async Task DownloadImageAsync()
+	{
+		if (!IsValidUrl)
+			return;
+
+		_isDownloadingImage = true;
+
+		var newUrl = await ImageCachingService.CacheImageAsync(Folder, Url, CancellationToken);
+		await UrlChanged.InvokeAsync(newUrl);
+
+		_isDownloadingImage = false;
+	}
+}

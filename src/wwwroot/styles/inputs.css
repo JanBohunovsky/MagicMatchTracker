@@ -14,3 +14,9 @@
 	top: calc(0.625rem + 1px);
 	right: 0.75rem;
 }
+
+.input-text-spinner-sm-start {
+	position: absolute;
+	top: calc(0.625rem + 1px);
+	left: 0.75rem;
+}

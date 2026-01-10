@@ -127,6 +127,26 @@
 	}
 }
 
+.btn-form-addon {
+	--bs-btn-focus-shadow-rgb: var(--bs-secondary-rgb);
+
+	--bs-btn-color: var(--bs-body-color);
+	--bs-btn-bg: var(--bs-tertiary-bg);
+	--bs-btn-border-color: var(--bs-border-color);
+
+	--bs-btn-hover-color: var(--bs-body-color);
+	--bs-btn-hover-bg: var(--bs-secondary-bg);
+	--bs-btn-hover-border-color: var(--bs-border-color);
+
+	--bs-btn-active-color: var(--bs-body-color);
+	--bs-btn-active-bg: var(--bs-border-color);
+	--bs-btn-active-border-color: var(--bs-border-color);
+
+	--bs-btn-disabled-color: var(--bs-body-color);
+	--bs-btn-disabled-bg: var(--bs-secondary-bg);
+	--bs-btn-disabled-border-color: var(--bs-border-color);
+}
+
 /* region Ghost buttons */
 
 .btn-ghost-primary {

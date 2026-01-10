@@ -16,6 +16,8 @@ public static class ConfigureSharedFeature
 			client.DefaultRequestHeaders.Add("User-Agent", $"MagicMatchTracker/{GetApplicationVersion()}");
 		});
 
+		services.AddHttpClient<ImageCachingService>();
+
 		return services;
 	}
 

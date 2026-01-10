@@ -36,7 +36,7 @@ public class DeckEditModelValidator : AbstractValidator<DeckEditModel>
 			.WithMessage("Enter the commander");
 
 		RuleFor(m => m.ImageUri)
-			.Must(u => u.StartsWith("https://") || u.StartsWith("http://"))
+			.Must(u => u.StartsWith("https://") || u.StartsWith("http://") || u.StartsWith('/'))
 			.When(m => !string.IsNullOrEmpty(m.ImageUri))
 			.WithMessage("URL starts with http:// or https://");
 

@@ -28,7 +28,7 @@ public sealed class PlayerEditModelValidator : AbstractValidator<PlayerEditModel
 			.WithMessage("Enter the name");
 
 		RuleFor(m => m.AvatarUri)
-			.Must(u => u.StartsWith("https://") || u.StartsWith("http://"))
+			.Must(u => u.StartsWith("https://") || u.StartsWith("http://") || u.StartsWith('/'))
 			.When(m => !string.IsNullOrEmpty(m.AvatarUri))
 			.WithMessage("URL starts with http:// or https://");
 	}
