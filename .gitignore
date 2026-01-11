@@ -4,7 +4,7 @@
 ## Get latest from `dotnet new gitignore`
 
 # Cached images
-wwwroot/img/cache/
+src/wwwroot/img/cache/
 
 # dotenv files
 .env
