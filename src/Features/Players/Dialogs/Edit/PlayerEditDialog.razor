@@ -1,3 +1,4 @@
+@using MagicMatchTracker.Features.Shared
 @using MagicMatchTracker.Infrastructure.Dialogs
 @inherits StatefulComponentBase<PlayerEditDialogState>
 
@@ -23,7 +24,7 @@
 				<InputText @bind-Value="context.AvatarUri" class="form-control" id="avatarUrl" disabled="@State.IsBusy"/>
 				<CacheImageButton
 					@bind-Url="context.AvatarUri"
-					Folder="avatars"
+					Folder="@CacheConstants.AvatarsFolder"
 					IsDisabled="State.IsBusy"/>
 				<ValidationMessage For="() => context.AvatarUri" class="invalid-feedback"/>
 			</div>

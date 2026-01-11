@@ -1,4 +1,5 @@
 using FluentValidation;
+using MagicMatchTracker.Data.Seed;
 using MagicMatchTracker.Features.Matches;
 using MagicMatchTracker.Features.Players;
 using MagicMatchTracker.Features.Shared;
@@ -34,6 +35,9 @@ public static class ConfigureServices
 				options.UseNpgsql(builder.Configuration.GetConnectionString("Default"),
 					npgsql => npgsql.SetPostgresVersion(17, 5));
 			});
+
+			builder.Services.AddTransient<DataSeeder>();
+			builder.Services.AddTransient<GristImporter>();
 		}
 
 		private void AddInfrastructure()

@@ -1,3 +1,4 @@
+using MagicMatchTracker.Data.Seed;
 using MagicMatchTracker.Infrastructure.Authentication;
 using MagicMatchTracker.Infrastructure.Layout;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +45,10 @@ public static class ConfigureApp
 		{
 			using var scope = app.Services.CreateScope();
 			var context = scope.ServiceProvider.GetRequiredService<Database>();
+			var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+
 			await context.Database.MigrateAsync();
+			await seeder.SeedAsync(context);
 		}
 	}
 }

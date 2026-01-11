@@ -1,5 +1,6 @@
 using MagicMatchTracker.Features.Shared.Dialogs.DeckEdit;
 using MagicMatchTracker.Features.Shared.Services;
+using MagicMatchTracker.Features.Shared.Services.Scryfall;
 
 namespace MagicMatchTracker.Features.Shared;
 

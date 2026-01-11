@@ -1,4 +1,4 @@
-@using MagicMatchTracker.Features.Shared.Services
+@using MagicMatchTracker.Features.Shared.Services.Scryfall
 @using MagicMatchTracker.Infrastructure.Dialogs
 @inherits StatefulComponentBase<DeckEditDialogState>
 @inject ScryfallClient ScryfallClient
@@ -46,7 +46,7 @@
 				}
 				<CacheImageButton
 					@bind-Url="context.ImageUri"
-					Folder="deck_covers"
+					Folder="@CacheConstants.DeckCoversFolder"
 					IsDisabled="State.IsBusy || _isSearchingForImage"/>
 				<ValidationMessage For="() => context.ImageUri" class="invalid-feedback"/>
 			</div>
