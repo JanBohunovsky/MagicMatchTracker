@@ -1,4 +1,4 @@
-@using Humanizer
+@using MagicMatchTracker.Features.Players.Components
 <li class="player-entry list-group-item">
 	<a href="/players/@Player.Id/decks" class="player-link list-group-item-action text-body text-decoration-none">
 		<Avatar Player="Player" Size="36"/>
@@ -10,41 +10,7 @@
 					<span class="text-muted small">@Player.Alias</span>
 				}
 			</div>
-			<div class="stats small text-muted">
-				@if (Stats is not null)
-				{
-					var matchesTooltip = Stats.WinRate is null && Stats.Matches > 0
-						? $"Matches played ({"win".ToQuantity(Stats.Wins)})"
-						: "Matches played";
-
-					<div class="stats-entry" title="@matchesTooltip">
-						<span class="icon">swords</span>
-						@if (Stats.Matches > 0)
-						{
-							<span>@Stats.Matches</span>
-						}
-						else
-						{
-							<span>No matches yet</span>
-						}
-					</div>
-					@if (Stats.WinRate is not null)
-					{
-						<div class="stats-entry" title="Win rate">
-							<span class="icon">trophy</span>
-							<span>@(Stats.WinRate)%</span>
-						</div>
-					}
-
-					@if (Stats.LastPlayed is not null)
-					{
-						<div class="stats-entry" title="Last played">
-							<span class="icon">calendar_today</span>
-							<span>@Stats.LastPlayed.Value.HumanizeDay()</span>
-						</div>
-					}
-				}
-			</div>
+			<PlayerStatsOverview Stats="Stats" class="small text-muted"/>
 		</div>
 	</a>
 	<button class="player-edit btn btn-ghost-secondary btn-square hover-icon-filled"

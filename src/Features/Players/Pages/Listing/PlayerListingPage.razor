@@ -56,7 +56,6 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await State.LoadStatsAsync(CancellationToken);
 		await State.LoadPlayersAsync(CancellationToken);
 		await LoadSortOptionAsync();
 	}

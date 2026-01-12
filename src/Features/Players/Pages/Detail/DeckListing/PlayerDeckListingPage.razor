@@ -84,8 +84,6 @@
 
 @code {
 
-	private bool _firstLoad;
-
 	private string PageTitle => State.Player is null
 		? "Player Decks"
 		: $"{State.Player.Name.ToPossessive()} Decks";
@@ -95,20 +93,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		_firstLoad = true;
 		await State.LoadPlayerAsync(Id, CancellationToken);
-		await State.LoadDeckStatsAsync(CancellationToken);
-	}
-
-	protected override async Task OnParametersSetAsync()
-	{
-		if (_firstLoad)
-		{
-			_firstLoad = false;
-			return;
-		}
-
-		await State.LoadDeckStatsAsync(CancellationToken);
 	}
 
 	private IReadOnlyList<Deck> GetActiveDecks(Player player)

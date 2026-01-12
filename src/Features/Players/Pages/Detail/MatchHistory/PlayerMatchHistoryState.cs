@@ -4,20 +4,29 @@ using Microsoft.Extensions.Options;
 
 namespace MagicMatchTracker.Features.Players.Pages.Detail.MatchHistory;
 
-public sealed class PlayerMatchHistoryState(
-	Database database,
-	IOptions<PlayerMatchHistoryOptions> options,
-	PlayerEditDialogState playerEditDialogState) : PlayerDetailStateBase(playerEditDialogState)
+public sealed class PlayerMatchHistoryState : PlayerDetailStateBase
 {
+	private readonly IOptions<PlayerMatchHistoryOptions> _options;
+
 	private List<MatchParticipation> _finishedMatchParticipations = [];
 	private Match? _nextMatch;
+
+	// ReSharper disable once ConvertToPrimaryConstructor - Issue with capturing `database` twice
+	public PlayerMatchHistoryState(
+		Database database,
+		IOptions<PlayerMatchHistoryOptions> options,
+		PlayerEditDialogState playerEditDialogState)
+		: base(database, playerEditDialogState)
+	{
+		_options = options;
+	}
 
 	public IReadOnlyList<MatchParticipation> FinishedMatchParticipations => _finishedMatchParticipations;
 	public bool HasMoreMatches => _nextMatch is not null;
 
 	protected override async Task<Player?> LoadPlayerCoreAsync(Guid id, CancellationToken cancellationToken)
 	{
-		var player = await database.Players.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+		var player = await Database.Players.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 		var matchParticipations = await LoadMoreMatchesCoreAsync(player, cancellationToken);
 		_finishedMatchParticipations = matchParticipations.ToList();
 
@@ -45,7 +54,7 @@ public sealed class PlayerMatchHistoryState(
 			return [];
 		}
 
-		var query = database.Matches
+		var query = Database.Matches
 			.Include(m => m.Participations)
 			.Where(m => m.TimeStarted != null && m.TimeEnded != null && m.Participations.Any(mp => mp.Player == player));
 
@@ -62,7 +71,7 @@ public sealed class PlayerMatchHistoryState(
 				.Select(x => x.Match);
 		}
 
-		var matchesPerPage = options.Value.MatchesPerPage;
+		var matchesPerPage = _options.Value.MatchesPerPage;
 		query = query.OrderByDescending(m => DateOnly.FromDateTime(m.TimeEnded!.Value.DateTime))
 			.ThenByDescending(m => m.MatchNumber)
 			.Take(matchesPerPage + 1);

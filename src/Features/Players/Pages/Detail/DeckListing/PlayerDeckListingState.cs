@@ -5,29 +5,37 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Features.Players.Pages.Detail.DeckListing;
 
-public sealed class PlayerDeckListingState(
-	Database database,
-	DeckEditDialogState deckEditDialogState,
-	PlayerEditDialogState playerEditDialogState) : PlayerDetailStateBase(playerEditDialogState)
+public sealed class PlayerDeckListingState : PlayerDetailStateBase
 {
+	private readonly DeckEditDialogState _deckEditDialogState;
+
 	public IReadOnlyDictionary<Guid, Stats> DeckStats { get; private set; } = new Dictionary<Guid, Stats>();
+
+	// ReSharper disable once ConvertToPrimaryConstructor - Issue with capturing `database` twice
+	public PlayerDeckListingState(
+		Database database,
+		DeckEditDialogState deckEditDialogState,
+		PlayerEditDialogState playerEditDialogState)
+		: base(database, playerEditDialogState)
+	{
+		_deckEditDialogState = deckEditDialogState;
+	}
 
 	protected override async Task<Player?> LoadPlayerCoreAsync(Guid id, CancellationToken cancellationToken)
 	{
-		return await database.Players
+		var player = await Database.Players
 			.Include(p => p.Decks)
 			.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
-	}
 
-	public async Task LoadDeckStatsAsync(CancellationToken cancellationToken = default)
-	{
-		if (Player is null)
-			return;
+		if (player is null)
+			return null;
 
-		var playerDecks = Player.Decks.Select(d => d.Id);
-		DeckStats = await database.QueryDeckStats()
+		var playerDecks = player.Decks.Select(d => d.Id);
+		DeckStats = await Database.QueryDeckStats()
 			.Where(d => playerDecks.Contains(d.DeckId))
 			.ToDictionaryAsync(d => d.DeckId, d => (Stats)d, cancellationToken);
+
+		return player;
 	}
 
 	public async Task AddNewDeckAsync(CancellationToken cancellationToken = default)
@@ -40,7 +48,7 @@ public sealed class PlayerDeckListingState(
 			Owner = Player,
 			Commander = "",
 		};
-		var success = await deckEditDialogState.ShowDialogAsync(deck, cancellationToken);
+		var success = await _deckEditDialogState.ShowDialogAsync(deck, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}
@@ -50,7 +58,7 @@ public sealed class PlayerDeckListingState(
 		if (Player is null)
 			return;
 
-		var success = await deckEditDialogState.ShowDialogAsync(deck, cancellationToken);
+		var success = await _deckEditDialogState.ShowDialogAsync(deck, cancellationToken);
 		if (success)
 			NotifyStateChanged();
 	}

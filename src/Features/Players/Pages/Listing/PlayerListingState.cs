@@ -17,13 +17,10 @@ public sealed class PlayerListingState(Database database, PlayerEditDialogState 
 		if (_players is not null)
 			return;
 
-		_players = await database.Players.ToListAsync(cancellationToken);
-	}
-
-	public async Task LoadStatsAsync(CancellationToken cancellationToken = default)
-	{
 		PlayerStats = await database.QueryPlayerStats()
 			.ToDictionaryAsync(p => p.PlayerId, p => (Stats)p, cancellationToken);
+
+		_players = await database.Players.ToListAsync(cancellationToken);
 	}
 
 	public async Task AddNewPlayerAsync(CancellationToken cancellationToken = default)

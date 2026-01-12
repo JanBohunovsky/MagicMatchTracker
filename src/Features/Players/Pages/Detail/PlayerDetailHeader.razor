@@ -1,3 +1,4 @@
+@using MagicMatchTracker.Features.Players.Components
 @using MagicMatchTracker.Features.Players.Dialogs.Edit
 @inherits LifecycleComponentBase
 
@@ -25,20 +26,24 @@
 	</button>
 </div>
 
-<ul class="nav nav-pills">
-	<li class="nav-item">
-		<NavLink class="nav-link text-content justify-content-center" href=@($"/players/{State.Player.Id}/decks")>
-			<span class="icon" aria-hidden="true">box</span>
-			<span>Decks</span>
-		</NavLink>
-	</li>
-	<li class="nav-item">
-		<NavLink class="nav-link text-content justify-content-center" href=@($"/players/{State.Player.Id}/matches")>
-			<span class="icon" aria-hidden="true">swords</span>
-			<span>Matches</span>
-		</NavLink>
-	</li>
-</ul>
+<div class="subheading">
+	<PlayerStatsOverview Stats="State.PlayerStats" class="text-muted"/>
+
+	<ul class="nav nav-pills">
+		<li class="nav-item">
+			<NavLink class="nav-link text-content justify-content-center" href=@($"/players/{State.Player.Id}/decks")>
+				<span class="icon" aria-hidden="true">box</span>
+				<span>Decks</span>
+			</NavLink>
+		</li>
+		<li class="nav-item">
+			<NavLink class="nav-link text-content justify-content-center" href=@($"/players/{State.Player.Id}/matches")>
+				<span class="icon" aria-hidden="true">swords</span>
+				<span>Matches</span>
+			</NavLink>
+		</li>
+	</ul>
+</div>
 
 <PlayerEditDialog/>
 

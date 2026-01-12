@@ -1,0 +1,55 @@
+@using Humanizer
+<div @attributes="AdditionalAttributes" class="@_containerClass">
+	@if (Stats is not null)
+	{
+		<div class="stats-entry" title="@("match".ToQuantity(Stats.Matches)) played">
+			<span class="icon">swords</span>
+			@if (Stats.Matches > 0)
+			{
+				<span>@Stats.Matches</span>
+			}
+			else
+			{
+				<span>No matches yet</span>
+			}
+		</div>
+
+		<div class="stats-entry" title="Win rate (@("win".ToQuantity(Stats.Wins)))">
+			<span class="icon">trophy</span>
+			@if (Stats.WinRate is not null)
+			{
+				<span>@(Stats.WinRate)%</span>
+			}
+			else
+			{
+				<span>N/A</span>
+			}
+		</div>
+
+		@if (Stats.LastPlayed is not null)
+		{
+			var formattedDate = Stats.LastPlayed.Value.ToString("D");
+			<div class="stats-entry" title="Last played on @formattedDate">
+				<span class="icon">calendar_today</span>
+				<span>@Stats.LastPlayed.Value.HumanizeDay()</span>
+			</div>
+		}
+	}
+</div>
+
+@code {
+
+	private string? _containerClass;
+
+	[Parameter, EditorRequired]
+    public required Stats? Stats { get; set; }
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		_containerClass = AttributeUtilities.CombineClassNames(AdditionalAttributes, "stats");
+	}
+
+}
