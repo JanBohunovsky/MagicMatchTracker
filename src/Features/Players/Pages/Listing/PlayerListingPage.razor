@@ -1,11 +1,21 @@
 @page "/players"
 @using MagicMatchTracker.Features.Players.Dialogs.Edit
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inherits StatefulComponentBase<PlayerListingState>
 @attribute [Authorize(Roles = Roles.Owner)]
+@inject ProtectedLocalStorage LocalStorage
 
 <PageTitle>Players - Match Tracker</PageTitle>
 
-<h1>Players</h1>
+<div class="heading">
+	<h1>Players</h1>
+	@if (State.Players is not null)
+	{
+		<div class="heading-toolbar">
+			<PlayerSortDropdown @bind-Value="_sortOption" @bind-Value:after="SaveSortOptionAsync"/>
+		</div>
+	}
+</div>
 
 <button class="btn btn-primary btn-fab"
         disabled="@(State.Players is null)"
@@ -40,29 +50,44 @@
 
 @code {
 
-	private bool _firstLoad;
+	private const string SortOptionKey = "playerListingSort";
+
+	private PlayerSortOption _sortOption = PlayerSortOption.Name;
 
 	protected override async Task OnInitializedAsync()
 	{
-		_firstLoad = true;
 		await State.LoadStatsAsync(CancellationToken);
 		await State.LoadPlayersAsync(CancellationToken);
+		await LoadSortOptionAsync();
 	}
 
-	protected override async Task OnParametersSetAsync()
+	private async Task LoadSortOptionAsync()
 	{
-		if (_firstLoad)
+		var result = await LocalStorage.GetAsync<PlayerSortOption>(SortOptionKey);
+		if (result.Success)
 		{
-			_firstLoad = false;
-			return;
+			_sortOption = result.Value;
 		}
+	}
 
-		await State.LoadStatsAsync(CancellationToken);
+	private async Task SaveSortOptionAsync()
+	{
+		await LocalStorage.SetAsync(SortOptionKey, _sortOption);
 	}
 
 	private IEnumerable<Player> GetSortedPlayers(IEnumerable<Player> players)
 	{
-		return players.OrderBy(p => p.Name);
+		return _sortOption switch
+		{
+			PlayerSortOption.Name => players.OrderBy(p => p.Name),
+			PlayerSortOption.Matches => players.OrderByDescending(p => State.PlayerStats.GetValueOrDefault(p.Id, Stats.Empty).Matches)
+				.ThenBy(p => p.Name),
+			PlayerSortOption.WinRate => players.OrderByDescending(p => State.PlayerStats.GetValueOrDefault(p.Id, Stats.Empty).WinRate)
+				.ThenBy(p => p.Name),
+			PlayerSortOption.LastPlayed => players.OrderByDescending(p => State.PlayerStats.GetValueOrDefault(p.Id, Stats.Empty).LastPlayed)
+				.ThenBy(p => p.Name),
+			_ => players.OrderBy(p => p.Name),
+		};
 	}
 
 }

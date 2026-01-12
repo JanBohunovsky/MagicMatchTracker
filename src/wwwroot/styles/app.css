@@ -37,6 +37,12 @@ h1:focus {
 	}
 }
 
+.heading-toolbar {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+}
+
 .content {
 	padding-top: 1.1rem;
 	padding-left: 1.5rem;
@@ -124,6 +130,10 @@ h1:focus {
 
 	.heading {
 		justify-content: start;
+	}
+
+	.heading-toolbar {
+		flex-direction: row-reverse;
 	}
 
 	.nested-modal-layer .modal {

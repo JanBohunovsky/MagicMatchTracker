@@ -1,0 +1,46 @@
+<Dropdown>
+	<Button>
+		<button class="btn btn-sm btn-form-select"
+		        @onclick="context.ShowMenu">
+			<span class="floating-label floating-label-sm">Sort by</span>
+			<span class="icon">@Value.Icon</span>
+			<span>@Value.DisplayName</span>
+		</button>
+	</Button>
+	<Menu>
+		<div class="dropdown-menu w-100 shadow">
+			@foreach (var sortOption in GetSortOptions())
+			{
+				<button type="button" class="dropdown-item py-2 text-content active-icon-filled user-select-none @(sortOption == Value ? "active" : null)"
+				        @onclick="() => UpdateValueAndClose(context, sortOption)">
+					<span class="icon">@sortOption.Icon</span>
+					<span>@sortOption.DisplayName</span>
+				</button>
+			}
+		</div>
+	</Menu>
+</Dropdown>
+
+@code {
+
+	[Parameter, EditorRequired]
+    public required PlayerSortOption Value { get; set; }
+
+	[Parameter]
+    public EventCallback<PlayerSortOption> ValueChanged { get; set; }
+
+	private async Task UpdateValueAndClose(Dropdown dropdown, PlayerSortOption sortOption)
+	{
+		await ValueChanged.InvokeAsync(sortOption);
+		dropdown.HideMenu();
+	}
+
+	private static IEnumerable<PlayerSortOption> GetSortOptions()
+	{
+		yield return PlayerSortOption.Name;
+		yield return PlayerSortOption.Matches;
+		yield return PlayerSortOption.WinRate;
+		yield return PlayerSortOption.LastPlayed;
+	}
+
+}
