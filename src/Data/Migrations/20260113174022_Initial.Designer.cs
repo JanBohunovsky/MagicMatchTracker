@@ -12,15 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MagicMatchTracker.Data.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20251115113906_ReplaceMatchEventsWithParticipationEndState")]
-    partial class ReplaceMatchEventsWithParticipationEndState
+    [Migration("20260113174022_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.6")
+                .HasAnnotation("ProductVersion", "10.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -86,9 +86,9 @@ namespace MagicMatchTracker.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                    b.Property<bool>("IsLive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_live");
 
                     b.Property<int>("MatchNumber")
                         .HasColumnType("integer")
@@ -130,6 +130,10 @@ namespace MagicMatchTracker.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("notes");
 
+                    b.Property<int?>("TurnOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("turn_order");
+
                     b.HasKey("MatchId", "PlayerId")
                         .HasName("pk_match_participations");
 
@@ -148,6 +152,10 @@ namespace MagicMatchTracker.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<string>("Alias")
+                        .HasColumnType("text")
+                        .HasColumnName("alias");
 
                     b.Property<string>("AvatarUri")
                         .HasColumnType("text")
@@ -183,7 +191,7 @@ namespace MagicMatchTracker.Data.Migrations
             modelBuilder.Entity("MagicMatchTracker.Data.Models.MatchParticipation", b =>
                 {
                     b.HasOne("MagicMatchTracker.Data.Models.Deck", "Deck")
-                        .WithMany("Matches")
+                        .WithMany()
                         .HasForeignKey("DeckId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_match_participations_decks_deck_id");
@@ -196,7 +204,7 @@ namespace MagicMatchTracker.Data.Migrations
                         .HasConstraintName("fk_match_participations_matches_match_id");
 
                     b.HasOne("MagicMatchTracker.Data.Models.Player", "Player")
-                        .WithMany("Matches")
+                        .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
@@ -260,11 +268,6 @@ namespace MagicMatchTracker.Data.Migrations
                     b.Navigation("Player");
                 });
 
-            modelBuilder.Entity("MagicMatchTracker.Data.Models.Deck", b =>
-                {
-                    b.Navigation("Matches");
-                });
-
             modelBuilder.Entity("MagicMatchTracker.Data.Models.Match", b =>
                 {
                     b.Navigation("Participations");
@@ -273,8 +276,6 @@ namespace MagicMatchTracker.Data.Migrations
             modelBuilder.Entity("MagicMatchTracker.Data.Models.Player", b =>
                 {
                     b.Navigation("Decks");
-
-                    b.Navigation("Matches");
                 });
 #pragma warning restore 612, 618
         }
