@@ -46,6 +46,7 @@ public static class ConfigureServices
 			builder.Services.AddCascadingAuthenticationState();
 			builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 			builder.Services
+				.AddSingleton<ApplicationVersionProvider>()
 				.AddScoped<IMessageHub, MessageHub>()
 				.AddScoped<FocusService>()
 				.AddScoped<AutoCloseService>()

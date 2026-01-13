@@ -1,11 +1,15 @@
 ﻿@page "/"
 @using MagicMatchTracker.Infrastructure.Authentication.Discord
+@using MagicMatchTracker.Infrastructure.Services
 @using Microsoft.AspNetCore.Components.Authorization
 @attribute [Authorize]
+@inject ApplicationVersionProvider VersionProvider
 
 <PageTitle>Match Tracker</PageTitle>
 
 <h1>Match Tracker - Commander</h1>
+
+<div class="text-muted small">Version: @VersionProvider.Version</div>
 
 <AuthorizeView>
 	<Authorized>
