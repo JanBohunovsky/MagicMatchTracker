@@ -12,35 +12,35 @@
 .mana-white {
 	--mana-colour: #F8F6D8;
 	--mana-colour-rgb: 248, 246, 216;
-	--mana-symbol-url: url('/img/mana_symbols/white.svg');
+	--mana-symbol-url: url('../img/mana_symbols/white.svg');
 }
 
 .mana-blue {
 	--mana-colour: #C1D7E9;
 	--mana-colour-rgb: 193, 215, 233;
-	--mana-symbol-url: url('/img/mana_symbols/blue.svg');
+	--mana-symbol-url: url('../img/mana_symbols/blue.svg');
 }
 
 .mana-black {
 	--mana-colour: #CAC5C0;
 	--mana-colour-rgb: 202, 197, 192;
-	--mana-symbol-url: url('/img/mana_symbols/black.svg');
+	--mana-symbol-url: url('../img/mana_symbols/black.svg');
 }
 
 .mana-red {
 	--mana-colour: #E49977;
 	--mana-colour-rgb: 228, 153, 119;
-	--mana-symbol-url: url('/img/mana_symbols/red.svg');
+	--mana-symbol-url: url('../img/mana_symbols/red.svg');
 }
 
 .mana-green {
 	--mana-colour: #A3C095;
 	--mana-colour-rgb: 163, 192, 149;
-	--mana-symbol-url: url('/img/mana_symbols/green.svg');
+	--mana-symbol-url: url('../img/mana_symbols/green.svg');
 }
 
 .mana-colourless {
 	--mana-colour: #CAC5C0;
 	--mana-colour-rgb: 202, 197, 192;
-	--mana-symbol-url: url('/img/mana_symbols/colourless.svg');
+	--mana-symbol-url: url('../img/mana_symbols/colourless.svg');
 }

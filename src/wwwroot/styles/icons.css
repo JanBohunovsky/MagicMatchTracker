@@ -1,5 +1,9 @@
-/* TODO: Limit the icons before deploying to production (using icon_names=...) */
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght,FILL@300,0..1&display=block');
+@font-face {
+	font-display: block;
+	font-family: 'Material Symbols Rounded';
+	font-style: normal;
+	src: url('../fonts/material-symbols-rounded.woff2') format('woff2');
+}
 
 .icon {
 	font-family: 'Material Symbols Rounded';
