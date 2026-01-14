@@ -2,6 +2,7 @@ using MagicMatchTracker.Data.Seed;
 using MagicMatchTracker.Infrastructure.Authentication;
 using MagicMatchTracker.Infrastructure.Layout;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 namespace MagicMatchTracker.Infrastructure.Startup;
 
@@ -30,6 +31,18 @@ public static class ConfigureApp
 		private void ConfigureMiddlewares()
 		{
 			app.UseAntiforgery();
+
+			var cachePath = Path.Combine(app.Environment.WebRootPath, "img", "cache");
+			if (!Directory.Exists(cachePath))
+			{
+				Directory.CreateDirectory(cachePath);
+			}
+
+			app.UseStaticFiles(new StaticFileOptions
+			{
+				FileProvider = new PhysicalFileProvider(cachePath),
+				RequestPath = "/img/cache",
+			});
 		}
 
 		private void MapRoutes()
