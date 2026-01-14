@@ -90,3 +90,6 @@ resharper_web_config_wrong_module_highlighting = warning
 [{*.slnx,*.csproj}]
 indent_style = tab
 tab_width = 2
+
+[*.yml]
+tab_width = 2
