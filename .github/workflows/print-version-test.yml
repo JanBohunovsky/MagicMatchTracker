@@ -1,0 +1,21 @@
+name: Print application version
+
+on: workflow_dispatch
+
+jobs:
+  print-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version
+        uses: kzrnm/get-net-sdk-project-versions-action@v2
+        id: get-version
+        with:
+          proj-path: src/MagicMatchTracker.csproj
+
+      - run: echo "Version: ${{ steps.get-version.outputs.version }}"
+      - run: echo "VersionPrefix: ${{ steps.get-version.outputs.version-prefix }}"
+      - run: echo "VersionSuffix: ${{ steps.get-version.outputs.version-suffix }}"
+      - run: echo "InformationalVersion: ${{ steps.get-version.outputs.informational-version }}"
