@@ -1,9 +1,11 @@
 name: Print application version
 
-on: workflow_dispatch
+on: issue_comment
 
 jobs:
   print-version:
+    name: Print version
+    if: ${{ github.event.issue.pull_request }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
