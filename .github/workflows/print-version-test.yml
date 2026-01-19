@@ -15,7 +15,9 @@ jobs:
         with:
           proj-path: src/MagicMatchTracker.csproj
 
-      - run: echo "Version: ${{ steps.get-version.outputs.version }}"
-      - run: echo "VersionPrefix: ${{ steps.get-version.outputs.version-prefix }}"
-      - run: echo "VersionSuffix: ${{ steps.get-version.outputs.version-suffix }}"
-      - run: echo "InformationalVersion: ${{ steps.get-version.outputs.informational-version }}"
+      - name: Print versions
+        run: |
+          echo "Version: ${{ steps.get-version.outputs.version }}"
+          echo "VersionPrefix: ${{ steps.get-version.outputs.version-prefix }}"
+          echo "VersionSuffix: ${{ steps.get-version.outputs.version-suffix }}"
+          echo "InformationalVersion: ${{ steps.get-version.outputs.informational-version }}"
