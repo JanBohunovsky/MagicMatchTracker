@@ -35,6 +35,7 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v4
+        uses: fregante/setup-git-user@v2
 
       - name: Update version
         uses: vers-one/dotnet-project-version-updater@v1.7
