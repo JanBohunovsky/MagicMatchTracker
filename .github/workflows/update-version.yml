@@ -10,6 +10,8 @@ jobs:
   update-version:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Validate labels
         uses: mheap/github-action-required-labels@v5
