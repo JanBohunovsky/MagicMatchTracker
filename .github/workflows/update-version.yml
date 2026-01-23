@@ -35,6 +35,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup git user
         uses: fregante/setup-git-user@v2
 
       - name: Update version
