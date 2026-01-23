@@ -2,16 +2,13 @@ name: Update version
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, main-test ]
     types:
-      - opened
-      - synchronize
-      - reopened
-      - labeled
-      - unlabeled
+      - closed
 
 jobs:
   update-version:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Validate labels
@@ -47,7 +44,8 @@ jobs:
           version: ${{ env.BUMP_PATTERN }}
           tags: csproj.VersionPrefix
 
-      - name: Print new version
+      - name: Commit changes
         run: |
-          echo "Updated version: ${{ steps.update-version.outputs.oldVersion }} -> ${{ steps.update-version.outputs.newVersion }}"
-          git diff
+          git commit -am "Update version to ${{ steps.update-version.outputs.newVersion }}"
+          git tag v${{ steps.update-version.outputs.newVersion }}
+          git push
