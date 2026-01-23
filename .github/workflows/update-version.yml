@@ -1,4 +1,4 @@
-name: Print application version
+name: Update version
 
 on:
   pull_request:
@@ -11,8 +11,7 @@ on:
       - unlabeled
 
 jobs:
-  print-version:
-    name: Print new version
+  update-version:
     runs-on: ubuntu-latest
     steps:
       - name: Validate labels
@@ -26,7 +25,7 @@ jobs:
             maintenance
             bug
 
-      - name: Set variable based on label
+      - name: Set bump pattern based on label
         run: |
           label=${{ steps.check-labels.outputs.labels }}
           case "$label" in
@@ -51,3 +50,4 @@ jobs:
       - name: Print new version
         run: |
           echo "Updated version: ${{ steps.update-version.outputs.oldVersion }} -> ${{ steps.update-version.outputs.newVersion }}"
+          git diff
