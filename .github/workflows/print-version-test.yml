@@ -1,24 +1,53 @@
 name: Print application version
 
-on: pull_request
+on:
+  pull_request:
+    branches: [ main ]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
 
 jobs:
   print-version:
-    name: Print version
+    name: Print new version
     runs-on: ubuntu-latest
     steps:
+      - name: Validate labels
+        uses: mheap/github-action-required-labels@v5
+        id: check-labels
+        with:
+          mode: exactly
+          count: 1
+          labels: |
+            feature
+            maintenance
+            bug
+
+      - name: Set variable based on label
+        run: |
+          label=${{ steps.check-labels.outputs.labels }}
+          case "$label" in
+            feature) bump_pattern="^.0.0" ;;
+            maintenance) bump_pattern="*.^.0" ;;
+            bug) bump_pattern="*.*.^" ;;
+            *) echo "Failed to match label: $label" && exit 1 ;;
+          esac
+          echo "BUMP_PATTERN=$bump_pattern" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Get version
-        uses: kzrnm/get-net-sdk-project-versions-action@v2
-        id: get-version
+      - name: Update version
+        uses: vers-one/dotnet-project-version-updater@v1.7
+        id: update-version
         with:
-          proj-path: src/MagicMatchTracker.csproj
+          file: src/MagicMatchTracker.csproj
+          version: ${{ env.BUMP_PATTERN }}
+          tags: csproj.VersionPrefix
 
-      - name: Print versions
+      - name: Print new version
         run: |
-          echo "Version: ${{ steps.get-version.outputs.version }}"
-          echo "VersionPrefix: ${{ steps.get-version.outputs.version-prefix }}"
-          echo "VersionSuffix: ${{ steps.get-version.outputs.version-suffix }}"
-          echo "InformationalVersion: ${{ steps.get-version.outputs.informational-version }}"
+          echo "Updated version: ${{ steps.update-version.outputs.oldVersion }} -> ${{ steps.update-version.outputs.newVersion }}"
