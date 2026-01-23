@@ -53,4 +53,4 @@ jobs:
         run: |
           git commit -am "Update version to ${{ steps.update-version.outputs.newVersion }}"
           git tag v${{ steps.update-version.outputs.newVersion }}
-          git push
+          git push --tags
