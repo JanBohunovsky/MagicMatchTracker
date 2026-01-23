@@ -1,0 +1,25 @@
+name: Validate labels
+
+on:
+  pull_request:
+    branches: [ main ]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+
+jobs:
+  validate-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: mheap/github-action-required-labels@v5
+        id: check-labels
+        with:
+          mode: exactly
+          count: 1
+          labels: |
+            feature
+            maintenance
+            bug

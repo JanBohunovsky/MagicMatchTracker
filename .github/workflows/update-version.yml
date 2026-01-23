@@ -1,0 +1,58 @@
+name: Update version
+
+on:
+  pull_request:
+    branches: [ main ]
+    types:
+      - closed
+
+jobs:
+  update-version:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Validate labels
+        uses: mheap/github-action-required-labels@v5
+        id: check-labels
+        with:
+          mode: exactly
+          count: 1
+          labels: |
+            feature
+            maintenance
+            bug
+
+      - name: Set bump pattern based on label
+        run: |
+          label=${{ steps.check-labels.outputs.labels }}
+          case "$label" in
+            feature) bump_pattern="^.0.0" ;;
+            maintenance) bump_pattern="*.^.0" ;;
+            bug) bump_pattern="*.*.^" ;;
+            *) echo "Failed to match label: $label" && exit 1 ;;
+          esac
+          echo "BUMP_PATTERN=$bump_pattern" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup git user
+        uses: fregante/setup-git-user@v2
+
+      - name: Update version
+        uses: vers-one/dotnet-project-version-updater@v1.7
+        id: update-version
+        with:
+          file: src/MagicMatchTracker.csproj
+          version: ${{ env.BUMP_PATTERN }}
+          tags: csproj.VersionPrefix
+
+      - name: Commit changes
+        run: |
+          git commit -am "Update version to ${{ steps.update-version.outputs.newVersion }}"
+          git tag v${{ steps.update-version.outputs.newVersion }}
+          git push
+          git push --tags

@@ -7,8 +7,11 @@
 		<File Path="LICENSE" />
 		<File Path="README.md" />
 	</Folder>
+	<Folder Name="/.root/.github/" />
 	<Folder Name="/.root/.github/workflows/">
 		<File Path=".github\workflows\docker-image.yml" />
+		<File Path=".github\workflows\update-version.yml" />
+		<File Path=".github\workflows\validate-labels.yml" />
 	</Folder>
 	<Project Path="src/MagicMatchTracker.csproj" />
 </Solution>
