@@ -5,6 +5,7 @@ using MagicMatchTracker.Features.Players;
 using MagicMatchTracker.Features.Shared;
 using MagicMatchTracker.Infrastructure.Authentication;
 using MagicMatchTracker.Infrastructure.Services;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 
 namespace MagicMatchTracker.Infrastructure.Startup;
@@ -35,6 +36,9 @@ public static class ConfigureServices
 				options.UseNpgsql(builder.Configuration.GetConnectionString("Default"),
 					npgsql => npgsql.SetPostgresVersion(17, 5));
 			});
+
+			builder.Services.AddDataProtection()
+				.PersistKeysToDbContext<Database>();
 
 			builder.Services.AddTransient<DataSeeder>();
 			builder.Services.AddTransient<GristImporter>();

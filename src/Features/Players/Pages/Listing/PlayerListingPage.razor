@@ -4,6 +4,7 @@
 @inherits StatefulComponentBase<PlayerListingState>
 @attribute [Authorize(Roles = Roles.Owner)]
 @inject ProtectedLocalStorage LocalStorage
+@inject ILogger<PlayerListingPage> Logger
 
 <PageTitle>Players - Match Tracker</PageTitle>
 
@@ -62,10 +63,17 @@
 
 	private async Task LoadSortOptionAsync()
 	{
-		var result = await LocalStorage.GetAsync<PlayerSortOption>(SortOptionKey);
-		if (result.Success)
+		try
 		{
-			_sortOption = result.Value;
+			var result = await LocalStorage.GetAsync<PlayerSortOption>(SortOptionKey);
+			if (result.Success)
+			{
+				_sortOption = result.Value;
+			}
+		}
+		catch (Exception e)
+		{
+			Logger.LogError(e, "Failed to get value from local storage");
 		}
 	}
 
