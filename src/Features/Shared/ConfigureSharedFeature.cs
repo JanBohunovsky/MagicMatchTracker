@@ -1,4 +1,5 @@
 using MagicMatchTracker.Features.Shared.Dialogs.DeckEdit;
+using MagicMatchTracker.Features.Shared.Options;
 using MagicMatchTracker.Features.Shared.Services;
 using MagicMatchTracker.Features.Shared.Services.Scryfall;
 using MagicMatchTracker.Infrastructure.Services;
@@ -7,7 +8,7 @@ namespace MagicMatchTracker.Features.Shared;
 
 public static class ConfigureSharedFeature
 {
-	public static IServiceCollection AddSharedFeature(this IServiceCollection services)
+	public static IServiceCollection AddSharedFeature(this IServiceCollection services, IConfiguration configuration)
 	{
 		services.AddScoped<DeckEditDialogState>();
 
@@ -21,6 +22,8 @@ public static class ConfigureSharedFeature
 		});
 
 		services.AddHttpClient<ImageCachingService>();
+
+		services.Configure<ChangelogOptions>(configuration.GetSection(ChangelogOptions.SectionName));
 
 		return services;
 	}

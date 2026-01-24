@@ -21,6 +21,24 @@ public static class StringExtensions
 	public static bool IsNotEmpty([NotNullWhen(true)] this string? value)
 		=> !string.IsNullOrEmpty(value);
 
-	public static string ToPossessive(this string value)
-		=> value.EndsWith("s", StringComparison.InvariantCultureIgnoreCase) ? $"{value}'" : $"{value}'s";
+	extension(string value)
+	{
+		public string ToPossessive()
+			=> value.EndsWith("s", StringComparison.InvariantCultureIgnoreCase) ? $"{value}'" : $"{value}'s";
+
+		public string Format(object? arg0)
+			=> string.Format(value, arg0);
+
+		public string Format(object? arg0, object? arg1)
+			=> string.Format(value, arg0, arg1);
+
+		public string Format(object? arg0, object? arg1, object? arg2)
+			=> string.Format(value, arg0, arg1, arg2);
+
+		public string Format(params ReadOnlySpan<object?> args)
+			=> string.Format(value, args);
+
+		public string Format(params object[] args)
+			=> string.Format(value, args);
+	}
 }
