@@ -60,7 +60,7 @@ public static class ConfigureServices
 		private void AddFeatures()
 		{
 			builder.Services
-				.AddSharedFeature()
+				.AddSharedFeature(builder.Configuration)
 				.AddPlayersFeature(builder.Configuration)
 				.AddMatchesFeature(builder.Configuration);
 		}

@@ -1,25 +1,26 @@
 ﻿@page "/"
+@using MagicMatchTracker.Features.Shared.Options
 @using MagicMatchTracker.Infrastructure.Authentication.Discord
 @using MagicMatchTracker.Infrastructure.Services
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.Options
 @attribute [Authorize]
 @inject ApplicationVersionProvider VersionProvider
+@inject IOptions<ChangelogOptions> ChangelogOptions
 
 <PageTitle>Match Tracker</PageTitle>
 
 <h1>Match Tracker - Commander</h1>
 
-<div class="text-muted small">Version: @VersionProvider.Version</div>
-
 <AuthorizeView>
 	<Authorized>
 		<div class="d-flex align-items-center gap-2">
-			<span class="text-muted small">Signed in as @(context.User.Identity?.DisplayName)</span>
+			<span class="text-muted">Signed in as @(context.User.Identity?.DisplayName)</span>
 			<form action="/account/signout" method="post">
 				<AntiforgeryToken/>
 				<input type="hidden" name="ReturnUrl" value=""/>
 				<button type="submit" class="btn btn-link p-0 d-flex">
-					<span class="small">Sign out</span>
+					<span>Sign out</span>
 				</button>
 			</form>
 		</div>
@@ -33,3 +34,13 @@
 		}
 	</Authorized>
 </AuthorizeView>
+
+<div class="position-fixed bottom-0 py-3">
+	<div class="d-flex align-items-center justify-content-between gap-2 small">
+		<div class="text-muted">Version @(VersionProvider.Version)</div>
+		<span class="text-muted small">&bull;</span>
+		<a href="@ChangelogOptions.Value.UrlFormat.Format(VersionProvider.VersionPrefix)" target="_blank">
+			Changelog
+		</a>
+	</div>
+</div>
