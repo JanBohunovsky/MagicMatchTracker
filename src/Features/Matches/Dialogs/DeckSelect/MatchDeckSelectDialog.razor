@@ -1,7 +1,12 @@
+@using System.Reactive.Disposables
+@using System.Reactive.Disposables.Fluent
+@using System.Reactive.Linq
 @using MagicMatchTracker.Features.Shared.Dialogs.DeckEdit
 @using MagicMatchTracker.Infrastructure.Dialogs
+@using MagicMatchTracker.Infrastructure.Reactive
+@using Microsoft.EntityFrameworkCore
 @inherits StatefulComponentBase<MatchDeckSelectionDialogState>
-@inject MatchDeckSearchProvider SearchProvider
+@inject Database Database
 
 <FormDialog
 	TModel="MatchDeckSelectModel"
@@ -19,21 +24,21 @@
 
 		<AutoFocus class="mt-3 mb-2">
 			<input type="text" onfocus="this.select();" id="search-term"
-			       @bind="_searchTerm" @bind:after="SearchAsync" @bind:event="oninput"
+			       @bind="_searchTerm.Value"  @bind:event="oninput"
 			       class="form-control search-term text-truncate"
 			       placeholder="Search decks..."
 			       spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" autofocus/>
 		</AutoFocus>
 
 		<div class="d-flex flex-column">
-			<InputRadioGroup @bind-Value="_selectedPlayerId" @bind-Value:after="SearchAsync">
+			<InputRadioGroup @bind-Value="_selectedPlayerId.Value">
 				<div class="d-flex gap-2 overflow-x-auto flex-shrink-0">
 					@foreach (var player in _playerFilters)
 					{
 						<div>
 							<InputRadio class="btn-check btn-sm" Value="player.Id" id="@player.Id"/>
 							<label class="btn btn-sm btn-outline-secondary" for="@player.Id">
-								@if (_selectedPlayerId == player.Id)
+								@if (_selectedPlayer.Value == player)
 								{
 									<span class="icon">check</span>
 								}
@@ -51,7 +56,7 @@
 	</div>
 
 	<div class="modal-body d-flex flex-column gap-0 p-0">
-		@if (_decks is null)
+		@if (!_decks.HasSource)
 		{
 			<div class="center m-4">
 				<span class="spinner-border text-primary"></span>
@@ -59,13 +64,13 @@
 		}
 		else if (_decks.Count == 0)
 		{
-			if (_selectedPlayerId != Guid.Empty)
+			if (_selectedPlayer.Value is not null)
 			{
 				<span class="center my-5 d-flex flex-column gap-3 align-items-center justify-content-start">
 					<span class="icon filled huge text-primary">box_add</span>
-					@if (_searchTerm.IsEmpty())
+					@if (_searchTerm.Value.IsEmpty())
 					{
-						<span>@SelectedPlayer!.Name has no decks yet</span>
+						<span>@_selectedPlayer.Value.Name has no decks yet</span>
 					}
 					else
 					{
@@ -102,7 +107,7 @@
 								{
 									<span class="small text-muted">@deck.Partner</span>
 								}
-								@if (_selectedPlayerId == Guid.Empty)
+								@if (_selectedPlayer.Value is null)
 								{
 									<div class="small text-content">
 										<Avatar Player="deck.Owner" Size="16"/>
@@ -116,7 +121,7 @@
 							</label>
 						</div>
 					}
-					@if (_selectedPlayerId != Guid.Empty)
+					@if (_selectedPlayer.Value != null)
 					{
 						<button type="button" class="list-group-item list-group-item-action text-content gap-2 py-3"
 						        @onclick="AddNewDeckAsync">
@@ -154,72 +159,101 @@
 
 @code {
 
-	private CancellationTokenSource? _searchCancellationSource;
-	private string _searchTerm = string.Empty;
+	private CompositeDisposable _disposables = new();
+	private ReactiveProperty<string> _searchTerm = new(string.Empty);
+	private ReactiveProperty<Guid> _selectedPlayerId = new(Guid.Empty);
+	private ReactiveReadOnlyProperty<Player?> _selectedPlayer = null!;
+
 	private List<Player> _playerFilters = [];
-	private Guid _selectedPlayerId;
-	private IReadOnlyList<Deck>? _decks;
+	private SearchableDecks _decks = null!;
 	private Guid? _selectedDeckId;
 
-	private Player? SelectedPlayer => _selectedPlayerId != Guid.Empty
-		? _playerFilters.FirstOrDefault(p => p.Id == _selectedPlayerId)
-		: null;
+	private bool IsSelectedDeckVisible => _decks.Any(d => d.Id == _selectedDeckId);
 
-	private bool IsSelectedDeckVisible => _decks is not null && _decks.Any(d => d.Id == _selectedDeckId);
-
-	private async Task SearchAsync()
+	protected override void OnInitialized()
 	{
-		// TODO: Implement actual throttling
-		if (_searchCancellationSource is not null)
-			await _searchCancellationSource.CancelAsync();
+		base.OnInitialized();
+		_decks = new SearchableDecks(StateHasChanged);
 
-		_searchCancellationSource = new CancellationTokenSource();
-		var cancellationToken = _searchCancellationSource.Token;
+		// TODO: I've tried to move it here, because technically there's no reason to NOT have it here,
+		//  but it has some issues:
+		//   - Closing the dialog doesn't cancel any loading (e.g. LoadDecksAsync)
+		//   - ReactiveReadOnlyProperty subscription can't have DistinctUntilChanged,
+		//     otherwise re-opening the same user will result in an infinite "loading".
 
-		_decks = null;
-		StateHasChanged();
+		_selectedPlayer = _selectedPlayerId
+			.Select(id => id != Guid.Empty ? _playerFilters.FirstOrDefault(p => p.Id == id) : null)
+			.ToProperty();
 
-		_decks = await SearchProvider.SearchAsync(_searchTerm, SelectedPlayer, cancellationToken);
+		_searchTerm.Select(s => s.Trim())
+			.Select(s => s.IsEmpty() ? Observable.Return(s) : Observable.Return(s).Delay(TimeSpan.FromMilliseconds(500)))
+			.Switch()
+			.DistinctUntilChanged()
+			.ObserveOn(SynchronizationContext.Current!)
+			.Subscribe(s => _decks.UpdateSearchTerm(s))
+			.DisposeWith(_disposables);
 
-		_searchCancellationSource = null;
-		StateHasChanged();
+		_selectedPlayer.Do(_ => _decks.UpdateSource(null))
+			.SelectLatestAsync(LoadDecksAsync)
+			.ObserveOn(SynchronizationContext.Current!)
+			.Subscribe(d => _decks.UpdateSource(d))
+			.DisposeWith(_disposables);
 	}
 
 	private async Task OnDialogShown(MatchDeckSelectModel editModel)
 	{
-		_searchTerm = string.Empty;
+		// _disposables = new CompositeDisposable();
+		// _searchTerm = new ReactiveProperty<string>(string.Empty);
+		// _selectedPlayerId = new ReactiveProperty<Guid>(editModel.Player.Id);
+		// _decks = new SearchableDecks(StateHasChanged);
+
+		_decks.Reset();
 		_playerFilters = editModel.AvailablePlayers
 			.Prepend(new Player { Name = "All" })
 			.ToList();
 
-		_selectedPlayerId = editModel.Player.Id;
+		_searchTerm.Value = string.Empty;
+		_selectedPlayerId.Value = editModel.Player.Id;
 		_selectedDeckId = editModel.Deck?.Id;
-		await SearchAsync();
 	}
 
 	private async Task OnDialogHidden()
 	{
-		_playerFilters = [];
-		_selectedPlayerId = Guid.Empty;
+		// _disposables.Dispose();
+		// _selectedPlayer.Dispose();
+		// _selectedPlayerId.Dispose();
+		// _searchTerm.Dispose();
 
-		if (_searchCancellationSource is not null)
-			await _searchCancellationSource.CancelAsync();
+		_playerFilters = [];
+	}
+
+	private async Task<IReadOnlyList<Deck>> LoadDecksAsync(Player? player, CancellationToken cancellationToken)
+	{
+		await Task.Delay(2000, cancellationToken);
+		var query = Database.Decks.Where(d => !d.IsArchived);
+
+		if (player is not null)
+		{
+			query = query.Where(d => d.Owner == player);
+		}
+
+		return await query.ToListAsync(cancellationToken);
 	}
 
 	private async Task AddNewDeckAsync()
 	{
-		var player = SelectedPlayer;
+		var player = _selectedPlayer.Value;
 		if (player is null)
 			return;
 
 		var success = await State.AddNewDeckAsync(player, CancellationToken);
 		if (success)
-			await SearchAsync();
+			_selectedPlayer.NotifyPropertyChanged();
 	}
 
 	private async Task EditSelectedDeckAsync()
 	{
-		if (_selectedDeckId is null || _decks is null)
+		if (_selectedDeckId is null)
 			return;
 
 		var deck = _decks.FirstOrDefault(d => d.Id == _selectedDeckId);
@@ -228,7 +262,12 @@
 
 		var success = await State.EditDeckAsync(deck, CancellationToken);
 		if (success)
-			await SearchAsync();
+			_selectedPlayer.NotifyPropertyChanged();
 	}
 
+	protected override void DisposeCore()
+	{
+		base.DisposeCore();
+		_disposables.Dispose();
+	}
 }
