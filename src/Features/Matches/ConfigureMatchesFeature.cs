@@ -23,8 +23,7 @@ public static class ConfigureMatchesFeature
 			.AddScoped<MatchParticipationDetailsEditDialogState>()
 			.AddScoped<MatchParticipationEndStateEditDialogState>()
 			.AddScoped<MatchStartTransitionDialogState>()
-			.AddScoped<MatchEndTransitionDialogState>()
-			.AddScoped<MatchDeckSearchProvider>();
+			.AddScoped<MatchEndTransitionDialogState>();
 
 		services.Configure<MatchListingOptions>(configuration.GetSection(MatchListingOptions.SectionName));
 
