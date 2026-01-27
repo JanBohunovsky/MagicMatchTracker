@@ -25,6 +25,8 @@ public static class ConfigureMatchesFeature
 			.AddScoped<MatchStartTransitionDialogState>()
 			.AddScoped<MatchEndTransitionDialogState>();
 
+		services.AddTransient<MatchDecksProvider>();
+
 		services.Configure<MatchListingOptions>(configuration.GetSection(MatchListingOptions.SectionName));
 
 		return services;
