@@ -4,9 +4,8 @@
 @using MagicMatchTracker.Features.Shared.Dialogs.DeckEdit
 @using MagicMatchTracker.Infrastructure.Dialogs
 @using MagicMatchTracker.Infrastructure.Reactive
-@using Microsoft.EntityFrameworkCore
 @inherits StatefulComponentBase<MatchDeckSelectionDialogState>
-@inject Database Database
+@inject MatchDecksProvider Provider
 
 <FormDialog
 	TModel="MatchDeckSelectModel"
@@ -56,13 +55,13 @@
 	</div>
 
 	<div class="modal-body d-flex flex-column gap-0 p-0">
-		@if (!_decks.HasSource)
+		@if (Provider.IsLoading)
 		{
 			<div class="center m-4">
 				<span class="spinner-border text-primary"></span>
 			</div>
 		}
-		else if (_decks.Count == 0)
+		else if (Provider.Decks.Value.Count == 0)
 		{
 			if (_selectedPlayer.Value is not null)
 			{
@@ -89,9 +88,9 @@
 		}
 		else
 		{
-			<InputRadioGroup @bind-Value="_selectedDeckId" @bind-Value:after="@(() => context.Deck = _decks.FirstOrDefault(d => d.Id == _selectedDeckId))">
+			<InputRadioGroup @bind-Value="_selectedDeckId" @bind-Value:after="@(() => context.Deck = Provider.Decks.Value.FirstOrDefault(d => d.Id == _selectedDeckId))">
 				<div class="list-group list-group-flush">
-					@foreach (var deck in _decks)
+					@foreach (var deck in Provider.Decks.Value)
 					{
 						var isTaken = context.IsDeckTakenByAnotherPlayer(deck);
 						<div class="list-group-item list-group-item-action list-group-item-deck-background d-flex align-items-center gap-3 py-0 deck-list-item @(isTaken ? "disabled" : null)"
@@ -159,55 +158,39 @@
 
 @code {
 
-	private CompositeDisposable _disposables = new();
-	private ReactiveProperty<string> _searchTerm = new(string.Empty);
-	private ReactiveProperty<Guid> _selectedPlayerId = new(Guid.Empty);
+	private readonly CompositeDisposable _disposables = new();
+	private readonly ReactiveProperty<string> _searchTerm = new(string.Empty);
+	private readonly ReactiveProperty<Guid> _selectedPlayerId = new(Guid.Empty);
+
 	private ReactiveReadOnlyProperty<Player?> _selectedPlayer = null!;
+	private CompositeDisposable _dialogDisposables = null!;
 
 	private List<Player> _playerFilters = [];
-	private SearchableDecks _decks = null!;
 	private Guid? _selectedDeckId;
 
-	private bool IsSelectedDeckVisible => _decks.Any(d => d.Id == _selectedDeckId);
+	private bool IsSelectedDeckVisible => Provider.Decks.Value.Any(d => d.Id == _selectedDeckId);
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		_decks = new SearchableDecks(StateHasChanged);
-
-		// TODO: I've tried to move it here, because technically there's no reason to NOT have it here,
-		//  but it has some issues:
-		//   - Closing the dialog doesn't cancel any loading (e.g. LoadDecksAsync)
-		//   - ReactiveReadOnlyProperty subscription can't have DistinctUntilChanged,
-		//     otherwise re-opening the same user will result in an infinite "loading".
 
 		_selectedPlayer = _selectedPlayerId
 			.Select(id => id != Guid.Empty ? _playerFilters.FirstOrDefault(p => p.Id == id) : null)
-			.ToProperty();
+			.ToProperty()
+			.DisposeWith(_disposables);
 
 		_searchTerm.Select(s => s.Trim())
 			.Select(s => s.IsEmpty() ? Observable.Return(s) : Observable.Return(s).Delay(TimeSpan.FromMilliseconds(500)))
 			.Switch()
 			.DistinctUntilChanged()
-			.ObserveOn(SynchronizationContext.Current!)
-			.Subscribe(s => _decks.UpdateSearchTerm(s))
-			.DisposeWith(_disposables);
-
-		_selectedPlayer.Do(_ => _decks.UpdateSource(null))
-			.SelectLatestAsync(LoadDecksAsync)
-			.ObserveOn(SynchronizationContext.Current!)
-			.Subscribe(d => _decks.UpdateSource(d))
+			.Subscribe(s => Provider.SetSearchTerm(s))
 			.DisposeWith(_disposables);
 	}
 
-	private async Task OnDialogShown(MatchDeckSelectModel editModel)
+	private void OnDialogShown(MatchDeckSelectModel editModel)
 	{
-		// _disposables = new CompositeDisposable();
-		// _searchTerm = new ReactiveProperty<string>(string.Empty);
-		// _selectedPlayerId = new ReactiveProperty<Guid>(editModel.Player.Id);
-		// _decks = new SearchableDecks(StateHasChanged);
+		_dialogDisposables = new CompositeDisposable();
 
-		_decks.Reset();
 		_playerFilters = editModel.AvailablePlayers
 			.Prepend(new Player { Name = "All" })
 			.ToList();
@@ -215,29 +198,21 @@
 		_searchTerm.Value = string.Empty;
 		_selectedPlayerId.Value = editModel.Player.Id;
 		_selectedDeckId = editModel.Deck?.Id;
+
+		_selectedPlayer.Subscribe(d => Provider.SetPlayer(d))
+			.DisposeWith(_dialogDisposables);
+
+		Provider.Decks
+			.ObserveOn(SynchronizationContext.Current!)
+			.Subscribe(_ => StateHasChanged())
+			.DisposeWith(_dialogDisposables);
 	}
 
-	private async Task OnDialogHidden()
+	private void OnDialogHidden()
 	{
-		// _disposables.Dispose();
-		// _selectedPlayer.Dispose();
-		// _selectedPlayerId.Dispose();
-		// _searchTerm.Dispose();
-
+		_dialogDisposables.Dispose();
+		Provider.Reset();
 		_playerFilters = [];
-	}
-
-	private async Task<IReadOnlyList<Deck>> LoadDecksAsync(Player? player, CancellationToken cancellationToken)
-	{
-		await Task.Delay(2000, cancellationToken);
-		var query = Database.Decks.Where(d => !d.IsArchived);
-
-		if (player is not null)
-		{
-			query = query.Where(d => d.Owner == player);
-		}
-
-		return await query.ToListAsync(cancellationToken);
 	}
 
 	private async Task AddNewDeckAsync()
@@ -248,7 +223,7 @@
 
 		var success = await State.AddNewDeckAsync(player, CancellationToken);
 		if (success)
-			_selectedPlayer.NotifyPropertyChanged();
+			Provider.ReloadData();
 	}
 
 	private async Task EditSelectedDeckAsync()
@@ -256,18 +231,21 @@
 		if (_selectedDeckId is null)
 			return;
 
-		var deck = _decks.FirstOrDefault(d => d.Id == _selectedDeckId);
+		var deck = Provider.Decks.Value.FirstOrDefault(d => d.Id == _selectedDeckId);
 		if (deck is null)
 			return;
 
 		var success = await State.EditDeckAsync(deck, CancellationToken);
 		if (success)
-			_selectedPlayer.NotifyPropertyChanged();
+			Provider.ReloadData();
 	}
 
 	protected override void DisposeCore()
 	{
 		base.DisposeCore();
+		_searchTerm.Dispose();
+		_selectedPlayer.Dispose();
 		_disposables.Dispose();
+		Provider.Dispose();
 	}
 }

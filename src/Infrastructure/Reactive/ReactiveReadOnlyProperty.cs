@@ -22,7 +22,7 @@ public sealed class ReactiveReadOnlyProperty<T> : IObservable<T>, IDisposable
 		_subject = new BehaviorSubject<T>(initialValue);
 
 		observable.StartWith(initialValue)
-			// .DistinctUntilChanged()
+			.DistinctUntilChanged()
 			.Subscribe(_subject)
 			.DisposeWith(_disposables);
 	}
