@@ -39,18 +39,18 @@
 			<div class="stats">
 				@if (Stats is not null)
 				{
-					var matchesTooltip = Stats.WinRate is null
-						? $"Matches played ({"win".ToQuantity(Stats.Wins)})"
-						: "Matches played";
-
-					@if (Stats.WinRate is not null)
-					{
-						<div class="stats-entry" title="Win rate">
-							<span class="icon">trophy</span>
+					<div class="stats-entry" title="Win rate (@("win".ToQuantity(Stats.Wins)))">
+						<span class="icon">trophy</span>
+						@if (Stats.WinRate is not null)
+						{
 							<span>@(Stats.WinRate)%</span>
-						</div>
-					}
-					<div class="stats-entry" title="@matchesTooltip">
+						}
+						else
+						{
+							<span>N/A</span>
+						}
+					</div>
+					<div class="stats-entry" title="@("match".ToQuantity(Stats.Matches)) played">
 						<span class="icon">swords</span>
 						<span>@Stats.Matches</span>
 					</div>
