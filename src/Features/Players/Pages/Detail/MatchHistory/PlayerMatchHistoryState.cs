@@ -27,6 +27,7 @@ public sealed class PlayerMatchHistoryState : PlayerDetailStateBase
 	protected override async Task<Player?> LoadPlayerCoreAsync(Guid id, CancellationToken cancellationToken)
 	{
 		var player = await Database.Players.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+		_nextMatch = null;
 		var matchParticipations = await LoadMoreMatchesCoreAsync(player, cancellationToken);
 		_finishedMatchParticipations = matchParticipations.ToList();
 
