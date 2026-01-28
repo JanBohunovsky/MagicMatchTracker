@@ -21,14 +21,17 @@
 					<span class="icon">open_in_new</span>
 				</a>
 			}
-			<div class="card-title fw-medium">@(Deck.Name ?? Deck.Commander)</div>
-			<div class="card-subtitle text-muted d-flex flex-column">
-				@if (Deck.Name is not null)
+			<div class="card-title fw-medium d-flex flex-column">
+				<span>@Deck.Commander</span>
+				@if (Deck.Partner is not null)
 				{
-					<span>@Deck.Commander</span>
+					<span>@Deck.Partner</span>
 				}
-				<span>@Deck.Partner</span>
 			</div>
+			@if (Deck.Name is not null)
+			{
+				<div class="card-subtitle text-muted fst-italic">@Deck.Name</div>
+			}
 		</div>
 
 		<div class="card-footer card-footer-borderless d-flex justify-content-between small">

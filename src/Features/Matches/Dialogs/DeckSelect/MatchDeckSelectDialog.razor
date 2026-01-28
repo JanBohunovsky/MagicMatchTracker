@@ -97,14 +97,14 @@
 						     style="--deck-image-url: url('@deck.ImageUri');">
 							<InputRadio TValue="Guid?" class="form-check-input m-0" id="@deck.Id" Value="@deck.Id" disabled="@isTaken"/>
 							<label class="form-check-label flex-grow-1 d-flex flex-column user-select-none py-2" for="@deck.Id">
-								<span class="deck-name">@(deck.Name ?? deck.Commander)</span>
-								@if (deck.Name is not null)
-								{
-									<span class="small text-muted">@deck.Commander</span>
-								}
+								<span class="deck-name">@deck.Commander</span>
 								@if (deck.Partner is not null)
 								{
-									<span class="small text-muted">@deck.Partner</span>
+									<span>@deck.Partner</span>
+								}
+								@if (deck.Name is not null)
+								{
+									<span class="small text-muted fst-italic">@deck.Name</span>
 								}
 								@if (_selectedPlayer.Value is null)
 								{
@@ -113,7 +113,7 @@
 										<span>@deck.Owner.Name</span>
 										@if (deck.Owner.Alias is not null)
 										{
-											<span class="text-muted small ms-0.5">@deck.Owner.Alias</span>
+											<span class="text-muted small fst-italic">@deck.Owner.Alias</span>
 										}
 									</div>
 								}

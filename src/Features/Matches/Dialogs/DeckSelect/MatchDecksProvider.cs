@@ -84,7 +84,7 @@ public sealed class MatchDecksProvider : IDisposable
 		IQueryable<Deck> query = _database.Decks
 			.Where(d => !d.IsArchived)
 			.OrderBy(d => d.Owner.Name)
-			.ThenBy(d => d.Name ?? d.Commander);
+			.ThenBy(d => d.Commander);
 
 		if (player is not null)
 		{
@@ -103,7 +103,7 @@ public sealed class MatchDecksProvider : IDisposable
 			.Where(x => x.Score > 60)
 			.OrderByDescending(x => x.Score)
 			.ThenBy(x => x.Deck.Owner.Name)
-			.ThenBy(x => x.Deck.Name ?? x.Deck.Commander)
+			.ThenBy(x => x.Deck.Commander)
 			.Select(x => x.Deck)
 			.ToList();
 
