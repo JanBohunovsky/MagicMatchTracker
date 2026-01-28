@@ -42,9 +42,15 @@
 				var toolTip = deck.Owner != Participation.Player
 					? $"Borrowed from {deck.Owner.NameWithAlias}"
 					: null;
-				<div class="text-content" title="@toolTip">
+				<div class="text-content align-items-start" title="@toolTip">
 					<span class="icon small" aria-hidden="true">box</span>
-					<span>@(deck.Name ?? deck.Commander)</span>
+					<div class="d-flex flex-column">
+						<span>@deck.Commander</span>
+						@if (deck.Partner is not null)
+						{
+							<span>@deck.Partner</span>
+						}
+					</div>
 				</div>
 			}
 

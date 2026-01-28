@@ -108,7 +108,7 @@
 	{
 		return player.Decks
 			.Where(d => !d.IsArchived)
-			.OrderBy(d => d.Name ?? d.Commander)
+			.OrderBy(d => d.Commander)
 			.ToList();
 	}
 
@@ -116,7 +116,7 @@
 	{
 		return player.Decks
 			.Where(d => d.IsArchived)
-			.OrderBy(d => d.Name ?? d.Commander)
+			.OrderBy(d => d.Commander)
 			.ToList();
 	}
 
