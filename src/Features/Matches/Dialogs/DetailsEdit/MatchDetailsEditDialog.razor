@@ -1,3 +1,4 @@
+@using MagicMatchTracker.Features.Matches.Components
 @using MagicMatchTracker.Infrastructure.Dialogs
 @inherits StatefulComponentBase<MatchDetailsEditDialogState>
 
@@ -15,6 +16,26 @@
 			<label for="notes" class="form-label">Notes</label>
 			<InputTextArea @bind-Value="context.Notes" class="form-control" rows="3" id="notes" disabled="@State.IsBusy" autofocus/>
 		</div>
+
+		@if (context.HasStarted)
+		{
+			<div class="d-flex flex-column gap-2">
+				<div class="form-check">
+					<InputCheckbox @bind-Value="context.HasTurnOrder" class="form-check-input" id="hasTurnOrder"
+					               disabled="@State.IsBusy"/>
+					<label class="form-check-label d-flex flex-column" for="hasTurnOrder">
+						<span>Turn order</span>
+					</label>
+				</div>
+
+				@if (context.HasTurnOrder)
+				{
+					<PlayerOrderEdit
+						Players="context.Players"
+						IsDisabled="State.IsBusy"/>
+				}
+			</div>
+		}
 
 		<details>
 			<summary class="user-select-none">Advanced</summary>

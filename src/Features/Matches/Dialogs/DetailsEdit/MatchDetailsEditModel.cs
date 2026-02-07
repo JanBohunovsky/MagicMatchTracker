@@ -14,6 +14,15 @@ public sealed class MatchDetailsEditModel(Match model)
 	public bool HasStarted { get; } = model.HasStarted;
 	public bool HasEnded { get; } = model.HasEnded;
 
+	public bool HasTurnOrder { get; set; } = model.Participations
+		.Any(mp => mp.TurnOrder.HasValue);
+
+	public List<Player> Players { get; } = model.Participations
+		.OrderBy(mp => mp.TurnOrder)
+		.ThenBy(mp => mp.Player.Name)
+		.Select(mp => mp.Player)
+		.ToList();
+
 	public Match ApplyChanges()
 	{
 		if (HasStarted)
@@ -28,6 +37,13 @@ public sealed class MatchDetailsEditModel(Match model)
 			model.TimeEnded = IsLive
 				? TimeEnded
 				: Match.GetDateTimeForNonLiveMatch(Date!.Value);
+		}
+
+		foreach (var participation in model.Participations)
+		{
+			participation.TurnOrder = HasTurnOrder
+				? Players.IndexOf(participation.Player) + 1
+				: null;
 		}
 
 		model.MatchNumber = MatchNumber;
