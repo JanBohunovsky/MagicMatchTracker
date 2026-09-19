@@ -13,5 +13,8 @@
 		<File Path=".github\workflows\update-version.yml" />
 		<File Path=".github\workflows\validate-labels.yml" />
 	</Folder>
-	<Project Path="src/MagicMatchTracker.csproj" />
+	<Project Path="src/Client/MagicMatchTracker.Client.csproj" />
+	<Project Path="src/Server/MagicMatchTracker.Server.csproj" />
+	<Project Path="src/Shared/MagicMatchTracker.Shared.csproj" />
+	<Project Path="src/WebApp/MagicMatchTracker.csproj" />
 </Solution>
