@@ -16,4 +16,9 @@
 	  <ProjectReference Include="..\Shared\MagicMatchTracker.Shared.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Content Remove="wwwroot\css\app.css" />
+	  <None Include="wwwroot\css\app.css" />
+	</ItemGroup>
+
 </Project>

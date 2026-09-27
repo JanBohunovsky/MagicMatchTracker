@@ -1,3 +1,12 @@
-﻿@inherits LayoutComponentBase
+﻿@using MagicMatchTracker.Client.Infrastructure.Components.NavMenu
+@inherits LayoutComponentBase
 
-@Body
+<div class="min-h-screen flex flex-col md:flex-col-reverse [--page-padding:--spacing(4)]">
+	<main class="m-(--page-padding) mb-0 flex-1 md:mt-0 md:mb-(--page-padding) md:w-250 md:self-center">
+		@Body
+	</main>
+
+	<div class="sticky flex flex-col bg-background bottom-0 md:top-0 z-10">
+		<NavMenu/>
+	</div>
+</div>
