@@ -1,0 +1,67 @@
+<div class="relative flex items-center gap-2">
+	<div class="absolute left-3 flex items-center text-sm text-on-surface-muted">
+		<span class="icon">search</span>
+	</div>
+	<input type="search"
+	       @ref="_searchElement"
+	       @bind="SearchTerm"
+	       @bind:after="NotifySearchTermChangedAsync"
+	       @bind:event="oninput"
+	       @onkeyup="OnKeyUp"
+	       placeholder="@Placeholder"
+	       class="min-w-0 w-full px-10 py-2 component-on-background"/>
+	@if (!string.IsNullOrWhiteSpace(SearchTerm))
+	{
+		<button class="absolute right-3 flex items center rounded-full transition cursor-pointer text-on-surface-muted hover:text-on-surface"
+		        @onclick="ClearSearchTermAsync">
+			<TouchTarget/>
+			<span class="icon">cancel</span>
+		</button>
+	}
+</div>
+
+@code {
+
+	private ElementReference _searchElement;
+
+	[Parameter, EditorRequired]
+    public string SearchTerm { get; set; }
+
+	[Parameter]
+    public EventCallback<string> SearchTermChanged { get; set; }
+
+	[Parameter]
+    public EventCallback Accepted { get; set; }
+
+	[Parameter]
+    public string Placeholder { get; set; } = "Search...";
+
+	public async Task FocusAsync()
+	{
+		await _searchElement.FocusAsync();
+	}
+
+	private async Task ClearSearchTermAsync()
+	{
+		SearchTerm = string.Empty;
+		await NotifySearchTermChangedAsync();
+	}
+
+	private async Task OnKeyUp(KeyboardEventArgs args)
+	{
+		if (args.IsComposing || !Accepted.HasDelegate)
+			return;
+
+		if (args.Key == "Enter")
+			await Accepted.InvokeAsync();
+	}
+
+	private async Task NotifySearchTermChangedAsync()
+	{
+		if (!SearchTermChanged.HasDelegate)
+			return;
+
+		await SearchTermChanged.InvokeAsync(SearchTerm);
+	}
+
+}

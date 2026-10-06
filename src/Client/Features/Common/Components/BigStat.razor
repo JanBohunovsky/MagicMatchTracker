@@ -1,0 +1,31 @@
+<a href="@Link" class="card @(Link is not null ? "interactive" : string.Empty) flex flex-row gap-3 pe-3">
+	<div class="rounded-component bg-component text-on-component grid place-items-center p-2 aspect-square">
+		<span class="icon icon-filled">@Icon</span>
+	</div>
+	<div class="flex flex-col">
+		<span class="text-on-surface-muted">@Label</span>
+		<span class="text-xl font-bold">@Value</span>
+	</div>
+	@if (Link is not null)
+	{
+		<div class="flex-1 flex items-center justify-end text-on-surface-muted text-base/loose">
+			<span class="icon icon-thin">chevron_forward</span>
+		</div>
+	}
+</a>
+
+@code {
+
+	[Parameter, EditorRequired]
+    public string Label { get; set; }
+
+	[Parameter, EditorRequired]
+	public string Icon { get; set; }
+
+	[Parameter, EditorRequired]
+    public object Value { get; set; }
+
+	[Parameter]
+    public string? Link { get; set; }
+
+}

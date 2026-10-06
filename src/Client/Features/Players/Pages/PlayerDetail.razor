@@ -1,0 +1,64 @@
+@page "/players/{username}"
+@using MagicMatchTracker.Client.Features.Common.Components
+@using MagicMatchTracker.Client.Infrastructure.Components
+@using MagicMatchTracker.Client.Infrastructure.Pages
+@inject MockDataProvider DataProvider
+
+@if (_player is null)
+{
+	<NotFound/>
+	return;
+}
+
+<div class="card flex gap-6 mb-4">
+	<Avatar Uri="@_player.AvatarUri" class="size-24"/>
+	<div class="flex flex-col gap-2">
+		<h1>@_player.Username</h1>
+		<div class="flex gap-2">
+			<span class="text-on-surface-muted italic">TODO: Add more stuff here</span>
+		</div>
+	</div>
+</div>
+
+<div class="grid grid-cols-2 gap-4">
+	<BigStat
+		Label="Matches"
+		Value="_player.Matches"
+		Icon="swords"
+		Link="@($"/sessions?player={_player.Slug}")"/>
+
+	<BigStat
+		Label="Decks"
+		Value="_player.Decks"
+		Icon="box"
+		Link="@($"/players/{_player.Slug}/decks")"/>
+
+	@if (_player.WinRate is not null)
+	{
+		<BigStat
+			Label="Win Rate"
+			Value="_player.FormattedWins"
+			Icon="trophy"/>
+	}
+	else
+	{
+		<BigStat
+			Label="Wins"
+			Value="_player.Wins"
+			Icon="trophy"/>
+	}
+</div>
+
+@code {
+
+	private Player? _player;
+
+	[Parameter, EditorRequired]
+	public string Username { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		_player = DataProvider.Players.FindBySlug(Username, p => p.Slug);
+	}
+
+}

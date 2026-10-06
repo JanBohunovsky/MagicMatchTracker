@@ -10,10 +10,18 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.12" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.12" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.12" />
+		<PackageReference Include="Raffinert.FuzzySharp" Version="3.0.8" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Shared\MagicMatchTracker.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Raffinert.FuzzySharp">
+			<HintPath>..\..\..\..\..\.nuget\packages\raffinert.fuzzysharp\3.0.8\lib\net10.0\Raffinert.FuzzySharp.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 
 	<ItemGroup>

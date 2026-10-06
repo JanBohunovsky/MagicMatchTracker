@@ -1,0 +1,59 @@
+@page "/players"
+@using MagicMatchTracker.Client.Features.Players.Components
+@using MagicMatchTracker.Client.Infrastructure.Components
+@inject NavigationManager NavigationManager
+@inject MockDataProvider DataProvider
+
+<FloatingActionButton
+	Icon="search"
+	HiddenOnDesktop="true"
+	Click="FocusSearch"/>
+
+<div class="mb-4">
+	<Search @ref="_searchElement"
+			@bind-SearchTerm="_searchTerm"
+	        Placeholder="Search players..."
+	        Accepted="OnSearchAccepted"/>
+</div>
+
+<div class="grid grid-cols-3 gap-4">
+	@foreach (var player in GetPlayers())
+	{
+		<PlayerCard Player="@player"/>
+	}
+</div>
+
+
+@code {
+
+	private Search? _searchElement;
+	private string _searchTerm = string.Empty;
+
+	private IEnumerable<Player> GetPlayers()
+	{
+		return DataProvider.Players
+			.OrderBy(p => p.Username)
+			.FuzzySearch(_searchTerm, p => p.Username);
+	}
+
+	private async Task FocusSearch()
+	{
+		if (_searchElement is null)
+			return;
+
+		await _searchElement.FocusAsync();
+	}
+
+	private void OnSearchAccepted()
+	{
+		if (string.IsNullOrWhiteSpace(_searchTerm))
+			return;
+
+		var player = GetPlayers().FirstOrDefault();
+		if (player is null)
+			return;
+
+		NavigationManager.NavigateTo($"/players/{player.Slug}");
+	}
+
+}

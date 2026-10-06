@@ -1,0 +1,17 @@
+<button class="@(HiddenOnDesktop ? "md:hidden" : string.Empty) z-10 fixed inset-e-6 bottom-24 button inverted-component grid place-items-center p-0 size-14 rounded-full text-lg shadow-lg"
+        @onclick="Click">
+	<span class="icon icon-filled">@Icon</span>
+</button>
+
+@code {
+
+	[Parameter, EditorRequired]
+    public string Icon { get; set; }
+
+	[Parameter]
+    public bool HiddenOnDesktop { get; set; }
+
+	[Parameter]
+    public EventCallback Click { get; set; }
+
+}

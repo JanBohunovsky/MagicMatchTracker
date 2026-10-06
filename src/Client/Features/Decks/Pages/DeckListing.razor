@@ -1,0 +1,108 @@
+@page "/players/{playerSlug}/decks"
+@using MagicMatchTracker.Client.Features.Decks.Components
+@using MagicMatchTracker.Client.Infrastructure.Components
+@using MagicMatchTracker.Client.Infrastructure.Components.FilterChip
+@using MagicMatchTracker.Client.Infrastructure.Pages
+@inject NavigationManager NavigationManager
+@inject MockDataProvider DataProvider
+
+@if (_player is null)
+{
+	<NotFound/>
+	return;
+}
+
+<FloatingActionButton
+	Icon="search"
+	HiddenOnDesktop="true"
+	Click="FocusSearch"/>
+
+<div class="mb-4">
+	<Search @ref="_searchElement"
+	        @bind-SearchTerm="_searchTerm"
+	        Placeholder="@($"Search {_player.Username.ToPossessive()} decks...")"
+	        Accepted="OnSearchAccepted"/>
+</div>
+
+<InputRadioGroup @bind-Value="_selectedFilter">
+	<div class="mb-4 flex gap-2">
+		@foreach (var filterItem in _filters)
+		{
+			<FilterChip Item="filterItem" IsSelected="_selectedFilter == filterItem.Id"/>
+		}
+	</div>
+</InputRadioGroup>
+
+<div class="grid grid-cols-3 gap-4">
+	@foreach (var deck in GetDecks())
+	{
+		<DeckCard Deck="@deck"/>
+	}
+</div>
+
+@code {
+
+	private Player? _player;
+	private List<Deck> _decks = [];
+
+	private Search? _searchElement;
+	private string _searchTerm = string.Empty;
+
+	private readonly FilterItem<Deck>[] _filters =
+	[
+		new("all", "All", _ => true),
+		new("active", "Active", d => !d.IsArchived),
+		new("archived", "Archived", d => d.IsArchived),
+	];
+
+	private string _selectedFilter = "active";
+
+	[Parameter, EditorRequired]
+	public string PlayerSlug { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		_player = DataProvider.Players.FindBySlug(PlayerSlug, p => p.Slug);
+		if (_player is null)
+		{
+			_decks = [];
+			return;
+		}
+
+		_decks = DataProvider.Decks
+			.FindAllBySlug(_player.Slug, d => d.OwnerSlug)
+			.ToList();
+	}
+
+	private IEnumerable<Deck> GetDecks()
+	{
+		var selectedFilter = _filters.First(f => f.Id == _selectedFilter);
+
+		return _decks.Where(selectedFilter.Filter)
+			.OrderBy(d => d.Title)
+			.FuzzySearch(_searchTerm,
+				deck => deck.Commander,
+				deck => deck.Title);
+	}
+
+	private async Task FocusSearch()
+	{
+		if (_searchElement is null)
+			return;
+
+		await _searchElement.FocusAsync();
+	}
+
+	private void OnSearchAccepted()
+	{
+		if (string.IsNullOrWhiteSpace(_searchTerm))
+			return;
+
+		var deck = GetDecks().FirstOrDefault();
+		if (deck is null)
+			return;
+
+		NavigationManager.NavigateTo($"/players/{PlayerSlug}/decks/{deck.Slug}");
+	}
+
+}

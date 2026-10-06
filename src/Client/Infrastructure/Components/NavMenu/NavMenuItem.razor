@@ -1,5 +1,5 @@
 <NavLink href="@Target" Match="LinkMatch" ActiveClass="active [.active]:text-on-surface [.active]:icon-filled [.active]:bg-surface"
-         class="px-4 py-2 transition rounded-t-surface text-on-surface-inactive flex flex-col gap-x-1 md:flex-row md:rounded-badge items-center justify-center
+         class="px-4 py-2 transition rounded-t-surface text-on-background-muted flex flex-col gap-x-1 md:flex-row md:rounded-badge items-center justify-center
 				hover:bg-surface hover:text-on-surface hover:cursor-pointer">
 	<div class="flex">
 		<span class="icon" aria-hidden="true">@Icon</span>
@@ -10,13 +10,13 @@
 @code {
 
 	[Parameter, EditorRequired]
-    public required string Target { get; set; }
+    public string Target { get; set; }
 
 	[Parameter, EditorRequired]
-    public required string Icon { get; set; }
+    public string Icon { get; set; }
 
 	[Parameter, EditorRequired]
-    public required string Label { get; set; }
+    public string Label { get; set; }
 
 	[Parameter]
     public NavLinkMatch LinkMatch { get; set; } = NavLinkMatch.Prefix;

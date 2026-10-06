@@ -6,6 +6,9 @@
 # Cached images
 src/wwwroot/img/cache/
 
+# Mock data
+mock_data/
+
 # dotenv files
 .env
 

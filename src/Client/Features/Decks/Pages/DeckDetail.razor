@@ -1,0 +1,38 @@
+@page "/players/{playerSlug}/decks/{deckSlug}"
+@using MagicMatchTracker.Client.Infrastructure.Pages
+@inject MockDataProvider DataProvider
+
+@if (_player is null || _deck is null)
+{
+	<NotFound/>
+	return;
+}
+
+<h1 class="flex flex-col">
+	<span>@_deck.Title</span>
+	<span class="text-xl text-on-background-muted">@_deck.SubTitle</span>
+</h1>
+
+@code {
+
+	private Player? _player;
+	private Deck? _deck;
+
+	[Parameter, EditorRequired]
+	public string PlayerSlug { get; set; }
+
+	[Parameter, EditorRequired]
+    public string DeckSlug { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		_player = DataProvider.Players.FindBySlug(PlayerSlug, p => p.Slug);
+		if (_player is null)
+		{
+			return;
+		}
+
+		_deck = DataProvider.Decks.FindBySlug(DeckSlug, d => d.Slug);
+	}
+
+}

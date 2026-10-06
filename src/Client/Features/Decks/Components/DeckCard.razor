@@ -1,0 +1,30 @@
+@using MagicMatchTracker.Client.Features.Common.Components
+@using MagicMatchTracker.Client.Infrastructure.Components
+<a href="/players/@Deck.OwnerSlug/decks/@Deck.Slug" class="card interactive p-0 flex flex-col">
+	<div class="h-35 overflow-clip rounded-t-surface">
+		@if (Deck.ImageUri is not null)
+		{
+			<img src="@Deck.ImageUri" class="h-full object-cover object-top-top scale-110 translate-y-1.5 _rounded-t-surface"/>
+		}
+		else
+		{
+			<div class="h-full bg-component-on-background text-on-background-muted/50 grid place-items-center text-8xl">
+				<span class="icon icon-filled">box</span>
+			</div>
+		}
+	</div>
+	<div class="flex flex-col gap-1 p-4 pt-2 items-center flex-1">
+		<span>@Deck.Title</span>
+		<div class="flex gap-3 text-sm text-on-surface-muted">
+			<CardStat Value="Deck.Matches" Icon="swords" Orientation="Orientation.Horizontal"/>
+			<CardStat Value="Deck.FormattedWins" Icon="trophy" ToolTip="@($"{Deck.Wins} wins")" Orientation="Orientation.Horizontal"/>
+		</div>
+	</div>
+</a>
+
+@code {
+
+	[Parameter, EditorRequired]
+    public Deck Deck { get; set; }
+
+}

@@ -1,0 +1,21 @@
+@using MagicMatchTracker.Client.Infrastructure.Components
+<div class="flex gap-0.5 items-center @(Orientation == Orientation.Vertical ? "flex-col" : string.Empty)" title="@ToolTip">
+	<span class="icon">@Icon</span>
+	<span>@Value</span>
+</div>
+
+@code {
+
+	[Parameter, EditorRequired]
+    public string Icon { get; set; }
+
+	[Parameter, EditorRequired]
+	public object Value { get; set; }
+
+	[Parameter]
+    public string? ToolTip { get; set; }
+
+	[Parameter]
+    public Orientation Orientation { get; set; } = Orientation.Vertical;
+
+}

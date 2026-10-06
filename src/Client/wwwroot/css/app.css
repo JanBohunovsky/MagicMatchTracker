@@ -11,14 +11,15 @@
 	--font-icon: 'Material Symbols Rounded';
 
 	--color-background: light-dark(var(--color-neutral-200), var(--color-neutral-900));
+	--color-on-background-muted: light-dark(var(--color-neutral-500), var(--color-neutral-500));
 
 	--color-surface: light-dark(var(--color-white), var(--color-neutral-800));
 	--color-on-surface: light-dark(var(--color-neutral-800), var(--color-neutral-200));
-	--color-on-surface-muted: light-dark(var(--color-neutral-600), var(--color-neutral-400));
-	--color-on-surface-inactive: light-dark(var(--color-neutral-500), var(--color-neutral-500));
+	--color-on-surface-muted: light-dark(var(--color-neutral-500), var(--color-neutral-400));
 
 	--color-component: light-dark(var(--color-neutral-200), var(--color-neutral-700));
 	--color-on-component: light-dark(var(--color-neutral-900), var(--color-neutral-100));
+	--color-component-on-background: light-dark(var(--color-neutral-300), var(--color-neutral-700));
 
 	--color-inverted-component: light-dark(var(--color-neutral-900), var(--color-neutral-100));
 	--color-on-inverted-component: light-dark(var(--color-white), var(--color-neutral-900));
@@ -57,15 +58,27 @@
 @layer components {
 
 	.card {
-		@apply bg-surface text-on-surface p-6 rounded-surface
+		@apply [--card-padding:--spacing(6)] bg-surface text-on-surface p-(--card-padding) rounded-surface;
+	}
+
+	.card.interactive {
+		@apply transition-all cursor-pointer hover:-translate-y-0.5 hover:shadow-lg focus:-translate-y-0.5 focus:shadow-lg;
+	}
+
+	.interactive-card {
+		@apply [--card-padding:--spacing(6)]  bg-surface text-on-surface p-(--card-padding) rounded-surface cursor-pointer hover:-translate-y-0.5 hover:shadow-lg focus:-translate-y-0.5 focus:shadow-lg;
 	}
 
 	.button {
-		@apply transition-all px-4 py-2 rounded-component bg-component text-on-component hover:brightness-85 dark:hover:brightness-115 hover:cursor-pointer active:scale-95
+		@apply transition-all px-4 py-2 rounded-component bg-component text-on-component cursor-pointer hover:brightness-85 dark:hover:brightness-115 active:scale-95
 	}
 
 	.inverted-component {
 		@apply bg-inverted-component text-on-inverted-component hover:brightness-115 dark:hover:brightness-85;
+	}
+
+	.component-on-background {
+		@apply rounded-full bg-component-on-background border border-on-background-muted/25;
 	}
 
 }
