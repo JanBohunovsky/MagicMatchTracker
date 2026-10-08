@@ -1,7 +1,7 @@
 @page "/players/{playerSlug}/decks"
 @using MagicMatchTracker.Client.Features.Decks.Components
 @using MagicMatchTracker.Client.Infrastructure.Components
-@using MagicMatchTracker.Client.Infrastructure.Components.FilterChip
+@using MagicMatchTracker.Client.Infrastructure.Components.Filter
 @using MagicMatchTracker.Client.Infrastructure.Pages
 @inject NavigationManager NavigationManager
 @inject MockDataProvider DataProvider
@@ -24,14 +24,9 @@
 	        Accepted="OnSearchAccepted"/>
 </div>
 
-<InputRadioGroup @bind-Value="_selectedFilter">
-	<div class="mb-4 flex gap-2">
-		@foreach (var filterItem in _filters)
-		{
-			<FilterChip Item="filterItem" IsSelected="_selectedFilter == filterItem.Id"/>
-		}
-	</div>
-</InputRadioGroup>
+<FilterGroup Filters="_filters"
+             @bind-SelectedFilter="_selectedFilter"
+             class="mb-4 flex gap-2"/>
 
 <div class="grid grid-cols-3 gap-4">
 	@foreach (var deck in GetDecks())
@@ -48,14 +43,13 @@
 	private Search? _searchElement;
 	private string _searchTerm = string.Empty;
 
+	private FilterItem<Deck>? _selectedFilter;
 	private readonly FilterItem<Deck>[] _filters =
 	[
 		new("all", "All", _ => true),
-		new("active", "Active", d => !d.IsArchived),
+		new("active", "Active", d => !d.IsArchived, IsDefault: true),
 		new("archived", "Archived", d => d.IsArchived),
 	];
-
-	private string _selectedFilter = "active";
 
 	[Parameter, EditorRequired]
 	public string PlayerSlug { get; set; }
@@ -76,9 +70,9 @@
 
 	private IEnumerable<Deck> GetDecks()
 	{
-		var selectedFilter = _filters.First(f => f.Id == _selectedFilter);
+		var predicate = _selectedFilter?.Predicate ?? (_ => true);
 
-		return _decks.Where(selectedFilter.Filter)
+		return _decks.Where(predicate)
 			.OrderBy(d => d.Title)
 			.FuzzySearch(_searchTerm,
 				deck => deck.Commander,

@@ -1,0 +1,56 @@
+@typeparam T
+
+<InputRadioGroup @bind-Value="_selectedFilterId" @bind-Value:after="OnSelectedFilterIdChanged">
+	<div @attributes="AdditionalAttributes">
+		@foreach (var filterItem in Filters)
+		{
+			<FilterChip Item="filterItem" IsSelected="_selectedFilterId == filterItem.Id"/>
+		}
+	</div>
+</InputRadioGroup>
+
+@code {
+
+	private string? _selectedFilterId;
+
+	[Parameter, EditorRequired]
+    public IReadOnlyList<FilterItem<T>> Filters { get; set; }
+
+	[Parameter, EditorRequired]
+    public FilterItem<T>? SelectedFilter { get; set; }
+
+	[Parameter]
+    public EventCallback<FilterItem<T>?> SelectedFilterChanged { get; set; }
+
+	[Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (SelectedFilter is not null)
+			return;
+
+		var defaultFilter = Filters.FirstOrDefault(f => f.IsDefault);
+		if (defaultFilter is null)
+			return;
+
+		_selectedFilterId = defaultFilter.Id;
+		SelectedFilter = defaultFilter;
+
+		if (SelectedFilterChanged.HasDelegate)
+		{
+			await SelectedFilterChanged.InvokeAsync(SelectedFilter);
+		}
+	}
+
+	private async Task OnSelectedFilterIdChanged()
+	{
+		SelectedFilter = Filters.FirstOrDefault(f => f.Id == _selectedFilterId);
+
+		if (SelectedFilterChanged.HasDelegate)
+		{
+			await SelectedFilterChanged.InvokeAsync(SelectedFilter);
+		}
+	}
+
+}

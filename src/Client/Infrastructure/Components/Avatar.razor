@@ -1,22 +1,15 @@
-<img src="@(Uri ?? "/img/avatar.png")"
-     alt=""
-     @attributes="Attributes"
-     class="rounded-full @_cssClass"
-     aria-hidden="true"/>
+<Image Uri="@Uri" Size="@Size" PlaceholderIcon="person" ContainerClass="rounded-full"/>
+
 
 @code {
-
-	private string? _cssClass;
 
 	[Parameter]
 	public string? Uri { get; set; }
 
-	[Parameter(CaptureUnmatchedValues = true)]
-	public Dictionary<string, object>? Attributes { get; set; }
-
-	protected override void OnParametersSet()
-	{
-		_cssClass = AttributeUtilities.CombineClassNames(Attributes, null);
-	}
+	/// <summary>
+	/// Size in Tailwind spacing
+	/// </summary>
+	[Parameter]
+	public int Size { get; set; } = 6;
 
 }

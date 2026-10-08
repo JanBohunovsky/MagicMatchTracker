@@ -1,0 +1,76 @@
+<div class="relative overflow-clip @(Width is not null ? "w-(--image-width)" : string.Empty) @(Height is not null ? "h-(--image-height)" : string.Empty) @ContainerClass"
+     style="--image-width:calc(var(--spacing)*@Width); --image-height:calc(var(--spacing)*@Height); --image-placeholder-size:calc(var(--spacing)*0.75*@(Height ?? Width))">
+	@if (!_isLoaded)
+	{
+		<div class="absolute inset-0 h-full w-full bg-component-on-background text-on-background-muted/50 grid place-items-center leading-(--image-placeholder-size)">
+			@if (PlaceholderIcon is not null)
+			{
+				<span class="icon icon-filled">@PlaceholderIcon</span>
+			}
+		</div>
+	}
+
+	@if (Uri is not null)
+	{
+		<img src="@Uri"
+		     alt=""
+		     @attributes="Attributes"
+		     class="absolute inset-0 @(_isLoaded ? "opacity-100" : "opacity-0") @_imageClass"
+		     @onload="() => _isLoaded = true"/>
+	}
+</div>
+
+@code {
+
+	private bool _isLoaded;
+	private string? _previousUri;
+	private string? _imageClass;
+
+	[Parameter]
+    public string? Uri { get; set; }
+
+	/// <summary>
+	/// Width in Tailwind spacing (0.25rem)
+	/// </summary>
+	[Parameter]
+	public int? Width { get; set; }
+
+	/// <summary>
+	/// Height in Tailwind spacing (0.25rem)
+	/// </summary>
+	[Parameter]
+	public int? Height { get; set; }
+
+	/// <summary>
+	/// Size in Tailwind spacing (0.25rem)
+	/// </summary>
+	[Parameter]
+    public int? Size { get; set; }
+
+	[Parameter]
+    public string? PlaceholderIcon { get; set; }
+
+	[Parameter]
+    public string? ContainerClass { get; set; }
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public Dictionary<string, object>? Attributes { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		if (Size is not null)
+		{
+			Width = Size;
+			Height = Size;
+		}
+
+		if (Uri != _previousUri)
+		{
+			_previousUri = Uri;
+			_isLoaded = false;
+		}
+
+		_imageClass = AttributeUtilities.CombineClassNames(Attributes, null);
+	}
+
+}

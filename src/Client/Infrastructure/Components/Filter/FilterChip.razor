@@ -1,9 +1,8 @@
 @typeparam T
 
 <div class="@(IsSelected ? "selected" : string.Empty)">
-	<InputRadio class="hidden"
-	            Value="Item.Id" id="@Item.Id"/>
-	<label class="button component-on-background flex items-center gap-1 py-1 px-3 text-sm in-[.selected]:bg-inverted-component in-[.selected]:text-on-inverted-component in-[.selected]:border-transparent"
+	<InputRadio class="hidden" Value="Item.Id" id="@Item.Id"/>
+	<label class="button component-on-background select-none flex items-center gap-1 py-1 px-3 text-sm in-[.selected]:bg-inverted-component in-[.selected]:text-on-inverted-component in-[.selected]:border-transparent"
 	       for="@Item.Id">
 		@if (IsSelected)
 		{
