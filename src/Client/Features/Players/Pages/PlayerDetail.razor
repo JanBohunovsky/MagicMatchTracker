@@ -1,5 +1,4 @@
 @page "/players/{username}"
-@using MagicMatchTracker.Client.Features.Common.Components
 @using MagicMatchTracker.Client.Infrastructure.Components
 @using MagicMatchTracker.Client.Infrastructure.Pages
 @inject MockDataProvider DataProvider
@@ -10,7 +9,7 @@
 	return;
 }
 
-<div class="card flex gap-6 mb-4">
+<div class="card flex gap-(--card-padding) mb-4">
 	<Avatar Uri="@_player.AvatarUri" Size="24"/>
 	<div class="flex flex-col gap-2">
 		<h1>@_player.Username</h1>

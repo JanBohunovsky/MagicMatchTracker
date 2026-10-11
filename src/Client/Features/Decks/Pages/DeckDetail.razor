@@ -1,4 +1,5 @@
 @page "/players/{playerSlug}/decks/{deckSlug}"
+@using MagicMatchTracker.Client.Infrastructure.Components
 @using MagicMatchTracker.Client.Infrastructure.Pages
 @inject MockDataProvider DataProvider
 
@@ -8,10 +9,53 @@
 	return;
 }
 
-<h1 class="flex flex-col">
-	<span>@_deck.Title</span>
-	<span class="text-xl text-on-background-muted">@_deck.SubTitle</span>
-</h1>
+<div class="card flex gap-(--card-padding) mb-4">
+	<div class="h-40">
+		<Image Uri="@_deck.ImageUri" Width="30" PlaceholderIcon="box"
+		       ContainerClass="h-full rounded-component" class="h-full object-cover"/>
+	</div>
+	<div class="flex flex-col gap-4 flex-1">
+		<h1 class="flex flex-col">
+			<span>@_deck.Title</span>
+			<span class="text-xl text-on-background-muted">@_deck.SubTitle</span>
+		</h1>
+		<div class="flex-1 grid grid-cols-2 items-end gap-3">
+			<button class="button" @onclick="() => _deck.IsArchived = !_deck.IsArchived">
+				<span class="icon">@(_deck.IsArchived ? "unarchive" : "archive")</span>
+				<span>@(_deck.IsArchived ? "Unarchive" : "Archive")</span>
+			</button>
+			<button class="button">
+				<span class="icon">edit</span>
+				<span>Edit</span>
+			</button>
+		</div>
+	</div>
+</div>
+
+
+<div class="grid grid-cols-2 gap-4">
+	<BigStat
+		Label="Matches"
+		Value="_deck.Matches"
+		Icon="swords"
+		Link="@($"/sessions?player={_player.Slug}&deck={_deck.Slug}")"/>
+
+	@if (_deck.WinRate is not null)
+	{
+		<BigStat
+			Label="Win Rate"
+			Value="_deck.FormattedWins"
+			Icon="trophy"/>
+	}
+	else
+	{
+		<BigStat
+			Label="Wins"
+			Value="_deck.Wins"
+			Icon="trophy"/>
+	}
+</div>
+
 
 @code {
 
