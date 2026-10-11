@@ -65,10 +65,6 @@
 		@apply transition-all cursor-pointer hover:-translate-y-0.5 hover:shadow-lg focus:-translate-y-0.5 focus:shadow-lg;
 	}
 
-	.interactive-card {
-		@apply [--card-padding:--spacing(6)]  bg-surface text-on-surface p-(--card-padding) rounded-surface cursor-pointer hover:-translate-y-0.5 hover:shadow-lg focus:-translate-y-0.5 focus:shadow-lg;
-	}
-
 	.button {
 		@apply transition-all px-4 py-2 flex items-center justify-center gap-1 rounded-component bg-component text-on-component cursor-pointer hover:brightness-85 dark:hover:brightness-115 active:scale-95
 	}

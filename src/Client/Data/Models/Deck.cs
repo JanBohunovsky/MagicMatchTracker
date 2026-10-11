@@ -1,10 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace MagicMatchTracker.Client.Data.Models;
 
 public sealed class Deck : IStats
 {
 	public string Slug { get; private set; } = string.Empty;
 
-	public required string OwnerSlug { get; init; }
+	public required string OwnerSlug { get; set; }
 
 	public required string Commander
 	{
@@ -34,6 +36,17 @@ public sealed class Deck : IStats
 
 	public int Matches { get; set; }
 	public int Wins { get; set; }
+
+	[JsonIgnore]
+	public Player Owner
+	{
+		get;
+		set
+		{
+			field = value;
+			OwnerSlug = value.Slug;
+		}
+	}
 
 	private void UpdateValues()
 	{

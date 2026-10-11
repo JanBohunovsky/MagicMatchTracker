@@ -1,5 +1,4 @@
-@page "/players/{username}"
-@using MagicMatchTracker.Client.Infrastructure.Components
+@page "/players/{slug}"
 @using MagicMatchTracker.Client.Infrastructure.Pages
 @inject MockDataProvider DataProvider
 
@@ -11,10 +10,13 @@
 
 <div class="card flex gap-(--card-padding) mb-4">
 	<Avatar Uri="@_player.AvatarUri" Size="24"/>
-	<div class="flex flex-col gap-2">
+	<div class="flex-1 flex flex-col gap-2">
 		<h1>@_player.Username</h1>
-		<div class="flex gap-2">
-			<span class="text-on-surface-muted italic">TODO: Add more stuff here</span>
+		<div class="flex-1 flex items-end">
+			<button class="button">
+				<span class="icon">edit</span>
+				<span>Edit</span>
+			</button>
 		</div>
 	</div>
 </div>
@@ -53,11 +55,11 @@
 	private Player? _player;
 
 	[Parameter, EditorRequired]
-	public string Username { get; set; }
+	public string Slug { get; set; }
 
 	protected override void OnParametersSet()
 	{
-		_player = DataProvider.Players.FindBySlug(Username, p => p.Slug);
+		_player = DataProvider.Players.FindBySlug(Slug, p => p.Slug);
 	}
 
 }

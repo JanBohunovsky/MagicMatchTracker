@@ -1,0 +1,62 @@
+@page "/sessions/{sessionSlug}/{matchSlug}"
+@using MagicMatchTracker.Client.Infrastructure.Pages
+@inject MockDataProvider DataProvider
+
+@if (_match is null)
+{
+	<NotFound/>
+	return;
+}
+
+<div class="card flex flex-row justify-between items-baseline">
+	<div class="flex flex-col gap-4">
+		<h1 class="flex flex-col">
+			<span>Match @_match.Number of @_match.Session.Matches.Count</span>
+			<span class="text-lg text-on-surface-muted">@_match.Session.FormattedDate</span>
+		</h1>
+		<div class="flex flex-row gap-3">
+			<button class="button">
+				<span class="icon">edit</span>
+				<span>Edit</span>
+			</button>
+		</div>
+	</div>
+
+	<div class="flex flex-col text-sm text-on-surface-muted">
+		@if (_formattedDuration is not null)
+		{
+			<CardStat Icon="timer" Value="_formattedDuration" Orientation="Orientation.Horizontal"/>
+		}
+	</div>
+</div>
+
+@code {
+
+	private Match? _match;
+	private string? _formattedDuration;
+
+	[Parameter, EditorRequired]
+    public string SessionSlug { get; set; }
+
+	[Parameter, EditorRequired]
+    public string MatchSlug { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		var session = DataProvider.Sessions.FindBySlug(SessionSlug, s => s.Slug);
+		if (session is null)
+			return;
+
+		_match = session.Matches.FindBySlug(MatchSlug, m => m.Slug);
+		if (_match is null)
+			return;
+
+		if (_match.StartTime is not null)
+		{
+			var endTime = _match.EndTime ?? DateTimeOffset.Now;
+			var duration = endTime - _match.StartTime.Value;
+			_formattedDuration = duration.ToShortString();
+		}
+	}
+
+}

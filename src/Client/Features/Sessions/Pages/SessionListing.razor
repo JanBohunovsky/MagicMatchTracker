@@ -1,0 +1,20 @@
+@page "/sessions"
+@using MagicMatchTracker.Client.Features.Sessions.Components
+@inject MockDataProvider DataProvider
+
+<div class="flex flex-col gap-4">
+	@foreach (var session in GetSessions())
+	{
+		<SessionCard Session="@session"/>
+	}
+</div>
+
+@code {
+
+	private IEnumerable<Session> GetSessions()
+	{
+		return DataProvider.Sessions
+			.OrderByDescending(s => s.Date);
+	}
+
+}
