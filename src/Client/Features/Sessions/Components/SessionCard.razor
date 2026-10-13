@@ -2,32 +2,29 @@
 	<div class="flex justify-between">
 		<div class="flex gap-2 items-baseline">
 			<span class="text-lg">@Session.Date.ToString("MMMM d")</span>
-			<span class="text-on-surface-muted">@Session.Date.ToString("dddd")</span>
+			<span class="text-muted">@Session.Date.ToString("dddd")</span>
 		</div>
-		<div class="flex gap-3 text-on-surface-muted text-sm">
-			@if (_formattedDuration is not null)
-			{
-				<CardStat Icon="timer" Value="_formattedDuration" Orientation="Orientation.Horizontal"/>
-			}
+		<div class="flex gap-3 text-muted text-sm">
+			<CardStat Icon="timer" Value="Session.GetFormattedDuration()" Orientation="Orientation.Horizontal"/>
 			<CardStat Icon="swords" Value="Session.Matches.Count" Orientation="Orientation.Horizontal"/>
 		</div>
 	</div>
 
 	<div class="grid grid-cols-4 gap-x-3 gap-y-6">
-		@foreach (var player in Session.SeatedPlayers)
+		@foreach (var sessionPlayer in Session.Players.OrderBy(sp => sp.SeatNumber))
 		{
 			<div class="flex flex-col items-center gap-1 text-sm">
-				<Avatar Uri="@player.AvatarUri" Size="12"/>
-				<span class="">@player.Username</span>
+				<Avatar Uri="@sessionPlayer.Player.AvatarUri" Size="12"/>
+				<span>@sessionPlayer.Player.Username</span>
 				@{
 					var wins = Session.Matches
 						.SelectMany(m => m.Participations)
-						.Where(p => p.PlayerSlug == player.Slug)
-						.Count(p => p.IsWinner is true);
+						.Where(p => p.PlayerSlug == sessionPlayer.PlayerSlug)
+						.Count(p => p.IsWinner);
 				}
 				@if (wins > 0)
 				{
-					<div class="flex text-on-surface-muted">
+					<div class="flex text-muted">
 						@for (var i = 0; i < wins; i++)
 						{
 							<span class="icon">trophy</span>
@@ -41,14 +38,7 @@
 
 @code {
 
-	private string? _formattedDuration;
-
 	[Parameter, EditorRequired]
     public Session Session { get; set; }
-
-	protected override void OnParametersSet()
-	{
-		_formattedDuration = Session.GetFormattedDuration();
-	}
 
 }

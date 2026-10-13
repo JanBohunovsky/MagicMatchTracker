@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace MagicMatchTracker.Client.Data.Models;
 
 public sealed class Session
@@ -16,21 +14,9 @@ public sealed class Session
 		}
 	}
 
-	// List of players that were attending this session. Also serves as a seating order.
-	public required string[] SeatedPlayerSlugs { get; set; }
+	public required List<SessionPlayer> Players { get; set; }
 
 	public List<Match> Matches { get; set; } = [];
-
-	[JsonIgnore]
-	public Player[] SeatedPlayers
-	{
-		get;
-		set
-		{
-			field = value;
-			SeatedPlayerSlugs = value.Select(player => player.Slug).ToArray();
-		}
-	}
 
 	public string FormattedDate => Date.ToString("MMMM d, dddd");
 
@@ -39,11 +25,11 @@ public sealed class Session
 		if (Matches.Count == 0)
 			return null;
 
-		var lastMatch = Matches.MaxBy(m => m.Number);
+		var lastMatch = Matches.Where(m => m.IsLive).MaxBy(m => m.Number);
 		if (lastMatch?.EndTime is null)
 			return null;
 
-		var firstMatch = Matches.MinBy(m => m.Number);
+		var firstMatch = Matches.Where(m => m.IsLive).MinBy(m => m.Number);
 		if (firstMatch?.StartTime is null)
 			return null;
 

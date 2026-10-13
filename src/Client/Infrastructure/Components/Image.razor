@@ -2,7 +2,7 @@
      style="--image-width:calc(var(--spacing)*@Width); --image-height:calc(var(--spacing)*@Height); --image-placeholder-size:calc(var(--spacing)*0.75*@(Height ?? Width))">
 	@if (!_isLoaded)
 	{
-		<div class="absolute inset-0 h-full w-full bg-component-on-background text-on-background-muted/50 grid place-items-center leading-(--image-placeholder-size)">
+		<div class="absolute inset-0 h-full w-full bg-component-on-background text-current/20 grid place-items-center leading-(--image-placeholder-size)">
 			@if (PlaceholderIcon is not null)
 			{
 				<span class="icon icon-filled">@PlaceholderIcon</span>

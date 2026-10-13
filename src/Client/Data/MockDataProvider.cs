@@ -28,9 +28,11 @@ public sealed class MockDataProvider(ILogger<MockDataProvider> logger, IHttpClie
 
 		foreach (var session in Sessions)
 		{
-			session.SeatedPlayers = session.SeatedPlayerSlugs
-				.Select(s => Players.FindBySlug(s, p => p.Slug) ?? throw new InvalidOperationException($"Player '{s}' not found"))
-				.ToArray();
+			foreach (var sessionPlayer in session.Players)
+			{
+				sessionPlayer.Player = Players.FindBySlug(sessionPlayer.PlayerSlug, p => p.Slug)
+					?? throw new InvalidOperationException($"Player '{sessionPlayer.PlayerSlug}' not found");
+			}
 
 			foreach (var match in session.Matches)
 			{
@@ -39,11 +41,8 @@ public sealed class MockDataProvider(ILogger<MockDataProvider> logger, IHttpClie
 				foreach (var participation in match.Participations)
 				{
 					participation.Match = match;
-					participation.Player = session.SeatedPlayers.FindBySlug(participation.PlayerSlug, p => p.Slug)
+					participation.Player = session.Players.FindBySlug(participation.PlayerSlug, p => p.PlayerSlug)?.Player
 						?? throw new InvalidOperationException($"Player '{participation.PlayerSlug}' is not in the session '{session.Slug}'");
-
-					if (participation.DeckSlug is null)
-						continue;
 
 					var ownerSlug = participation.PlayerSlug;
 					var deckSlug = participation.DeckSlug;

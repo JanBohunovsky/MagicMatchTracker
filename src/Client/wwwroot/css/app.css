@@ -15,7 +15,6 @@
 
 	--color-surface: light-dark(var(--color-white), var(--color-neutral-800));
 	--color-on-surface: light-dark(var(--color-neutral-800), var(--color-neutral-200));
-	--color-on-surface-muted: light-dark(var(--color-neutral-500), var(--color-neutral-400));
 
 	--color-component: light-dark(var(--color-neutral-200), var(--color-neutral-700));
 	--color-on-component: light-dark(var(--color-neutral-900), var(--color-neutral-100));
@@ -85,6 +84,10 @@
 
 @utility icon-thin {
 	--icon-opsz: 48;
+}
+
+@utility text-muted {
+	@apply text-current/60;
 }
 
 .icon {

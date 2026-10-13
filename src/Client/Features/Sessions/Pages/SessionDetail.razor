@@ -11,34 +11,35 @@
 
 <div class="card flex flex-col gap-(--card-padding) mb-(--page-padding)">
 	<div class="flex flex-row justify-between items-baseline">
-		<h1 class="flex flex-col">
-			<span>@_session.Date.ToString("MMMM d")</span>
-			<span class="text-xl text-on-surface-muted">@_session.Date.ToString("dddd")</span>
-		</h1>
-		@if (_formattedDuration is not null)
-		{
-			<CardStat Icon="timer" Value="_formattedDuration" Orientation="Orientation.Horizontal" class="text-sm text-on-surface-muted"/>
-		}
+		<div>
+			<h1>@_session.Date.ToString("MMMM d")</h1>
+			<span class="text-lg text-muted">@_session.Date.ToString("dddd")</span>
+		</div>
+		<CardStat Icon="timer" Value="_session.GetFormattedDuration()" Orientation="Orientation.Horizontal" class="text-sm text-muted"/>
 	</div>
 
 	<div class="grid grid-cols-4 gap-x-3 gap-y-6">
-		@foreach (var player in _session.SeatedPlayers)
+		@foreach (var sessionPlayer in _session.Players.OrderBy(sp => sp.SeatNumber))
 		{
 			<div class="flex flex-col items-center gap-1 text-sm">
-				<Avatar Uri="@player.AvatarUri" Size="12"/>
-				<span>@player.Username</span>
+				<Avatar Uri="@sessionPlayer.Player.AvatarUri" Size="12"/>
+				<span>@sessionPlayer.Player.Username</span>
 			</div>
 		}
 	</div>
 
 	<div class="flex flex-row gap-3">
-		<button class="button">
+		<button class="button flex-1">
 			<span class="icon">patient_list</span>
 			<span>Players</span>
 		</button>
-		<button class="button">
+		<button class="button flex-1">
 			<span class="icon">edit</span>
 			<span>Edit</span>
+		</button>
+		<button class="button flex-1 min-w-fit @(_isToday ? "inverted-component" : string.Empty)">
+			<span class="icon">add</span>
+			<span>New Match</span>
 		</button>
 	</div>
 </div>
@@ -53,7 +54,7 @@
 @code {
 
 	private Session? _session;
-	private string? _formattedDuration;
+	private bool _isToday;
 
 	[Parameter, EditorRequired]
     public string Slug { get; set; }
@@ -64,7 +65,7 @@
 		if (_session is null)
 			return;
 
-		_formattedDuration = _session.GetFormattedDuration();
+		_isToday = _session.Date == DateOnly.FromDateTime(DateTime.Today);
 	}
 
 }

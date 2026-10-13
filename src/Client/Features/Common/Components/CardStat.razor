@@ -1,3 +1,8 @@
+@if (Value is null)
+{
+	return;
+}
+
 <div class="flex gap-x-1 gap-y-0.5 items-center @(Orientation == Orientation.Vertical ? "flex-col" : string.Empty) @_cssClass" title="@ToolTip">
 	<span class="icon">@Icon</span>
 	<span>@Value</span>
@@ -11,7 +16,7 @@
     public string Icon { get; set; }
 
 	[Parameter, EditorRequired]
-	public object Value { get; set; }
+	public object? Value { get; set; }
 
 	[Parameter]
     public string? ToolTip { get; set; }

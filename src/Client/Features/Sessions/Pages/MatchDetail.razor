@@ -12,7 +12,7 @@
 	<div class="flex flex-col gap-4">
 		<h1 class="flex flex-col">
 			<span>Match @_match.Number of @_match.Session.Matches.Count</span>
-			<span class="text-lg text-on-surface-muted">@_match.Session.FormattedDate</span>
+			<span class="text-lg text-muted">@_match.Session.FormattedDate</span>
 		</h1>
 		<div class="flex flex-row gap-3">
 			<button class="button">
@@ -22,18 +22,14 @@
 		</div>
 	</div>
 
-	<div class="flex flex-col text-sm text-on-surface-muted">
-		@if (_formattedDuration is not null)
-		{
-			<CardStat Icon="timer" Value="_formattedDuration" Orientation="Orientation.Horizontal"/>
-		}
+	<div class="flex flex-col text-sm text-muted">
+		<CardStat Icon="timer" Value="_match.GetFormattedDuration()" Orientation="Orientation.Horizontal"/>
 	</div>
 </div>
 
 @code {
 
 	private Match? _match;
-	private string? _formattedDuration;
 
 	[Parameter, EditorRequired]
     public string SessionSlug { get; set; }
@@ -48,15 +44,6 @@
 			return;
 
 		_match = session.Matches.FindBySlug(MatchSlug, m => m.Slug);
-		if (_match is null)
-			return;
-
-		if (_match.StartTime is not null)
-		{
-			var endTime = _match.EndTime ?? DateTimeOffset.Now;
-			var duration = endTime - _match.StartTime.Value;
-			_formattedDuration = duration.ToShortString();
-		}
 	}
 
 }

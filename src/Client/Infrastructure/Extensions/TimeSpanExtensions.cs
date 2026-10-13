@@ -6,6 +6,9 @@ public static class TimeSpanExtensions
 	{
 		public string ToShortString()
 		{
+			if (value.TotalDays >= 1)
+				return $"{value.Days}d";
+
 			if (value.TotalHours >= 1)
 				return $"{value.Hours}h {value.Minutes}m";
 

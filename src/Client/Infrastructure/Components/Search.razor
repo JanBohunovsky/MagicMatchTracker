@@ -1,5 +1,5 @@
 <div class="relative flex items-center gap-2">
-	<div class="absolute left-3 flex items-center text-sm text-on-surface-muted">
+	<div class="absolute left-3 flex items-center text-sm text-muted">
 		<span class="icon">search</span>
 	</div>
 	<input type="search"
@@ -12,7 +12,7 @@
 	       class="min-w-0 w-full px-10 py-2 component-on-background"/>
 	@if (!string.IsNullOrWhiteSpace(SearchTerm))
 	{
-		<button class="absolute right-3 flex items center rounded-full transition cursor-pointer text-on-surface-muted hover:text-on-surface"
+		<button class="absolute right-3 flex items center rounded-full transition cursor-pointer text-muted hover:text-on-surface"
 		        @onclick="ClearSearchTermAsync">
 			<TouchTarget/>
 			<span class="icon">cancel</span>
