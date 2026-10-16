@@ -11,3 +11,17 @@
 		<button class="button"><span class="icon">mail</span><span>Email</span></button>
 	</div>
 </div>
+
+<div class="mt-4 card flex flex-col gap-4 md:mx-auto md:w-100">
+	<h2>Elimination reasons</h2>
+	@foreach (var reason in Enum.GetValues<EliminationReason>())
+	{
+		<div class="flex items-center gap-2">
+			<span class="icon">@reason.Icon</span>
+			<div class="flex flex-col">
+				<span>@reason.DisplayName</span>
+				<span class="text-sm text-muted">@reason.Description</span>
+			</div>
+		</div>
+	}
+</div>

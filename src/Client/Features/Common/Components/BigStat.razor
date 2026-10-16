@@ -1,4 +1,4 @@
-<a href="@Link" class="card @(Link is not null ? "interactive" : string.Empty) flex flex-row gap-3 pe-3">
+<a href="@Link" class="card @(Link is not null ? "interactive" : string.Empty) flex flex-row gap-3 pe-3" title="@ToolTip">
 	<div class="rounded-component bg-component text-on-component grid place-items-center p-2 aspect-square">
 		<span class="icon icon-filled">@Icon</span>
 	</div>
@@ -27,5 +27,8 @@
 
 	[Parameter]
     public string? Link { get; set; }
+
+	[Parameter]
+	public string? ToolTip { get; set; }
 
 }

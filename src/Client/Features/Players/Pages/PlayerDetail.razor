@@ -1,4 +1,5 @@
 @page "/players/{slug}"
+@using Humanizer
 @using MagicMatchTracker.Client.Infrastructure.Pages
 @inject MockDataProvider DataProvider
 
@@ -39,7 +40,8 @@
 		<BigStat
 			Label="Win Rate"
 			Value="_player.FormattedWins"
-			Icon="trophy"/>
+			Icon="trophy"
+			ToolTip="@("win".ToQuantity(_player.Wins))"/>
 	}
 	else
 	{

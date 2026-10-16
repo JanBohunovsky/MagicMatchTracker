@@ -17,10 +17,18 @@
 					<span class="text-muted">@participation.Deck.Commander</span>
 				</div>
 
-				<div class="me-1 grid place-items-center size-8 rounded-full @(participation.IsWinner ? "bg-amber-200 dark:bg-amber-400/15" : "bg-component")">
-					<span class="icon text-current/80 @(participation.IsWinner ? "icon-filled" : string.Empty)">
-						@(participation.IsWinner ? "trophy" : "skull")
-					</span>
+				<div class="me-1 grid place-items-center size-8 rounded-full @(participation.IsWinner ? "bg-amber-200 dark:bg-amber-400/15" : "bg-component")"
+				     title="@participation.BuildDescription()">
+					@if (participation.IsWinner || participation.EliminatedBy is null)
+					{
+						<span class="icon text-current/80 @(participation.IsWinner ? "icon-filled" : string.Empty)">
+							@(participation.IsWinner ? "trophy" : participation.EliminationReason?.Icon ?? "skull")
+						</span>
+					}
+					else
+					{
+						<Avatar Uri="@participation.EliminatedBy.AvatarUri" Size="6"/>
+					}
 				</div>
 			</div>
 		}
@@ -30,6 +38,6 @@
 @code {
 
 	[Parameter, EditorRequired]
-    public Match Match { get; set; }
+	public Match Match { get; set; }
 
 }
