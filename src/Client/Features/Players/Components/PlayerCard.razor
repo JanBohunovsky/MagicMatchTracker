@@ -4,9 +4,9 @@
 		<span>@Player.Username</span>
 	</div>
 	<div class="grid grid-cols-3 text-sm text-muted">
-		<CardStat Value="Player.Matches" Icon="swords"/>
-		<CardStat Value="Player.FormattedWins" Icon="trophy" ToolTip="@($"{Player.Wins} wins")"/>
-		<CardStat Value="Player.Decks" Icon="box"/>
+		<CardStat Value="Player.Matches" Icon="swords" Orientation="Orientation.Vertical"/>
+		<CardStat Value="Player.FormattedWins" Icon="trophy" ToolTip="@($"{Player.Wins} wins")" Orientation="Orientation.Vertical"/>
+		<CardStat Value="Player.Decks" Icon="box" Orientation="Orientation.Vertical"/>
 	</div>
 </a>
 
