@@ -2,6 +2,8 @@
 @using MagicMatchTracker.Client.Features.Sessions.Components
 @inject MockDataProvider DataProvider
 
+<h1 class="mb-(--page-padding)">Sessions</h1>
+
 <div class="flex flex-col gap-4">
 	@foreach (var session in GetSessions())
 	{

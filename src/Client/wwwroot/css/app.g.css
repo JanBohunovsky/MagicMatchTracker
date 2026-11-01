@@ -428,9 +428,6 @@
   .bg-amber-100 {
     background-color: var(--color-amber-100);
   }
-  .bg-amber-200 {
-    background-color: var(--color-amber-200);
-  }
   .bg-background {
     background-color: var(--color-background);
   }
@@ -445,6 +442,9 @@
   }
   .bg-component-on-background {
     background-color: var(--color-component-on-background);
+  }
+  .bg-neutral-100 {
+    background-color: var(--color-neutral-100);
   }
   .object-cover {
     object-fit: cover;
@@ -653,20 +653,20 @@
     }
   }
   @media (prefers-color-scheme: dark) {
-    .dark\:bg-amber-400\/5 {
-      background-color: color-mix(in srgb, oklch(82.8% 0.189 84.429) 5%, transparent);
+    .dark\:bg-amber-400\/10 {
+      background-color: color-mix(in srgb, oklch(82.8% 0.189 84.429) 10%, transparent);
     }
     @supports (color: color-mix(in lab, red, red)) {
-      .dark\:bg-amber-400\/5 {
-        background-color: color-mix(in oklab, var(--color-amber-400) 5%, transparent);
+      .dark\:bg-amber-400\/10 {
+        background-color: color-mix(in oklab, var(--color-amber-400) 10%, transparent);
       }
     }
-    .dark\:bg-amber-400\/15 {
-      background-color: color-mix(in srgb, oklch(82.8% 0.189 84.429) 15%, transparent);
+    .dark\:bg-neutral-700\/50 {
+      background-color: color-mix(in srgb, oklch(37.1% 0 none) 50%, transparent);
     }
     @supports (color: color-mix(in lab, red, red)) {
-      .dark\:bg-amber-400\/15 {
-        background-color: color-mix(in oklab, var(--color-amber-400) 15%, transparent);
+      .dark\:bg-neutral-700\/50 {
+        background-color: color-mix(in oklab, var(--color-neutral-700) 50%, transparent);
       }
     }
     .dark\:text-amber-200 {
