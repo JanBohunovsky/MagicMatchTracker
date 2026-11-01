@@ -1,5 +1,6 @@
+@using System.Text
 <div class="relative overflow-clip @(Width is not null ? "w-(--image-width)" : string.Empty) @(Height is not null ? "h-(--image-height)" : string.Empty) @ContainerClass"
-     style="--image-width:calc(var(--spacing)*@Width); --image-height:calc(var(--spacing)*@Height); --image-placeholder-size:calc(var(--spacing)*0.75*@(Height ?? Width))">
+     style="@_containerVariables">
 	@if (!_isLoaded)
 	{
 		<div class="absolute inset-0 h-full w-full bg-component-on-background text-current/20 grid place-items-center leading-(--image-placeholder-size)">
@@ -25,6 +26,7 @@
 	private bool _isLoaded;
 	private string? _previousUri;
 	private string? _imageClass;
+	private string? _containerVariables;
 
 	[Parameter]
     public string? Uri { get; set; }
@@ -70,7 +72,26 @@
 			_isLoaded = false;
 		}
 
+		_containerVariables = BuildContainerVariables();
 		_imageClass = AttributeUtilities.CombineClassNames(Attributes, null);
 	}
 
+	private string BuildContainerVariables()
+	{
+		var sb = new StringBuilder();
+
+		if (Width is not null)
+		{
+			sb.Append($"--image-width: calc(var(--spacing)*{Width});");
+		}
+
+		if (Height is not null)
+		{
+			sb.Append($"--image-height: calc(var(--spacing)*{Height});");
+		}
+
+		sb.Append($"--image-placeholder-size: var(--image-placeholder-size-override, calc(var(--spacing)*0.75*{Height ?? Width ?? 1}));");
+
+		return sb.ToString();
+	}
 }

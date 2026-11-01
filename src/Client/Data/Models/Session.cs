@@ -19,21 +19,4 @@ public sealed class Session
 	public List<Match> Matches { get; set; } = [];
 
 	public string FormattedDate => Date.ToString("MMMM d, dddd");
-
-	public string? GetFormattedDuration()
-	{
-		if (Matches.Count == 0)
-			return null;
-
-		var lastMatch = Matches.Where(m => m.IsLive).MaxBy(m => m.Number);
-		if (lastMatch?.EndTime is null)
-			return null;
-
-		var firstMatch = Matches.Where(m => m.IsLive).MinBy(m => m.Number);
-		if (firstMatch?.StartTime is null)
-			return null;
-
-		var duration = lastMatch.EndTime.Value - firstMatch.StartTime.Value;
-		return duration.ToShortString();
-	}
 }

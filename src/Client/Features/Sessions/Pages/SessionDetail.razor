@@ -15,7 +15,6 @@
 			<h1>@_session.Date.ToString("MMMM d")</h1>
 			<span class="text-lg text-muted">@_session.Date.ToString("dddd")</span>
 		</div>
-		<CardStat Icon="timer" Value="_session.GetFormattedDuration()" class="text-sm text-muted"/>
 	</div>
 
 	<div class="grid grid-cols-4 gap-x-3 gap-y-6">
@@ -45,7 +44,7 @@
 </div>
 
 <div class="flex flex-col gap-(--page-padding)">
-	@foreach (var match in _session.Matches)
+	@foreach (var match in _session.Matches.OrderBy(m => m.Number))
 	{
 		<MatchCard Match="match"/>
 	}

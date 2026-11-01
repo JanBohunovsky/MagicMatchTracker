@@ -9,7 +9,7 @@ public sealed class MatchParticipation
 	public required string DeckSlug { get; set; }
 	public int TurnOrder { get; set; }
 	public bool IsWinner { get; set; }
-	public DateTimeOffset? EndTime { get; set; }
+	public TimeSpan? Duration { get; set; }
 	public int? EndTurn { get; set; }
 	public string? EliminatedByPlayerSlug { get; set; }
 	public EliminationReason? EliminationReason { get; set; }
@@ -26,7 +26,7 @@ public sealed class MatchParticipation
 	[JsonIgnore]
 	public Player? EliminatedBy { get; set; }
 
-	public string BuildDescription()
+	public string BuildDescription(bool includeTurn = true)
 	{
 		var sb = new StringBuilder();
 
@@ -44,7 +44,7 @@ public sealed class MatchParticipation
 		}
 		else
 		{
-			sb.Append("Lost");
+			sb.Append("Eliminated");
 		}
 
 		if (EliminatedBy is not null)
@@ -52,7 +52,7 @@ public sealed class MatchParticipation
 			sb.Append($" by {EliminatedBy.Username}");
 		}
 
-		if (EndTurn is not null)
+		if (includeTurn && EndTurn is not null)
 		{
 			sb.Append($" on turn {EndTurn}");
 		}

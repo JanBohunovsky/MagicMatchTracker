@@ -2,14 +2,15 @@
 	<div class="flex justify-between">
 		<span class="text-lg">Match #@Match.Number</span>
 		<div class="flex gap-3 text-muted text-sm">
-			<CardStat Icon="timer" Value="Match.GetFormattedDuration()"/>
+			<CardStat Icon="timer" Value="Match.Duration?.ToShortString()"/>
 		</div>
 	</div>
 
 	<div class="grid grid-cols-2 gap-3">
 		@foreach (var participation in Match.Participations.OrderBy(mp => mp.TurnOrder))
 		{
-			<div class="flex flex-row items-center gap-2 text-sm rounded-full @(participation.IsWinner ? "bg-amber-100 dark:bg-amber-400/10 text-amber-800 dark:text-amber-200" : "bg-neutral-100 dark:bg-neutral-700/50")">
+			<div class="flex flex-row items-center gap-2 text-sm rounded-full @(participation.IsWinner ? "bg-amber-100 dark:bg-amber-400/10 text-amber-800 dark:text-amber-200" : "bg-neutral-100 dark:bg-neutral-700/50")"
+			     title="@participation.BuildDescription()">
 				<Avatar Uri="@participation.Player.AvatarUri" Size="10"/>
 
 				<div class="flex-1 flex flex-col text-sm/tight">
@@ -17,8 +18,7 @@
 					<span class="text-muted">@participation.Deck.Title</span>
 				</div>
 
-				<div class="me-1 grid place-items-center size-8 rounded-full"
-				     title="@participation.BuildDescription()">
+				<div class="me-1 grid place-items-center size-8 rounded-full">
 					@if (participation.IsWinner || participation.EliminatedBy is null)
 					{
 						<span class="icon text-current/80 @(participation.IsWinner ? "icon-filled" : string.Empty)">

@@ -1,7 +1,9 @@
-<Image Uri="@Uri" Size="@Size" PlaceholderIcon="person" ContainerClass="rounded-full"/>
+<Image Uri="@Uri" Size="@Size" PlaceholderIcon="person" ContainerClass="@_containerClass" @attributes="AdditionalAttributes"/>
 
 
 @code {
+
+	private string _containerClass = string.Empty;
 
 	[Parameter]
 	public string? Uri { get; set; }
@@ -12,4 +14,14 @@
 	[Parameter]
 	public int Size { get; set; } = 6;
 
+	[Parameter]
+    public string? ContainerClass { get; set; }
+
+	[Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		_containerClass = $"rounded-full {ContainerClass}";
+	}
 }
