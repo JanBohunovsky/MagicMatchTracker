@@ -23,8 +23,9 @@
 		</div>
 	</div>
 
-	<div class="flex flex-col text-sm text-muted">
+	<div class="flex flex-col gap-2 text-sm text-muted">
 		<CardStat Icon="timer" Value="_match.Duration?.ToShortString()"/>
+		<CardStat Icon="laps" Value="@("turn".ToNullableQuantity(_match.GetTotalTurns()))"/>
 	</div>
 </div>
 

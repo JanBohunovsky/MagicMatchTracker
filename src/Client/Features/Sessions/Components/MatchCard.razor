@@ -3,13 +3,14 @@
 		<span class="text-lg">Match #@Match.Number</span>
 		<div class="flex gap-3 text-muted text-sm">
 			<CardStat Icon="timer" Value="Match.Duration?.ToShortString()"/>
+			<CardStat Icon="laps" Value="@("turn".ToNullableQuantity(Match.GetTotalTurns()))"/>
 		</div>
 	</div>
 
 	<div class="grid grid-cols-2 gap-3">
 		@foreach (var participation in Match.Participations.OrderBy(mp => mp.TurnOrder))
 		{
-			<div class="flex flex-row items-center gap-2 text-sm rounded-full @(participation.IsWinner ? "bg-amber-100 dark:bg-amber-400/10 text-amber-800 dark:text-amber-200" : "bg-neutral-100 dark:bg-neutral-700/50")"
+			<div class="flex flex-row items-center gap-2 text-sm rounded-full @(participation.IsWinner ? "bg-highlight-on-component text-on-highlight-on-component" : "bg-neutral-100 dark:bg-neutral-700/50")"
 			     title="@participation.BuildDescription()">
 				<Avatar Uri="@participation.Player.AvatarUri" Size="10"/>
 

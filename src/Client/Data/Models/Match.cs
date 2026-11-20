@@ -22,4 +22,6 @@ public sealed class Match
 
 	[JsonIgnore]
 	public Session Session { get; set; } = null!;
+
+	public int? GetTotalTurns() => Participations.Max(p => p.EndTurn);
 }

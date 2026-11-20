@@ -20,6 +20,9 @@
 	--color-on-component: light-dark(var(--color-neutral-900), var(--color-neutral-100));
 	--color-component-on-background: light-dark(var(--color-neutral-300), var(--color-neutral-700));
 
+	--color-highlight-on-component: light-dark(var(--color-amber-100), color-mix(in oklab, var(--color-amber-400) 10%, transparent));
+	--color-on-highlight-on-component: light-dark(var(--color-amber-800), var(--color-amber-200));
+
 	--color-inverted-component: light-dark(var(--color-neutral-900), var(--color-neutral-100));
 	--color-on-inverted-component: light-dark(var(--color-white), var(--color-neutral-900));
 

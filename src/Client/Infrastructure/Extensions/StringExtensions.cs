@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
+using Humanizer;
 
 namespace MagicMatchTracker.Client.Infrastructure.Extensions;
 
@@ -26,6 +27,9 @@ public static class StringExtensions
 
 		public string ToPossessive()
 			=> value.EndsWith("s", StringComparison.InvariantCultureIgnoreCase) ? $"{value}'" : $"{value}'s";
+
+		public string? ToNullableQuantity(int? quantity)
+			=> quantity is not null ? value.ToQuantity(quantity.Value) : null;
 
 		public string Format(object? arg0)
 			=> string.Format(value, arg0);
