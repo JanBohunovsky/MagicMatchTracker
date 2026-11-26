@@ -1,0 +1,80 @@
+﻿@page "/"
+@using MagicMatchTracker.Client.Features.Sessions.Component
+@inject MockDataProvider DataProvider
+
+<PageTitle>@DataProvider.Settings.Name</PageTitle>
+
+<div class="flex items-center justify-between">
+	<h1>@DataProvider.Settings.Name</h1>
+	<IconButton Icon="settings" Link="/settings" Tooltip="Settings"/>
+</div>
+
+<div class="mt-(--page-padding) flex flex-col gap-8">
+	<div class="flex flex-col gap-(--page-padding)">
+		@* Session in progress *@
+		@if (_activeSession is not null)
+		{
+			<ActiveSessionCard Session="_activeSession"/>
+		}
+
+		@* New session *@
+		<button class="button bg-component-on-background @(_activeSession is null ? "py-4" : string.Empty)">
+			<span class="icon">add</span>
+			<span>New session</span>
+		</button>
+	</div>
+
+	@* Last 30 days - summary *@
+	<div class="flex flex-col gap-2">
+		<span class="text-muted">Season summary</span>
+		<div class="grid grid-cols-2 gap-3">
+			<BigStat Icon="swords" Label="Matches" Value="_seasonMatchCount"/>
+			<BigStat Icon="timer" Label="Avg. length" Value="@(_seasonMatchAverageDuration?.ToShortString() ?? "N/A")"/>
+		</div>
+	</div>
+
+	@* Recent sessions - listing *@
+	<div class="flex flex-col gap-2">
+		<span class="text-muted">Recent matches</span>
+		<div class="flex flex-col divide-y *:border-current/20">
+			@foreach (var session in _recentSessions)
+			{
+				<SessionRow Session="session"/>
+			}
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private Session? _activeSession;
+	private int _seasonMatchCount;
+	private TimeSpan? _seasonMatchAverageDuration;
+	private List<Session> _recentSessions = [];
+
+	protected override void OnInitialized()
+	{
+		// Use the most recent session for testing
+		_activeSession = DataProvider.Sessions.FirstOrDefault();
+
+		_recentSessions = DataProvider.Sessions.Where(s => s != _activeSession)
+			.ToList();
+
+		var seasonMatches = _recentSessions.Where(s => s.Date >= DataProvider.Settings.CurrentSeasonStartDate)
+			.SelectMany(s => s.Matches)
+			.ToList();
+
+		_seasonMatchCount = seasonMatches.Count;
+		if (seasonMatches.Count == 0)
+		{
+			return;
+		}
+
+		var averageMatchDurationSeconds = seasonMatches.Average(m => m.Duration?.TotalSeconds);
+		if (averageMatchDurationSeconds is not null)
+		{
+			_seasonMatchAverageDuration = TimeSpan.FromSeconds(averageMatchDurationSeconds.Value);
+		}
+	}
+
+}

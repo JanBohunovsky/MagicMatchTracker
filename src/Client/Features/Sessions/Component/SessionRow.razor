@@ -1,0 +1,22 @@
+@using Humanizer
+<a href="/sessions/@Session.Id" class="group -mx-(--page-padding) px-(--page-padding) py-3 flex flex-col gap-1 hover:bg-surface">
+	<div class="flex items-center justify-between">
+		<span>@Session.FormattedDate</span>
+		<span class="text-muted">@("match".ToQuantity(Session.Matches.Count))</span>
+	</div>
+	<div class="flex items-center justify-between">
+		<div class="flex gap-1 -space-x-2 *:ring-2 *:ring-background *:group-hover:ring-surface">
+			@foreach (var seat in Session.Seats)
+			{
+				<Avatar Uri="@seat.Player.AvatarUri" Size="5"/>
+			}
+		</div>
+	</div>
+</a>
+
+@code {
+
+	[Parameter, EditorRequired]
+    public Session Session { get; set; }
+
+}

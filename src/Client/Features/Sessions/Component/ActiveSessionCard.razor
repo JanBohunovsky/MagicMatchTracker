@@ -1,0 +1,36 @@
+@using Humanizer
+<div class="card flex flex-col gap-4">
+	<span class="text-lg font-medium">Session in progress</span>
+
+	<div class="flex flex-col gap-2 *:flex *:items-center *:gap-1">
+		<div>
+			<span class="icon">calendar_today</span>
+			<span>@Session.FormattedDate</span>
+		</div>
+		<div>
+			<span class="icon">swords</span>
+			<span>@("match".ToQuantity(@Session.Matches.Count))</span>
+		</div>
+	</div>
+
+	<div class="flex justify-around">
+		@foreach (var seat in Session.Seats)
+		{
+			<div class="flex flex-col gap-1 items-center">
+				<Avatar Uri="@seat.Player.AvatarUri" Size="10"/>
+				<span class="text-sm">@seat.Player.Username</span>
+			</div>
+		}
+	</div>
+
+	<a href="/sessions/@Session.Id" class="button inverted-component">
+		Continue session
+	</a>
+</div>
+
+@code {
+
+	[Parameter, EditorRequired]
+    public Session Session { get; set; }
+
+}
