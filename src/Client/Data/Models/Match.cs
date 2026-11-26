@@ -4,7 +4,10 @@ namespace MagicMatchTracker.Client.Data.Models;
 
 public sealed class Match
 {
-	public string Slug { get; private set; } = string.Empty;
+	public string Id { get; private set; } = string.Empty;
+
+	[JsonIgnore]
+	public Session Session { get; set; } = null!;
 
 	public required int Number
 	{
@@ -12,16 +15,18 @@ public sealed class Match
 		set
 		{
 			field = value;
-			Slug = Number.ToString();
+			Id = Number.ToString();
 		}
 	}
 
-	public TimeSpan? Duration { get; set; }
+	public DateTimeOffset? StartTime { get; set; }
+	public DateTimeOffset? EndTime { get; set; }
 
-	public List<MatchParticipation> Participations { get; set; } = [];
+	public TimeSpan? Duration => StartTime is null || EndTime is null ? null : EndTime - StartTime;
 
-	[JsonIgnore]
-	public Session Session { get; set; } = null!;
+	public bool IsAbandoned { get; set; } = false;
 
-	public int? GetTotalTurns() => Participations.Max(p => p.EndTurn);
+	public List<MatchPlayer> Players { get; set; } = [];
+
+	public int? GetTotalTurns() => Players.Max(p => p.EndTurn);
 }

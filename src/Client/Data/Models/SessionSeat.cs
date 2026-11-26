@@ -2,11 +2,13 @@ using System.Text.Json.Serialization;
 
 namespace MagicMatchTracker.Client.Data.Models;
 
-public sealed class SessionPlayer
+public sealed class SessionSeat
 {
-	public required string PlayerSlug { get; set; }
-	public required int SeatNumber { get; set; }
+	public required string PlayerId { get; set; }
 
 	[JsonIgnore]
 	public Player Player { get; set; } = null!;
+
+	public required int SeatNumber { get; set; }
+
 }

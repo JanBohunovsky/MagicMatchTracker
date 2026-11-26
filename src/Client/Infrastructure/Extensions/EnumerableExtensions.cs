@@ -9,15 +9,15 @@ public static class EnumerableExtensions
 
 	extension<T>(IEnumerable<T> source)
 	{
-		public T? FindBySlug(string? slug, Func<T, string?> slugSelector)
+		public T? FindById(string? id, Func<T, string?> idSelector)
 		{
-			return source.FindAllBySlug(slug, slugSelector)
+			return source.FindAllById(id, idSelector)
 				.FirstOrDefault();
 		}
 
-		public IEnumerable<T> FindAllBySlug(string? slug, Func<T, string?> slugSelector)
+		public IEnumerable<T> FindAllById(string? id, Func<T, string?> idSelector)
 		{
-			return source.Where(x => string.Equals(slug, slugSelector(x), StringComparison.OrdinalIgnoreCase));
+			return source.Where(x => string.Equals(id, idSelector(x), StringComparison.OrdinalIgnoreCase));
 		}
 
 		public IEnumerable<T> FuzzySearch(string query, params Func<T, string?>[] properties)

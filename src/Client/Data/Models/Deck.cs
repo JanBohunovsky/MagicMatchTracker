@@ -4,9 +4,22 @@ namespace MagicMatchTracker.Client.Data.Models;
 
 public sealed class Deck : IStats
 {
-	public string Slug { get; private set; } = string.Empty;
+	public string Id { get; private set; } = string.Empty;
 
-	public required string OwnerSlug { get; set; }
+	public required string OwnerId { get; set; }
+
+	[JsonIgnore]
+	public Player Owner
+	{
+		get;
+		set
+		{
+			field = value;
+			OwnerId = value.Id;
+		}
+	}
+
+	public required string Name { get; set; }
 
 	public required string Commander
 	{
@@ -14,7 +27,7 @@ public sealed class Deck : IStats
 		set
 		{
 			field = value;
-			UpdateValues();
+			UpdateId();
 		}
 	}
 
@@ -24,33 +37,20 @@ public sealed class Deck : IStats
 		set
 		{
 			field = value;
-			UpdateValues();
+			UpdateId();
 		}
 	}
 
-	public required string Title { get; set; }
-	public required string SubTitle { get; set; }
-
-	public string? ImageUri { get; set; }
-	public bool IsArchived { get; set; }
+	public string? ImageUrl { get; set; }
+	public string? DeckUrl { get; set; }
+	public bool IsRetired { get; set; }
 
 	public int Matches { get; set; }
 	public int Wins { get; set; }
 
-	[JsonIgnore]
-	public Player Owner
-	{
-		get;
-		set
-		{
-			field = value;
-			OwnerSlug = value.Slug;
-		}
-	}
-
-	private void UpdateValues()
+	private void UpdateId()
 	{
 		var commanderSlug = Commander.ToSlug();
-		Slug = Partner is not null ? $"{commanderSlug}--{Partner.ToSlug()}" : commanderSlug;
+		Id = Partner is not null ? $"{commanderSlug}--{Partner.ToSlug()}" : commanderSlug;
 	}
 }

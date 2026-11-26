@@ -11,6 +11,7 @@ public sealed class MockDataProvider(ILogger<MockDataProvider> logger, IHttpClie
 	public List<Player> Players { get; private set; } = [];
 	public List<Deck> Decks { get; private set; } = [];
 	public List<Session> Sessions { get; private set; } = [];
+	public AppSettings Settings { get; private set; } = new();
 
 	public async Task InitializeAsync()
 	{
@@ -51,10 +52,10 @@ public sealed class MockDataProvider(ILogger<MockDataProvider> logger, IHttpClie
 
 	private void FillSessionDetails(Session session)
 	{
-		foreach (var sessionPlayer in session.Players)
+		foreach (var sessionPlayer in session.Seats)
 		{
-			sessionPlayer.Player = Players.FindBySlug(sessionPlayer.PlayerSlug, p => p.Slug)
-				?? throw new InvalidOperationException($"Player '{sessionPlayer.PlayerSlug}' not found");
+			sessionPlayer.Player = Players.FindById(sessionPlayer.PlayerId, p => p.Id)
+				?? throw new InvalidOperationException($"Player '{sessionPlayer.PlayerId}' not found");
 		}
 
 		foreach (var match in session.Matches)
@@ -66,45 +67,44 @@ public sealed class MockDataProvider(ILogger<MockDataProvider> logger, IHttpClie
 
 	private void FillMatchDetails(Match match)
 	{
-		foreach (var participation in match.Participations)
+		foreach (var player in match.Players)
 		{
-			participation.Match = match;
-			FillMatchParticipationDetails(participation);
+			player.Match = match;
+			FillMatchPlayerDetails(player);
 		}
 	}
 
-	private void FillMatchParticipationDetails(MatchParticipation participation)
+	private void FillMatchPlayerDetails(MatchPlayer matchPlayer)
 	{
-		var session = participation.Match.Session;
+		var session = matchPlayer.Match.Session;
 
-		participation.Player = FindPlayerInSession(participation.PlayerSlug);
+		// Find player
+		matchPlayer.Player = FindPlayerInSession(matchPlayer.PlayerId);
 
-		var ownerSlug = participation.PlayerSlug;
-		var deckSlug = participation.DeckSlug;
-		if (participation.DeckSlug.Contains('/'))
+		// Find deck
+		var ownerId = matchPlayer.PlayerId;
+		var deckId = matchPlayer.DeckId;
+		if (matchPlayer.DeckId.Contains('/'))
 		{
-			var split = participation.DeckSlug.Split('/', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-			ownerSlug = split[0];
-			deckSlug = split[1];
+			var split = matchPlayer.DeckId.Split('/', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+			ownerId = split[0];
+			deckId = split[1];
 		}
 
-		participation.Deck = Decks.FindAllBySlug(ownerSlug, d => d.OwnerSlug)
-				.FindBySlug(deckSlug, d => d.Slug)
-			?? throw new InvalidOperationException($"Deck '{participation.DeckSlug}' not found");
+		matchPlayer.Deck = Decks.FindAllById(ownerId, d => d.OwnerId)
+				.FindById(deckId, d => d.Id)
+			?? throw new InvalidOperationException($"Deck '{matchPlayer.DeckId}' not found");
 
-		if (participation.EliminatedByPlayerSlug is not null)
-		{
-			participation.EliminatedBy = FindPlayerInSession(participation.EliminatedByPlayerSlug);
-		}
+		matchPlayer.Elimination?.Killer = FindPlayerInSession(matchPlayer.Elimination.KillerId);
 
 		return;
 
-		Player FindPlayerInSession(string playerSlug)
+		Player FindPlayerInSession(string playerId)
 		{
-			var sessionPlayer = session.Players.FindBySlug(playerSlug, p => p.PlayerSlug);
+			var sessionPlayer = session.Seats.FindById(playerId, p => p.PlayerId);
 
 			if (sessionPlayer?.Player is null)
-				throw new InvalidOperationException($"Player '{playerSlug}' is not in the session '{session.Slug}'");
+				throw new InvalidOperationException($"Player '{playerId}' is not in the session '{session.Id}'");
 
 			return sessionPlayer.Player;
 		}
@@ -112,8 +112,8 @@ public sealed class MockDataProvider(ILogger<MockDataProvider> logger, IHttpClie
 
 	private void FillPlayerDetails(Player player)
 	{
-		var ownedDecks = Decks.FindAllBySlug(player.Slug, d => d.OwnerSlug).ToList();
-		player.Decks = ownedDecks.Count(d => !d.IsArchived);
+		var ownedDecks = Decks.FindAllById(player.Id, d => d.OwnerId).ToList();
+		player.Decks = ownedDecks.Count(d => !d.IsRetired);
 		player.Matches = ownedDecks.Sum(d => d.Matches);
 		player.Wins = ownedDecks.Sum(d => d.Wins);
 

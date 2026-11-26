@@ -1,0 +1,10 @@
+@inject MockDataProvider DataProvider
+
+<PageTitle>@ChildContent - @DataProvider.Settings.Name</PageTitle>
+
+@code {
+
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+}

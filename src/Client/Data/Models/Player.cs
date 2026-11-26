@@ -2,7 +2,7 @@ namespace MagicMatchTracker.Client.Data.Models;
 
 public sealed class Player : IStats
 {
-	public string Slug { get; private set; } = string.Empty;
+	public string Id { get; private set; } = string.Empty;
 
 	public required string Username
 	{
@@ -10,7 +10,7 @@ public sealed class Player : IStats
 		set
 		{
 			field = value;
-			Slug = value.ToSlug();
+			Id = value.ToSlug();
 		}
 	}
 

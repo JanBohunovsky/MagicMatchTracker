@@ -1,0 +1,32 @@
+@if (Link is null)
+{
+	<button title="@Tooltip" onclick="@Clicked" class="@CssClass">
+		<TouchTarget></TouchTarget>
+		<span class="icon">@Icon</span>
+	</button>
+}
+else
+{
+	<a href="@Link" title="@Tooltip" class="@CssClass">
+		<TouchTarget></TouchTarget>
+		<span class="icon">@Icon</span>
+	</a>
+}
+
+@code {
+
+	private const string CssClass = "relative transition grid place-items-center size-8 rounded-full hover:bg-on-surface/20 hover:icon-filled cursor-pointer";
+
+	[Parameter, EditorRequired]
+    public string Icon { get; set; }
+
+	[Parameter]
+    public string? Link { get; set; }
+
+	[Parameter]
+    public EventCallback Clicked { get; set; }
+
+	[Parameter]
+    public string? Tooltip { get; set; }
+
+}
