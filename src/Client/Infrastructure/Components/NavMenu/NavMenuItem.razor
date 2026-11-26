@@ -1,11 +1,12 @@
-<NavLink href="@Target" Match="LinkMatch" ActiveClass="active [.active]:text-on-surface [.active]:icon-filled [.active]:bg-surface"
-         class="px-4 py-2 transition rounded-t-surface text-muted flex flex-col gap-x-1 items-center justify-center
-				hover:bg-surface hover:text-on-surface hover:cursor-pointer">
+<MultiMatchNavLink href="@Target" Match="LinkMatch" AdditionalPrefixes="AdditionalPrefixes"
+                   ActiveClass="active [.active]:text-on-surface [.active]:icon-filled [.active]:bg-surface"
+                   class="px-4 py-2 transition rounded-t-surface text-muted flex flex-col gap-x-1 items-center justify-center
+						  hover:bg-surface hover:text-on-surface hover:cursor-pointer">
 	<div class="flex">
 		<span class="icon" aria-hidden="true">@Icon</span>
 	</div>
 	<span class="text-sm">@Label</span>
-</NavLink>
+</MultiMatchNavLink>
 
 @code {
 
@@ -20,5 +21,8 @@
 
 	[Parameter]
     public NavLinkMatch LinkMatch { get; set; } = NavLinkMatch.Prefix;
+
+	[Parameter]
+    public IReadOnlyList<string> AdditionalPrefixes { get; set; } = [];
 
 }

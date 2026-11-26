@@ -24,8 +24,6 @@ public sealed class Match
 
 	public TimeSpan? Duration => StartTime is null || EndTime is null ? null : EndTime - StartTime;
 
-	public bool IsAbandoned { get; set; } = false;
-
 	public List<MatchPlayer> Players { get; set; } = [];
 
 	public int? GetTotalTurns() => Players.Max(p => p.EndTurn);

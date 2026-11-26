@@ -1,0 +1,74 @@
+@using MagicMatchTracker.Client.Features.Sessions.Component
+<div class="flex items-center gap-2">
+	<IconButton Icon="arrow_back" Link="/"/>
+	<h1>@Session.FormattedDate</h1>
+</div>
+
+<div class="mt-(--page-padding) flex flex-col gap-8">
+
+	@* Summary *@
+	<div class="grid grid-cols-2 gap-3">
+		<BigStat Icon="swords" Label="Matches" Value="@Session.Matches.Count"/>
+		<BigStat Icon="timer" Label="Duration" Value="@(_sessionDuration?.ToShortString() ?? "N/A")"/>
+	</div>
+
+	@* Players and wins *@
+	<div class="flex flex-col gap-2">
+		@* <span class="text-muted">Players</span> *@
+		<div class="flex _flex-col justify-around">
+			@foreach (var player in Session.Seats.OrderBy(s => s.SeatNumber).Select(s => s.Player))
+			{
+				var wins = _playerWins[player];
+				<div class="p-2 flex flex-col items-center gap-1">
+					<div class="flex flex-col items-center gap-1">
+						<Avatar Uri="@player.AvatarUri" Size="10"/>
+						<span>@player.Username</span>
+					</div>
+
+					@if (wins > 0)
+					{
+						<div class="flex text-muted text-sm">
+							@for (int i = 0; i < wins; i++)
+							{
+								<span class="icon">trophy</span>
+							}
+						</div>
+					}
+				</div>
+			}
+		</div>
+	</div>
+
+	@* Matches *@
+	<div class="flex flex-col gap-2">
+		<span class="text-muted">Matches</span>
+		<div class="-mx-(--page-padding) grid grid-cols-[auto_auto_minmax(0,1fr)_auto_auto] gap-x-2 *:px-(--page-padding)">
+			@foreach (var match in Session.Matches)
+			{
+				<MatchRow Match="match"/>
+			}
+		</div>
+	</div>
+
+</div>
+
+@code {
+
+	private TimeSpan? _sessionDuration;
+	private Dictionary<Player, int> _playerWins = [];
+
+	[Parameter, EditorRequired]
+    public Session Session { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		var sessionDurationSeconds = Session.Matches.Sum(m => m.Duration?.TotalSeconds);
+		_sessionDuration = sessionDurationSeconds is not null ? TimeSpan.FromSeconds(sessionDurationSeconds.Value) : null;
+
+		_playerWins = Session.Matches
+			.SelectMany(m => m.Players)
+			.GroupBy(mp => mp.Player)
+			.ToDictionary(g => g.Key, g => g.Count(mp => mp.IsWinner));
+	}
+
+}

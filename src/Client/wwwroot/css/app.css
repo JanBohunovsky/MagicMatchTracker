@@ -12,6 +12,7 @@
 
 	--color-background: light-dark(var(--color-neutral-200), var(--color-neutral-900));
 	--color-on-background-muted: light-dark(var(--color-neutral-500), var(--color-neutral-500));
+	--color-on-background-hover: color-mix(in oklab, var(--color-on-surface) 10%, var(--color-background));
 
 	--color-surface: light-dark(var(--color-white), var(--color-neutral-800));
 	--color-on-surface: light-dark(var(--color-neutral-800), var(--color-neutral-200));

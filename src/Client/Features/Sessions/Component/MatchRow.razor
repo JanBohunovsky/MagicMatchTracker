@@ -1,0 +1,50 @@
+<a href="/sessions/@Match.Session.Id/@Match.Id"
+   class="py-3 col-span-5 grid grid-cols-subgrid items-center transition hover:bg-on-background-hover">
+	<span>#@Match.Number</span>
+
+	@if (_winner is not null)
+	{
+		<Avatar Uri="@_winner.Player.AvatarUri" Size="8"/>
+	}
+	else
+	{
+		<div class="grid place-items-center size-8">
+			<span class="icon">flag</span>
+		</div>
+	}
+
+	<div class="flex min-w-0 items-center gap-2">
+		@if (_winner is not null)
+		{
+			<div class="flex flex-col">
+				<span class="truncate">@_winner.Player.Username won</span>
+				<span class="text-muted text-sm">@_winner.Deck.Name</span>
+			</div>
+		}
+		else
+		{
+			<span>Draw</span>
+		}
+	</div>
+
+	<div class="text-sm text-muted whitespace-nowrap">
+		<CardStat Icon="timer" Value="Match.Duration?.ToShortString()"/>
+	</div>
+	<div class="text-sm text-muted whitespace-nowrap">
+		<CardStat Icon="laps" Value="Match.GetTotalTurns()"/>
+	</div>
+</a>
+
+@code {
+
+	private MatchPlayer? _winner;
+
+	[Parameter, EditorRequired]
+    public Match Match { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		_winner = Match.Players.FirstOrDefault(mp => mp.IsWinner);
+	}
+
+}
